@@ -100,7 +100,6 @@ $(document).ready(function(e){
 			<span>入住日期<input type="text" class="mh_date" readonly="true" /></span>
 			<span>退房日期<input type="text" class="mh_date" readonly="true" /></span>
 			<span>关键词<input type="text" class="ju-adress"  placeholder="XXX/XXX/XXX等"/></span>
-			<!--  <span>酒店名称<input type="text" class="ju-name" /></span>-->
 			<a href="#" id="submit-btn">搜索</a>
 		</div>
 		
