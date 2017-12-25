@@ -64,28 +64,22 @@ public class SetRoomInfo extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
-		String roomNum = request.getParameter("roomnum");
-		String floorNum = request.getParameter("floornum");
+		String action = request.getParameter("action");
+		String table = request.getParameter("table");
+		String roomid = request.getParameter("roomnum");
 		String roomType = request.getParameter("roomtype");
+		String available = request.getParameter("available"); 
 		String orientation = request.getParameter("orientation");
 		String description = request.getParameter("description");
-		Integer available = Integer.valueOf(request.getParameter("available")); 
-		String roomid = floorNum + roomNum;
-		try {
-			String sql = "INSERT INTO 客房 (房号, 类型, 空置, 朝向, 描述) VALUES(?, ?, ?, ?, ?); ";
-			Connection cn = JDBC.getConnection(getServletContext());
-			PreparedStatement st = cn.prepareStatement(sql);
-			st.setString(1, roomid);
-			st.setString(2, roomType);
-			st.setInt(3, available);
-			st.setString(4, orientation);
-			st.setString(5, description);
-			st.execute();
-			st.close();
-			cn.close();
+		String[] values = {roomid, roomType, available, orientation, description};
+		switch (action) {
+		case "insert":
+			JDBC.insertRow(getServletContext(), table, values);
 			res.put("status", 200);
-		} catch (SQLException e) {
-			res.put("status", e.getMessage());
+			break;
+
+		default:
+			break;
 		}
 		response.getWriter().print(res);
 	}

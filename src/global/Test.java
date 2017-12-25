@@ -5,6 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,22 +38,13 @@ public class Test extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
-		Connection cn = JDBC.getConnection(getServletContext());
-		String table = "客房", field = "房号";
-		String sql = "SELECT * FROM "+ table + " WHERE " + field + "=?;";
-		PreparedStatement st;
-		try {
-			st = cn.prepareStatement(sql);st.setString(1, "0101");
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				res.put("col2", rs.getString(2));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		response.getWriter().print(res);
+//		String table = "客房类型";
+//		String[] values = {"大总统套房","1","1","10000"};
+//		res.put("queryresult", JDBC.insertRow(getServletContext(), "客房类型", values));
+		List arrayList = new ArrayList();
+		arrayList.add(1);
+		arrayList.add("hhh");
+		res.put("list",arrayList.get(1));
 	}
 
 	/**

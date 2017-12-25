@@ -17,8 +17,10 @@ import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 public class JDBC {
-	private static ArrayList<String> roles = new ArrayList<String>(Arrays
-			.asList("经理", "前台"));
+	/**
+	 * 	ENUMS
+	 */
+	private static final ArrayList<String> STAFF_ROLES = new ArrayList<String>(Arrays.asList("经理", "前台"));
 	
 	public static Connection getConnection(ServletContext sc) {
 		Context ctx = null;
@@ -43,8 +45,126 @@ public class JDBC {
         return cn;
 	}
 	
+	/**
+	 * Query
+	 * @param cn
+	 * @return
+	 */
+	public static String[] getTables(Connection cn) {
+		ArrayList<String> tables = new ArrayList<String>();
+		try {
+			String sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'hms'; ";
+			PreparedStatement st = cn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				if (!rs.getString(1).equals("住客_订单")) tables.add(rs.getString(1));	
+			}
+			rs.close();
+			st.close();
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		return tables.toArray(new String[tables.size()]);
+	}
+	
+	public static String[] getFields(Connection cn, String table) {
+		ArrayList<String> fields = new ArrayList<String>();
+		try {
+			String sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
+			PreparedStatement st = cn.prepareStatement(sql);
+			st.setString(1, table);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) fields.add(rs.getString(1));
+			rs.close();
+			st.close();
+		} catch (SQLException e) {
+			// pass
+		}
+		return fields.toArray(new String[fields.size()]);
+	}
+	
+	public static String[][] queryDirectly(ServletContext sc, String table, String field, String queryValue){
+		String[][] result = null;
+		try {
+			String sql = "SELECT * FROM " + table + "  WHERE " + field + " LIKE '%" + queryValue + "%'; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			int rowNum = 0;
+			while (rs.next()) rowNum++;
+			int colNum = rs.getMetaData().getColumnCount();
+			result = new String[rowNum+1][colNum];
+			result[0] = JDBC.getFields(cn, table);
+			for (int row = 1; row <= rowNum; row++) {
+				rs.absolute(row);
+				for(int col = 0; col < colNum; col++) result[row][col] = rs.getString(col+1);
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			
+		}
+		return result;
+	}
+
+	public static String[][] querySpecificOrder(ServletContext sc, String table, String field, String queryValue){
+		String[][] result = null;
+		try {
+			String referencedTable = "订单";
+			String sql = "SELECT * FROM " + referencedTable + " NATURAL JOIN " + table + " WHERE " + field + " LIKE '%" + queryValue + "%'; "; 
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			int rowNum = 0;
+			while (rs.next()) rowNum++;
+			int colNum = rs.getMetaData().getColumnCount();
+			result = new String[rowNum+1][colNum];
+			result[0] = JDBC.getFields(cn, referencedTable);
+			for (int row = 1; row <= rowNum; row++) {
+				rs.absolute(row);
+				for(int col = 0; col < colNum; col++) result[row][col] = rs.getString(col+1);
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	/**
+	 * Delete
+	 * @param sc
+	 * @param table
+	 * @param primaryKey
+	 * @param keyValue
+	 * @return
+	 */
+	public static boolean deleteRow(ServletContext sc, String table, String primaryKey, String keyValue) {
+		boolean success = false;
+		try {
+			String sql = "DELETE FROM " + table + " WHERE " + primaryKey + " = " + keyValue + "; ";
+			Connection cn= getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			success = st.execute();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			// pass
+		}
+		return success;
+	}
+	
+	/**
+	 * Insert
+	 * @param sc
+	 * @param role
+	 * @return
+	 */
 	public static String getStaffid(ServletContext sc, String role) {
-		Integer roleid = roles.indexOf(role);
+		Integer roleid = STAFF_ROLES.indexOf(role);
 		String newStaffid = null;
 		try {
 			Connection cn = getConnection(sc);
@@ -81,7 +201,61 @@ public class JDBC {
 	      return sdf.format(genTime);
 	}
 	
-	public static boolean isRoomEmpty(String roomid) {
+	public static boolean insertRow(ServletContext sc, String table, String[] values) {
+		boolean success = false;
+		try {
+			String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			st.setString(1, table);
+			ResultSet dataTypesRs = st.executeQuery();
+			ArrayList<String> dataTypes = new ArrayList<String>();
+			while (dataTypesRs.next()) dataTypes.add(dataTypesRs.getString(1));
+			
+			int colNum = dataTypes.size();
+			StringBuilder dynamicSql = new StringBuilder();
+			dynamicSql.append("INSERT INTO ").append(table).append(" VALUES(");
+			for (int i = 0; i < colNum; i++) {
+				if(i < colNum - 1) dynamicSql.append("?,");
+				else dynamicSql.append("?);");
+			}
+			st = cn.prepareStatement(dynamicSql.toString());
+			for (int i = 0; i < colNum; i++) {
+				if (dataTypes.get(i).contains("int")) {
+					if (values[i] == null) st.setNull(i+1, java.sql.Types.INTEGER);
+					else st.setInt(i+1, Integer.valueOf(values[i]));
+				} else if (dataTypes.get(i).contains("bit")) {
+					if (values[i] == null) st.setNull(i+1, java.sql.Types.BIT);
+					else st.setInt(i+1, Integer.valueOf(values[i]));
+				} else if (dataTypes.get(i).contains("date")) {
+					if (values[i] == null) st.setNull(i+1, java.sql.Types.DATE);
+					else st.setString(i+1, values[i]);
+				} else if (dataTypes.get(i).contains("char")) {
+					if (values[i] == null) st.setNull(i+1, java.sql.Types.CHAR);
+					else st.setString(i+1, values[i]);
+				} else if (dataTypes.get(i).contains("varchar")) {
+					if (values[i] == null) st.setNull(i+1, java.sql.Types.VARCHAR);
+					else st.setString(i+1, values[i]);
+				}
+			}
+			success = st.execute();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			// pass
+		}
+		return success;
+	}
+	
+	/**
+	 * Update
+	 * @param sc
+	 * @param primaryKey
+	 * @param keyValue
+	 * @param values
+	 * @return
+	 */
+	public static boolean updateRow(ServletContext sc, String primaryKey, String keyValue, String[] values) {
 		return false;
 	}
 }

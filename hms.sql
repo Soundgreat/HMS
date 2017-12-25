@@ -38,29 +38,26 @@ create table 客房
 foreign key(类型) references 客房类型(类型) on update cascade
 );
 
-create table 住客
+create table 客房_订单
 (
-身份证号 char(18) primary key,
-姓名 varchar(20) not null,
-订单号 char(20) not null,
-房号 char(4) not null,
-入住日期 date,
-离店日期 date,
-性别 enum('男', '女'),
-年龄 int,
-联系方式 char(11),
-foreign key(房号) references 客房(房号) on update cascade
-);
+编号 int auto_increment primary key,
+房号 char(4),
+订单号 char(20),
+foreign key(房号) references 客房(房号) on update cascade,
+foreign key(订单号) references 订单(订单号) on update cascade
+) AUTO_INCREMENT = 1;
 
 create table 订单
 (
 订单号 char(20) primary key,
 入住人数 int,
+入住日期 date,
+离店日期 date,
 价格 int,
 联系方式 char(11),
 服务评分 enum('1', '2', '3', '4', '5'),
 服务评价 varchar(140),
-订单类型 enum('预定单', '交易中订单', '历史订单', '团体订单')
+订单状态 enum('预定中', '交易中', '已完成') not null
 );
 
 create table 住客_订单
@@ -70,9 +67,18 @@ create table 住客_订单
 订单号 char(20),
 foreign key(身份证号) references 住客(身份证号) on update cascade,
 foreign key(订单号) references 订单(订单号) on update cascade
+) AUTO_INCREMENT = 1;
+
+create table 住客
+(
+身份证号 char(18) primary key,
+姓名 varchar(20) not null,
+性别 enum('男', '女'),
+年龄 int,
+联系方式 char(11),
 );
 
-create table 预订单
+create table 预定中订单
 (
 订单号 char(20) primary key,
 foreign key(订单号) references 订单(订单号) on update cascade
@@ -90,7 +96,7 @@ create table 团体订单
 foreign key(订单号) references 订单(订单号) on update cascade
 );
 
-create table 历史订单
+create table 已完成订单
 (
 订单号 char(20) primary key,
 foreign key(订单号) references 订单(订单号)
