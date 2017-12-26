@@ -14,13 +14,8 @@ td {
 td input {
 	border: none;
 }
-.cover {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-}
 .dialog {
-	margin: 0 auto;
+	
 	text-align: center;
 	border: black solid 1px;
 }
@@ -122,11 +117,11 @@ td input {
 	</transition>
 	</div>
 	
-	<div id="room-dialog" v-if="roomDialog.open" class="cover">
+	<div id="room-dialog" v-if="roomDialog.open" class="cover" align="center">
 	<transition name="bouncePage">
-	<div class="dialog">
+	<div class="dialog" align="center">
 	<h5>添加客房</h5>
-	<table>
+	<table  align="center">
 		<tr>
 			<td>房间号</td>
 			<td><input type="number" name="roomnum" required :disabled="roomDialog.disabled"></td>
@@ -318,7 +313,7 @@ new Vue({
 		setUpdatingRowInfo: function(rowIdx, colIdx) {
 			this.queryBar.updatingRowInfo.primaryKey = this.queryBar.queryResult[0][0];
 			this.queryBar.updatingRowInfo.keyValue = this.queryBar.queryResult[rowIdx][0];
-			this.queryBar.updatingRowInfo.field = this.queryBar.queryResult[rowIdx][0];
+			this.queryBar.updatingRowInfo.field = this.queryBar.queryResult[0][colIdx];
 			this.queryBar.updatingRowInfo.fieldValue = this.queryBar.queryResult[rowIdx][colIdx];
 		},
 		
@@ -326,8 +321,8 @@ new Vue({
 			this.queryBar.updating[idx] = !this.queryBar.updating[idx];
 			this.queryBar.exclusiveUpdating = this.queryBar.updating[idx];
 			switch (actFlag) {
-			case 'comfirm':
-				
+			case 'confirm':
+				console.log(this.queryBar.updatingRowInfo)
 				break;
 			case 'cancel':
 				this.queryBar.updatingRowInfo = {};
