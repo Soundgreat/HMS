@@ -5,6 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -35,21 +39,15 @@ public class Test extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
-		Connection cn = JDBC.getConnection(getServletContext());
-		String table = "¿Í·¿", field = "·¿ºÅ";
-		String sql = "SELECT * FROM "+ table + " WHERE " + field + "=?;";
-		PreparedStatement st;
-		try {
-			st = cn.prepareStatement(sql);st.setString(1, "0101");
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				res.put("col2", rs.getString(2));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		String table = request.getParameter("table");
+		String values = request.getParameter("values");
+		JSONArray list = new JSONObject(values).getJSONArray("values");
+//		ArrayList<String> rowValues = new ArrayList<String>();
+//		for (Object string : list) {
+//			rowValues.add((String)string);
+//		}
+//		res.put("status", JDBC.insertRow(getServletContext(), table, rowValues));
+		res.put("res", list);
 		response.getWriter().print(res);
 	}
 
