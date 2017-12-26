@@ -1,3 +1,4 @@
+create database hms;
 use hms;
 
 create table 员工

@@ -104,7 +104,7 @@
                         <div class="split"></div>
                     </li>
                     <li class="search Lfll Lposr">
-                                <a id="btnSearchHotel" href="javascript:;" class="Cbtn btnSearch">
+                                <a id="btnSearchHotel" href="searchhotel.jsp" class="Cbtn btnSearch">
                                     <div class="title">
                                         <i class="icon-newsearch"></i>
                                         搜索房间
