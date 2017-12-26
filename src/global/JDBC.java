@@ -50,10 +50,11 @@ public class JDBC {
 	 * @param cn
 	 * @return
 	 */
-	public static String[] getTables(Connection cn) {
+	public static String[] getTables(ServletContext sc) {
 		ArrayList<String> tables = new ArrayList<String>();
 		try {
 			String sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'hms'; ";
+			Connection cn = getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
@@ -61,26 +62,48 @@ public class JDBC {
 			}
 			rs.close();
 			st.close();
+			cn.close();
 		} catch (SQLException e) {
 			// TODO: handle exception
 		}
 		return tables.toArray(new String[tables.size()]);
 	}
 	
-	public static String[] getFields(Connection cn, String table) {
+	public static String[] getFields(ServletContext sc, String table) {
 		ArrayList<String> fields = new ArrayList<String>();
 		try {
 			String sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
+			Connection cn = getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
 			st.setString(1, table);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) fields.add(rs.getString(1));
 			rs.close();
 			st.close();
+			cn.close();
 		} catch (SQLException e) {
 			// pass
 		}
 		return fields.toArray(new String[fields.size()]);
+	}
+	
+	public static ArrayList<String> getRoomTypes(ServletContext sc) {
+		ArrayList<String> roomTypes = new ArrayList<String>();
+		Connection cn = JDBC.getConnection(sc);
+		String sql = "SELECT 类型 FROM 客房类型;";
+		try {
+			PreparedStatement st = cn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				roomTypes.add(rs.getString("类型"));
+			}
+            rs.close();
+			st.close();
+            cn.close();
+		} catch (SQLException e) {
+			// pass
+		}
+		return roomTypes;
 	}
 	
 	public static String[][] queryDirectly(ServletContext sc, String table, String field, String queryValue){
@@ -94,7 +117,7 @@ public class JDBC {
 			while (rs.next()) rowNum++;
 			int colNum = rs.getMetaData().getColumnCount();
 			result = new String[rowNum+1][colNum];
-			result[0] = JDBC.getFields(cn, table);
+			result[0] = JDBC.getFields(sc, table);
 			for (int row = 1; row <= rowNum; row++) {
 				rs.absolute(row);
 				for(int col = 0; col < colNum; col++) result[row][col] = rs.getString(col+1);
@@ -120,7 +143,7 @@ public class JDBC {
 			while (rs.next()) rowNum++;
 			int colNum = rs.getMetaData().getColumnCount();
 			result = new String[rowNum+1][colNum];
-			result[0] = JDBC.getFields(cn, referencedTable);
+			result[0] = JDBC.getFields(sc, referencedTable);
 			for (int row = 1; row <= rowNum; row++) {
 				rs.absolute(row);
 				for(int col = 0; col < colNum; col++) result[row][col] = rs.getString(col+1);
@@ -201,7 +224,7 @@ public class JDBC {
 	      return sdf.format(genTime);
 	}
 	
-	public static boolean insertRow(ServletContext sc, String table, String[] values) {
+	public static boolean insertRow(ServletContext sc, String table, ArrayList<String> values) {
 		boolean success = false;
 		try {
 			String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
@@ -222,27 +245,27 @@ public class JDBC {
 			st = cn.prepareStatement(dynamicSql.toString());
 			for (int i = 0; i < colNum; i++) {
 				if (dataTypes.get(i).contains("int")) {
-					if (values[i] == null) st.setNull(i+1, java.sql.Types.INTEGER);
-					else st.setInt(i+1, Integer.valueOf(values[i]));
+					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.INTEGER);
+					else st.setInt(i+1, Integer.valueOf(values.get(i)));
 				} else if (dataTypes.get(i).contains("bit")) {
-					if (values[i] == null) st.setNull(i+1, java.sql.Types.BIT);
-					else st.setInt(i+1, Integer.valueOf(values[i]));
+					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.BIT);
+					else st.setInt(i+1, Integer.valueOf(values.get(i)));
 				} else if (dataTypes.get(i).contains("date")) {
-					if (values[i] == null) st.setNull(i+1, java.sql.Types.DATE);
-					else st.setString(i+1, values[i]);
+					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.DATE);
+					else st.setString(i+1, values.get(i));
 				} else if (dataTypes.get(i).contains("char")) {
-					if (values[i] == null) st.setNull(i+1, java.sql.Types.CHAR);
-					else st.setString(i+1, values[i]);
+					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.CHAR);
+					else st.setString(i+1, values.get(i));
 				} else if (dataTypes.get(i).contains("varchar")) {
-					if (values[i] == null) st.setNull(i+1, java.sql.Types.VARCHAR);
-					else st.setString(i+1, values[i]);
+					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.VARCHAR);
+					else st.setString(i+1, values.get(i));
 				}
 			}
 			success = st.execute();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
-			// pass
+			e.printStackTrace();
 		}
 		return success;
 	}

@@ -4,12 +4,15 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>manager-statistic</title>
+<title>MANAGER PANEL</title>
 <style>
 td {
 	text-align: center;
 	padding: 5px;
 	border: gray solid 1px;
+}
+td input {
+	border: none;
 }
 .cover {
 	display: flex;
@@ -59,21 +62,25 @@ td {
 		<option v-for="field in queryBar.tableInfo[queryBar.currentTable]['fields']" :value="field">{{field}}</option>
 		</select>
 		<input type="text" name="queryvalue" placeholder="直接点击搜索查询所有内容" required/>
-		<button @click="submitquery">搜索</button>
-		<button v-if="queryBar.tableInfo[queryBar.currentTable]['insertable']" @click="insertRow">添加{{queryBar.currentTable}}</button>
+		<button @click="submitquery" :disabled="queryBar.exclusiveUpdating">搜索</button>
+		<button v-if="queryBar.tableInfo[queryBar.currentTable]['insertable']" @click="insertRow " :disabled="queryBar.exclusiveUpdating">添加{{queryBar.currentTable}}</button>
 	</div>
 	
 <transition name="bouncePage">
 <div id="search-result">
 	<h5 v-if="queryBar.queryResult.length > 0">找到{{queryBar.queryResult.length-1}}条结果</h5>
 	<table v-if="queryBar.queryResult.length > 1">
-		<tr v-for="(ret, rowIdx) in queryBar.queryResult">
-			<td v-for="val in ret">{{val}}</td>
+		<tr v-for="(row, rowIdx) in queryBar.queryResult">
+			<td v-for="(val, colIdx) in row"><input :value="val" @keyup="setUpdatingRowInfo(rowIdx, colIdx)" :readonly="!queryBar.updating[rowIdx]"/></td>
 			<template v-if="(queryBar.tableInfo[queryBar.queriedTable]['removable'] || queryBar.tableInfo[queryBar.queriedTable]['updatable'])">
-			<td v-if="rowIdx != 0">
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable']" @click="updateRow(rowIdx)">修改</button>
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['removable']" @click="deleteRow(rowIdx)">删除</button>
+
+			<td v-if="rowIdx != 0 ">
+			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && !queryBar.updating[rowIdx] " @click="updatingRow(rowIdx)" :disabled="queryBar.exclusiveUpdating">修改</button>
+			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && queryBar.updating[rowIdx] " @click="updatedRow(rowIdx, 'confirm')">确认修改</button>
+			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && queryBar.updating[rowIdx] " @click="updatedRow(rowIdx, 'cancel')">取消修改</button>
+			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['removable'] && !queryBar.updating[rowIdx] " @click="deleteRow(rowIdx)"  :disabled="queryBar.exclusiveUpdating">删除</button>
 			</td>
+
 			<td v-else>操作</td>
 			</template>
 		</tr>
@@ -201,7 +208,10 @@ new Vue({
 				queriedTable: '',
 				tableInfo: {},
 				tables: [],
-				queryResult: []
+				queryResult: [],
+				updating: [],
+				exclusiveUpdating: false,
+				updatingRowInfo: {}
 			},
 			roomTypeDialog: {
 				open: false,
@@ -218,14 +228,19 @@ new Vue({
 				roles: ['前台','经理']
 			},
 			currentAction: '',
-			indexClickedInQueryResult: 0
+			rowClickedInQueryResult: 0,
+			server: 'ManagerServlet'
 		}
 	},
+	
 	beforeMount: function() {
 		$.ajax({
-			url: 'Statistic',
+			url: this.server,
 			method: 'get',
 			async: false,
+			data: {
+				resource: 'tableinfo'
+			},
 			success: (res) => {
 				if (!$.isEmptyObject(res)) this.queryBar.tableInfo = res;
 				else alert('系统暂无可查数据！');
@@ -238,10 +253,11 @@ new Vue({
 			this.queryBar.tables.push(key);
 		this.queryBar.currentTable = this.queryBar.tables[0];
 	},
+	
 	methods: {
 		submitquery: function() {
 			$.ajax({
-				url: 'Statistic',
+				url: this.server,
 				method: 'post',
 				async: false,
 				data: {
@@ -251,7 +267,12 @@ new Vue({
 					queryvalue: $("input[name='queryvalue']").val()
 				},
 				success: (res) => {
-					if (res.queryresult.length > 1) this.queryBar.queryResult = res.queryresult;
+					if (res.queryresult.length > 1) {
+						this.queryBar.queryResult = res.queryresult;
+						for (let i = 0; i < this.queryBar.queryResult.length; i++) {
+							this.queryBar.updating.push(false);
+						}
+					}
 					else this.queryBar.queryResult = [''];
 					this.queryBar.queriedTable = this.queryBar.currentTable;
 				},
@@ -260,9 +281,10 @@ new Vue({
 				}
 			});
 		},
+		
 		deleteRow: function(idx) {
 			$.ajax({
-				url: 'Statistic',
+				url: this.server,
 				method: 'post',
 				data: {
 					action: 'deleterow',
@@ -282,15 +304,37 @@ new Vue({
 				}
 			});
 		},
+		
 		insertRow: function() {
 			this.openDialog();
 			this.currentAction = '添加';
 		},
-		updateRow: function(idx) {
-			this.openDialog();
-			this.currentAction = '修改';
-			this.indexClickedInQueryResult = idx;
+		
+		updatingRow: function(idx) {
+			this.queryBar.updating[idx] = !this.queryBar.updating[idx];
+			this.queryBar.exclusiveUpdating = this.queryBar.updating[idx];
 		},
+		
+		setUpdatingRowInfo: function(rowIdx, colIdx) {
+			this.queryBar.updatingRowInfo.primaryKey = this.queryBar.queryResult[0][0];
+			this.queryBar.updatingRowInfo.keyValue = this.queryBar.queryResult[rowIdx][0];
+			this.queryBar.updatingRowInfo.field = this.queryBar.queryResult[rowIdx][0];
+			this.queryBar.updatingRowInfo.fieldValue = this.queryBar.queryResult[rowIdx][colIdx];
+		},
+		
+		updatedRow: function(idx, actFlag) {
+			this.queryBar.updating[idx] = !this.queryBar.updating[idx];
+			this.queryBar.exclusiveUpdating = this.queryBar.updating[idx];
+			switch (actFlag) {
+			case 'comfirm':
+				
+				break;
+			case 'cancel':
+				this.queryBar.updatingRowInfo = {};
+				break;
+			}
+		},
+		
 		openDialog: function() {
 			switch (this.queryBar.currentTable) {
 			case '客房类型': 
@@ -299,8 +343,11 @@ new Vue({
 			case '客房':
 				this.roomDialog.open = true;
 				$.ajax({
-				    url: 'SetRoomInfo',
+				    url: this.server,
 				    method: 'get',
+				    data: {
+				    	resource: 'roomtypes'
+				    },
 				    success: (res) => {
 				    	if (res.roomtypes.length != 0) this.roomDialog.roomTypes = res.roomtypes;
 				    	else {
@@ -318,6 +365,7 @@ new Vue({
 			break;
 			}
 		},
+		
 		closeDialog: function() {
 			this.cover = false;
 			this.roomTypeDialog.open = false;
@@ -326,109 +374,70 @@ new Vue({
 			this.currentAction = '';
 			this.indexClickedInQueryResult = 0;
 		},
+		
 		submitRoomType: function() {
-			let action, keyValue;
-			if (this.idxClickedInQueryResult > 0) {
-				action = 'update';
-				keyValue = this.queryBar.queryResult[this.idxClickedInQueryResult][0];
-			} else {
-				action = 'indert';
-				keyValue = null;
-			}
-			if ($("input[name='roomtype']").val() != '' 
-				&& $("input[name='capacity']").val() != ''
-				&& $("input[name='surplus']").val() != '' 
-				&& $("input[name='price']").val() != '')
-			$.ajax({
-			    url: 'SetRoomType',
-			    method: 'post',
-			    data: {
-			    	action: action,
-			    	table: this.queryBar.currentTable,
-			    	primaykey: this.queryBar.tableInfo[this.queryBar.currentTable]['fields'][0],
-			    	keyvalue: keyValue,
-			    	roomtype: $("input[name='roomtype']").val(),
-			    	capacity: $("select[name='capacity']").val(),
-			    	surplus: $("input[name='surplus']").val(),
-			    	price: $("input[name='price']").val()
-			    },
-			    success: (res) => {
+			let values = [
+					$("input[name='roomtype']").val(),
+			    	$("select[name='capacity']").val(),
+			    	$("input[name='surplus']").val(),
+			    	$("input[name='price']").val()
+				];
+			this.submit(values, (res) => {
 			    	if (res.status == 200) alert('添加成功！');
 			    	else alert('添加失败：' + res.status);
-			    },
-			    error: (req, sta, err) => {
-			    	alert('可能遇到一些问题！请查询确认');
-			    }
 			});
 		},
+		
 		submitRoom: function() {
+			let values = [
+				$("input[name='roomnum']").val(),
+				$("select[name='roomtype']").val(),
+				$("input:radio[name='available']:checked").val(),
+				$("select[name='orientation']").val(),
+				$("textarea[name='description']").val()
+			];
+			this.submit(values, (res) => {
+					if (res.status == 200) alert('添加成功！');
+					else alert('添加失败：' + res.status);
+				});
+		},
+		
+		submitStaff: function() {
+			let values = [
+				$("input[name='staffname']").val(),
+				$("select[name='role']").val()
+			];
+			this.submit(values, (res) => {
+				if (res.staffid) alert('添加成功！ 员工号是：' + res.staffid);
+				else alert(res.status);
+			});
+		},
+		
+		submit: function(values, callback) {
 			let action, keyValue;
-			if (this.idxClickedInQueryResult > 0) {
+			if (this.rowClickedInQueryResult > 0) {
 				action = 'update';
-				keyValue = this.queryBar.queryResult[this.idxClickedInQueryResult][0];
+				keyValue = this.queryBar.queryResult[this.rowClickedInQueryResult][0];
 			} else {
 				action = 'insert';
 				keyValue = null;
 			}
-			if ($("input[name='roomnum']").val() != ''
-					&& $("input[name='floornum']").val() != ''
-					&& $("select[name='orientation']").val() != '' )
 			$.ajax({
-				url: 'SetRoomInfo',
+				url: this.server,
 				method: 'post',
 				data: {
 					action: action,
-			    	table: this.queryBar.currentTable,
-			    	primarykey: this.queryBar.tableInfo[this.queryBar.currentTable]['fields'][0],
-			    	keyvalue: keyValue,
-					roomnum: $("input[name='roomnum']").val(),
-					floornum: $("input[name='floornum']").val(),
-					roomtype: $("select[name='roomtype']").val(),
-					orientation: $("select[name='orientation']").val(),
-					description: $("textarea[name='description']").val(),
-					available: $("input:radio[name='available']:checked").val(),
-				},
-				success: (res) => {
-					if (res.status == 200) alert('添加成功！');
-					else alert('添加失败：' + res.status);
-				},
-				error: (req, sta, err) => {
-					alert('可能遇到一些问题！请查询确认');
-				}
-			});
-		},
-		submitStaff: function() {
-			let action, keyValue;
-			if (this.idxClickedInQueryResult > 0) {
-				action = 'update';
-				keyValue = this.queryBar.queryResult[this.idxClickedInQueryResult][0];
-			} else {
-				action = 'indert';
-				keyValue = null;
-			}
-			$.ajax({
-				url: 'SetAccount',
-				method: 'post',
-				data: {
-					action: 'addstaff',
 					table: this.queryBar.currentTable,
 			    	primarykey: this.queryBar.tableInfo[this.queryBar.currentTable]['fields'][0],
 			    	keyvalue: keyValue,
-					staffname: $("input[name='staffname']").val(),
-					role: $("select[name='role']").val()
+			    	values: JSON.stringify(values)
 				},
-				success: (res) => {
-					if (res.staffid) alert('添加成功！ 员工号是：' + res.staffid);
-					else alert(res.status);
-				},
+				success: callback,
 				error: (req, sta, err) => {
 					alert('可能遇到一些问题！请查询确认');
 				}
 			});
 		}
-	},
-	watch: {
-		 
 	}
 });
 </script>

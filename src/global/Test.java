@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -38,13 +39,16 @@ public class Test extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
-//		String table = "客房类型";
-//		String[] values = {"大总统套房","1","1","10000"};
-//		res.put("queryresult", JDBC.insertRow(getServletContext(), "客房类型", values));
-		List arrayList = new ArrayList();
-		arrayList.add(1);
-		arrayList.add("hhh");
-		res.put("list",arrayList.get(1));
+		String table = request.getParameter("table");
+		String values = request.getParameter("values");
+		JSONArray list = new JSONObject(values).getJSONArray("values");
+//		ArrayList<String> rowValues = new ArrayList<String>();
+//		for (Object string : list) {
+//			rowValues.add((String)string);
+//		}
+//		res.put("status", JDBC.insertRow(getServletContext(), table, rowValues));
+		res.put("res", list);
+		response.getWriter().print(res);
 	}
 
 	/**
