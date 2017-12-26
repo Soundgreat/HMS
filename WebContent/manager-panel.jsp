@@ -66,14 +66,14 @@ td input {
 	<h5 v-if="queryBar.queryResult.length > 0">找到{{queryBar.queryResult.length-1}}条结果</h5>
 	<table v-if="queryBar.queryResult.length > 1">
 		<tr v-for="(row, rowIdx) in queryBar.queryResult">
-			<td v-for="(val, colIdx) in row"><input :value="val" @keyup="setUpdatingRowInfo(rowIdx, colIdx)" :readonly="!queryBar.updating[rowIdx]"/></td>
+			<td v-for="(val, colIdx) in row"><input :name="rowIdx+'-'+colIdx" :value="val" @keyup="setUpdatingRowInfo(rowIdx, colIdx)" :readonly="!queryBar.isUpdating[rowIdx]"/></td>
 			<template v-if="(queryBar.tableInfo[queryBar.queriedTable]['removable'] || queryBar.tableInfo[queryBar.queriedTable]['updatable'])">
 
 			<td v-if="rowIdx != 0 ">
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && !queryBar.updating[rowIdx] " @click="updatingRow(rowIdx)" :disabled="queryBar.exclusiveUpdating">修改</button>
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && queryBar.updating[rowIdx] " @click="updatedRow(rowIdx, 'confirm')">确认修改</button>
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && queryBar.updating[rowIdx] " @click="updatedRow(rowIdx, 'cancel')">取消修改</button>
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['removable'] && !queryBar.updating[rowIdx] " @click="deleteRow(rowIdx)"  :disabled="queryBar.exclusiveUpdating">删除</button>
+			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && !queryBar.isUpdating[rowIdx] " @click="updatingRow(rowIdx)" :disabled="queryBar.exclusiveUpdating">修改</button>
+			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && queryBar.isUpdating[rowIdx] " @click="updatedRow(rowIdx, 'confirm')">确认修改</button>
+			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && queryBar.isUpdating[rowIdx] " @click="updatedRow(rowIdx, 'cancel')">取消修改</button>
+			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['removable'] && !queryBar.isUpdating[rowIdx] " @click="deleteRow(rowIdx)"  :disabled="queryBar.exclusiveUpdating">删除</button>
 			</td>
 
 			<td v-else>操作</td>
@@ -204,9 +204,11 @@ new Vue({
 				tableInfo: {},
 				tables: [],
 				queryResult: [],
-				updating: [],
+				isUpdating: [],
 				exclusiveUpdating: false,
-				updatingRowInfo: {}
+				previousRowInfo: {},
+				updatingRowInfo: {},
+				updatedRowValues: []
 			},
 			roomTypeDialog: {
 				open: false,
@@ -265,7 +267,7 @@ new Vue({
 					if (res.queryresult.length > 1) {
 						this.queryBar.queryResult = res.queryresult;
 						for (let i = 0; i < this.queryBar.queryResult.length; i++) {
-							this.queryBar.updating.push(false);
+							this.queryBar.isUpdating.push(false);
 						}
 					}
 					else this.queryBar.queryResult = [''];
@@ -277,15 +279,15 @@ new Vue({
 			});
 		},
 		
-		deleteRow: function(idx) {
+		deleteRow: function(rowIdx) {
 			$.ajax({
 				url: this.server,
 				method: 'post',
 				data: {
 					action: 'deleterow',
-					table: $("select[name='table']").val(),
+					table: this.queryBar.queriedTable,
 					primarykey: this.queryBar.queryResult[0][0],
-					keyvalue: this.queryBar.queryResult[idx][0]
+					keyvalue: this.queryBar.queryResult[rowIdx][0]
 				},
 				success: (res) => {
 					let oldLength = this.queryBar.queryResult.length;
@@ -305,29 +307,57 @@ new Vue({
 			this.currentAction = '添加';
 		},
 		
-		updatingRow: function(idx) {
-			this.queryBar.updating[idx] = !this.queryBar.updating[idx];
-			this.queryBar.exclusiveUpdating = this.queryBar.updating[idx];
+		updatingRow: function(rowIdx) {
+			this.queryBar.isUpdating[rowIdx] = !this.queryBar.isUpdating[rowIdx];
+			this.queryBar.exclusiveUpdating = this.queryBar.isUpdating[rowIdx];
+
+			for (let i = 0; i < this.queryBar.queryResult[0].length; i++) {
+				this.queryBar.previousRowInfo[(this.queryBar.queryResult[0][i])] = this.queryBar.queryResult[rowIdx][i];
+			}
 		},
 		
 		setUpdatingRowInfo: function(rowIdx, colIdx) {
-			this.queryBar.updatingRowInfo.primaryKey = this.queryBar.queryResult[0][0];
-			this.queryBar.updatingRowInfo.keyValue = this.queryBar.queryResult[rowIdx][0];
-			this.queryBar.updatingRowInfo.field = this.queryBar.queryResult[0][colIdx];
-			this.queryBar.updatingRowInfo.fieldValue = this.queryBar.queryResult[rowIdx][colIdx];
+			if (!this.queryBar.exclusiveUpdating) return;
+			this.queryBar.updatingRowInfo[this.queryBar.queryResult[0][colIdx]] = $("input[name='" + rowIdx + '-' + colIdx + "']").val();
 		},
 		
-		updatedRow: function(idx, actFlag) {
-			this.queryBar.updating[idx] = !this.queryBar.updating[idx];
-			this.queryBar.exclusiveUpdating = this.queryBar.updating[idx];
+		updatedRow: function(rowIdx, actFlag) {
+			this.queryBar.isUpdating[rowIdx] = !this.queryBar.isUpdating[rowIdx];
+			this.queryBar.exclusiveUpdating = this.queryBar.isUpdating[rowIdx];
 			switch (actFlag) {
 			case 'confirm':
-				console.log(this.queryBar.updatingRowInfo)
+				for (let key in this.queryBar.updatingRowInfo) {
+					if (this.queryBar.updatingRowInfo[key] != this.queryBar.previousRowInfo[key]) {
+						this.queryBar.updatedRowValues.push([key, this.queryBar.updatingRowInfo[key]]);
+					}
+				}
+				$.ajax({
+					url: this.server,
+					method: 'post',
+					data: {
+						action: 'updaterow',
+						table: this.queryBar.queriedTable,
+						primarykey: this.queryBar.queryResult[0][0],
+						keyvalue: this.queryBar.queryResult[rowIdx][0],
+						updatedvalues: JSON.stringify(this.queryBar.updatedRowValues)
+					},
+					success: (res) => {
+						if (res.status == 200) {
+							alert('修改成功！');
+						}
+						this.submitquery();
+					},
+					error: (req, sta, err) => {
+						alert('可能遇到一些问题');
+					}
+				});
 				break;
 			case 'cancel':
-				this.queryBar.updatingRowInfo = {};
 				break;
 			}
+			this.queryBar.previousRowInfo = {};
+			this.queryBar.updatingRowInfo = {};
+			this.queryBar.updatedRowValues = [];
 		},
 		
 		openDialog: function() {
@@ -409,22 +439,12 @@ new Vue({
 		},
 		
 		submit: function(values, callback) {
-			let action, keyValue;
-			if (this.rowClickedInQueryResult > 0) {
-				action = 'update';
-				keyValue = this.queryBar.queryResult[this.rowClickedInQueryResult][0];
-			} else {
-				action = 'insert';
-				keyValue = null;
-			}
 			$.ajax({
 				url: this.server,
 				method: 'post',
 				data: {
-					action: action,
+					action: 'insertrow',
 					table: this.queryBar.currentTable,
-			    	primarykey: this.queryBar.tableInfo[this.queryBar.currentTable]['fields'][0],
-			    	keyvalue: keyValue,
 			    	values: JSON.stringify(values)
 				},
 				success: callback,

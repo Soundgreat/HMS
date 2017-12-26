@@ -41,13 +41,18 @@ public class Test extends HttpServlet {
 		JSONObject res = new JSONObject();
 		String table = request.getParameter("table");
 		String values = request.getParameter("values");
-		JSONArray list = new JSONObject(values).getJSONArray("values");
-//		ArrayList<String> rowValues = new ArrayList<String>();
+		JSONArray list = new JSONArray("[[1,11],[2,22]]");
+		ArrayList<Integer> rowValues = new ArrayList<Integer>();
+		for (int i = 0; i<list.length();i++) {
+			JSONArray subList = new JSONArray(list.get(i).toString());
+			rowValues.add(subList.getInt(0));
+			rowValues.add(subList.getInt(1));
+		}
 //		for (Object string : list) {
 //			rowValues.add((String)string);
 //		}
 //		res.put("status", JDBC.insertRow(getServletContext(), table, rowValues));
-		res.put("res", list);
+		res.put("res", rowValues);
 		response.getWriter().print(res);
 	}
 

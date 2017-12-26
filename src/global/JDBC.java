@@ -22,7 +22,7 @@ public class JDBC {
 	 */
 	private static final ArrayList<String> STAFF_ROLES = new ArrayList<String>(Arrays.asList("经理", "前台"));
 	
-	public static Connection getConnection(ServletContext sc) {
+	private static Connection getConnection(ServletContext sc) {
 		Context ctx = null;
         try {
             ctx = new InitialContext();
@@ -50,6 +50,7 @@ public class JDBC {
 	 * @param cn
 	 * @return
 	 */
+	
 	public static String[] getTables(ServletContext sc) {
 		ArrayList<String> tables = new ArrayList<String>();
 		try {
@@ -209,6 +210,7 @@ public class JDBC {
 				count = currentRoleNumber;
 			}
 			newStaffid = roleid + new DecimalFormat("000").format(newRoleNumber);
+			rs.close();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
@@ -224,42 +226,64 @@ public class JDBC {
 	      return sdf.format(genTime);
 	}
 	
+	private static String[] getDataTypes(Connection cn, String table) {
+		ArrayList<String> dataTypes = new ArrayList<String>();
+		try {
+			String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
+			PreparedStatement st = cn.prepareStatement(sql);
+			st.setString(1, table);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) dataTypes.add(rs.getString(1));
+			rs.close();
+			st.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dataTypes.toArray(new String[dataTypes.size()]);
+	}
+	
+	private static boolean setData(PreparedStatement st, String dataType, int idx, String value) {
+		boolean success = false;
+		if (dataType == null) return success;
+		try {
+			if (dataType.equals("int")) {
+				if (value == null) st.setNull(idx, java.sql.Types.INTEGER);
+				else st.setInt(idx, (int)Integer.valueOf(value));
+			} else if (dataType.equals("bit")) {
+				if (value == null) st.setNull(idx, java.sql.Types.BIT);
+				else st.setInt(idx, (int)Integer.valueOf(value));
+			} else if (dataType.equals("date")) {
+				if (value == null) st.setNull(idx, java.sql.Types.DATE);
+				else st.setString(idx, value);
+			} else if (dataType.equals("char")) {
+				if (value == null) st.setNull(idx, java.sql.Types.CHAR);
+				else st.setString(idx, value);
+			} else if (dataType.equals("varchar")) {
+				if (value == null) st.setNull(idx, java.sql.Types.VARCHAR);
+				else st.setString(idx, value);
+			}
+			success = true;
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		return success;
+	}
+	
 	public static boolean insertRow(ServletContext sc, String table, ArrayList<String> values) {
 		boolean success = false;
 		try {
-			String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
 			Connection cn = getConnection(sc);
-			PreparedStatement st = cn.prepareStatement(sql);
-			st.setString(1, table);
-			ResultSet dataTypesRs = st.executeQuery();
-			ArrayList<String> dataTypes = new ArrayList<String>();
-			while (dataTypesRs.next()) dataTypes.add(dataTypesRs.getString(1));
-			
-			int colNum = dataTypes.size();
+			String[] dataTypes = getDataTypes(cn, table);
+			int colNum = dataTypes.length;
 			StringBuilder dynamicSql = new StringBuilder();
 			dynamicSql.append("INSERT INTO ").append(table).append(" VALUES(");
 			for (int i = 0; i < colNum; i++) {
 				if(i < colNum - 1) dynamicSql.append("?,");
 				else dynamicSql.append("?);");
 			}
-			st = cn.prepareStatement(dynamicSql.toString());
+			PreparedStatement st = cn.prepareStatement(dynamicSql.toString());
 			for (int i = 0; i < colNum; i++) {
-				if (dataTypes.get(i).contains("int")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.INTEGER);
-					else st.setInt(i+1, Integer.valueOf(values.get(i)));
-				} else if (dataTypes.get(i).contains("bit")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.BIT);
-					else st.setInt(i+1, Integer.valueOf(values.get(i)));
-				} else if (dataTypes.get(i).contains("date")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.DATE);
-					else st.setString(i+1, values.get(i));
-				} else if (dataTypes.get(i).contains("char")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.CHAR);
-					else st.setString(i+1, values.get(i));
-				} else if (dataTypes.get(i).contains("varchar")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.VARCHAR);
-					else st.setString(i+1, values.get(i));
-				}
+				setData(st, dataTypes[i], i, values.get(i));
 			}
 			success = st.execute();
 			st.close();
@@ -278,7 +302,43 @@ public class JDBC {
 	 * @param values
 	 * @return
 	 */
-	public static boolean updateRow(ServletContext sc, String primaryKey, String keyValue, String[] values) {
-		return false;
+	
+	private static boolean updateSingleValue(ServletContext sc, String table, String primaryKey, String keyValue, String field, String value) {
+		boolean success = false;
+		try {
+			String sql = "UPDATE " + table + " SET " + field + " = " + " ? WHERE " + primaryKey + " = " + keyValue + "; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			String[] fields = getFields(sc, table);
+			String[] dataTypes = getDataTypes(cn, table);
+			String dataType = null;
+			for (int i = 0; i < fields.length; i++) {
+				if (fields[i].equals(field)) {
+					dataType = dataTypes[i];
+					break;
+				}
+			}
+			setData(st, dataType, 1, value);
+			success = st.execute();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		return success;
+	}
+	
+	public static boolean updateRow(ServletContext sc, String table, String primaryKey, String keyValue, ArrayList<String[]> fieldValues) {
+		boolean success = false;
+		try {
+			Connection cn = getConnection(sc);
+			for (String[] fieldValue : fieldValues) {
+				updateSingleValue(sc, table, primaryKey, keyValue, fieldValue[0], fieldValue[1]);
+			}
+			cn.close();
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		return success;
 	}
 }

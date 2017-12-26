@@ -75,39 +75,59 @@ public class ManagerServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
+		ServletContext sc = getServletContext();
 		String action = request.getParameter("action");
 		String table = request.getParameter("table");
+		String primaryKey = null, keyValue = null;
 		switch (action) {
 		case "query":
 			String field = request.getParameter("field");
 			String queryValue = request.getParameter("queryvalue");
 			String[][] result = null;
 			if (table.contains("订单") && !table.equals("订单")) {
-				result = JDBC.querySpecificOrder(getServletContext(), table, field, queryValue);
+				result = JDBC.querySpecificOrder(sc, table, field, queryValue);
 			} else {
-				result = JDBC.queryDirectly(getServletContext(), table, field, queryValue);
+				result = JDBC.queryDirectly(sc, table, field, queryValue);
 			}
 			res.put("queryresult", result);
 			break;
 		case "deleterow":
-			String primaryKey = request.getParameter("primarykey");
-			String keyValue = request.getParameter("keyvalue");
-			boolean success = JDBC.deleteRow(getServletContext(), table, primaryKey, keyValue);
+			primaryKey = request.getParameter("primarykey");
+			keyValue = request.getParameter("keyvalue");
+			boolean success = JDBC.deleteRow(sc, table, primaryKey, keyValue);
 			res.put("status", success);
 			break;
-		case "insert":
+		case "insertrow":
 			String values = request.getParameter("values");
 			JSONArray list = new JSONArray(values);
 			ArrayList<String> valueList = new ArrayList<String>();
 			for (int i = 0; i < list.length(); i++) valueList.add(list.getString(i));
 			if (table.equals("员工")) {
-				String staffid = JDBC.getStaffid(getServletContext(), valueList.get(1));
+				String staffid = JDBC.getStaffid(sc, valueList.get(1));
 				valueList.add(0, staffid);
 				valueList.add(staffid);
 				res.put("staffid", staffid);
 			} 
 			JDBC.insertRow(getServletContext(), table, valueList);
 			res.put("status", 200);
+			break;
+		case "updaterow":
+			primaryKey = request.getParameter("primarykey");
+			keyValue = request.getParameter("keyvalue");
+			String updatedValues = request.getParameter("updatedvalues");
+			JSONArray fieldValues = new JSONArray(updatedValues);
+			
+			ArrayList<String[]> fieldValuesList = new ArrayList<String[]>();
+			for (int i = 0; i < fieldValues.length(); i++) {
+				String[] subList = new String[2];
+				JSONArray subJsonList = new JSONArray(fieldValues.get(i).toString());
+				subList[0] = subJsonList.getString(0);
+				subList[1] = subJsonList.getString(1);
+				fieldValuesList.add(subList);
+			}
+			JDBC.updateRow(sc, table, primaryKey, keyValue, fieldValuesList);
+			res.put("status", 200);
+			break;
 		default:
 			break;
 		}
