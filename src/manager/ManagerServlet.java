@@ -1,17 +1,16 @@
 package manager;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.plaf.basic.BasicTabbedPaneUI.TabbedPaneLayout;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import global.JDBC;
@@ -19,14 +18,14 @@ import global.JDBC;
 /**
  * Servlet implementation class Statistic
  */
-@WebServlet("/Statistic")
-public class Statistic extends HttpServlet {
+@WebServlet("/ManagerServlet")
+public class ManagerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Statistic() {
+    public ManagerServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -37,13 +36,14 @@ public class Statistic extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
-		Connection cn = JDBC.getConnection(getServletContext());
-		
-		try {
-			String[] tables = JDBC.getTables(cn);
+		String resource = request.getParameter("resource");
+		ServletContext sc = getServletContext();
+		switch (resource) {
+		case "tableinfo":
+			String[] tables = JDBC.getTables(sc);
 			for (String table : tables) {
 				JSONObject tableJobj = new JSONObject();
-				String[] allFields = JDBC.getFields(cn, table);
+				String[] allFields = JDBC.getFields(sc, table);
 				ArrayList<String> fields = new ArrayList<String>();
 				for (String s : allFields) if (!s.equals("密码")) fields.add(s);
 				tableJobj.put("fields", fields);
@@ -58,9 +58,14 @@ public class Statistic extends HttpServlet {
 				}
 				res.put(table, tableJobj);
 			}
-			cn.close();
-		} catch (SQLException e) {
+			break;
+		case "roomtypes":
+			res.put("roomtypes", JDBC.getRoomTypes(sc));
+			break;
+		default:
+			break;
 		}
+			
 		response.getWriter().print(res);
 	}
 
@@ -70,31 +75,61 @@ public class Statistic extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
+		ServletContext sc = getServletContext();
 		String action = request.getParameter("action");
 		String table = request.getParameter("table");
+		String primaryKey = null, keyValue = null;
 		switch (action) {
 		case "query":
 			String field = request.getParameter("field");
 			String queryValue = request.getParameter("queryvalue");
 			String[][] result = null;
 			if (table.contains("订单") && !table.equals("订单")) {
-				result = JDBC.querySpecificOrder(getServletContext(), table, field, queryValue);
+				result = JDBC.querySpecificOrder(sc, table, field, queryValue);
 			} else {
-				result = JDBC.queryDirectly(getServletContext(), table, field, queryValue);
+				result = JDBC.queryDirectly(sc, table, field, queryValue);
 			}
 			res.put("queryresult", result);
 			break;
 		case "deleterow":
-			String primaryKey = request.getParameter("primarykey");
-			String keyValue = request.getParameter("keyvalue");
-			boolean success = JDBC.deleteRow(getServletContext(), table, primaryKey, keyValue);
+			primaryKey = request.getParameter("primarykey");
+			keyValue = request.getParameter("keyvalue");
+			boolean success = JDBC.deleteRow(sc, table, primaryKey, keyValue);
 			res.put("status", success);
 			break;
-
+		case "insertrow":
+			String values = request.getParameter("values");
+			JSONArray list = new JSONArray(values);
+			ArrayList<String> valueList = new ArrayList<String>();
+			for (int i = 0; i < list.length(); i++) valueList.add(list.getString(i));
+			if (table.equals("员工")) {
+				String staffid = JDBC.getStaffid(sc, valueList.get(1));
+				valueList.add(0, staffid);
+				valueList.add(staffid);
+				res.put("staffid", staffid);
+			} 
+			JDBC.insertRow(getServletContext(), table, valueList);
+			res.put("status", 200);
+			break;
+		case "updaterow":
+			primaryKey = request.getParameter("primarykey");
+			keyValue = request.getParameter("keyvalue");
+			String updatedValues = request.getParameter("updatedvalues");
+			JSONArray fieldValues = new JSONArray(updatedValues);
+			ArrayList<String[]> fieldValuesList = new ArrayList<String[]>();
+			for (int i = 0; i < fieldValues.length(); i++) {
+				String[] subList = new String[2];
+				JSONArray subJsonList = new JSONArray(fieldValues.get(i).toString());
+				subList[0] = subJsonList.getString(0);
+				subList[1] = subJsonList.getString(1);
+				fieldValuesList.add(subList);
+			}
+			JDBC.updateRow(sc, table, primaryKey, keyValue, fieldValuesList);
+			res.put("status", 200);
+			break;
 		default:
 			break;
 		}
-		
 		response.getWriter().print(res);
 	}
 	

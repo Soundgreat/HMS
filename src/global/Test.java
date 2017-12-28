@@ -1,13 +1,6 @@
 package global;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -38,13 +31,8 @@ public class Test extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
-//		String table = "客房类型";
-//		String[] values = {"大总统套房","1","1","10000"};
-//		res.put("queryresult", JDBC.insertRow(getServletContext(), "客房类型", values));
-		List arrayList = new ArrayList();
-		arrayList.add(1);
-		arrayList.add("hhh");
-		res.put("list",arrayList.get(1));
+
+		response.getWriter().print(res);
 	}
 
 	/**
