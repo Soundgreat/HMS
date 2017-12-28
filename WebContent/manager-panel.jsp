@@ -526,7 +526,7 @@ new Vue({
 					y: 0,
 					r: 0,
 					items: ['空置客房', '非空客房'],
-					sectorNums: [123,391],
+					sectorNums: [7,443],
 					meetDegree: (7/8)*2*Math.PI,
 					leftBeginDegree: (3/2)*Math.PI,
 					leftEndDegree: (3/2)*Math.PI,
@@ -621,7 +621,8 @@ new Vue({
 			let rightEndDegree = this.animationParams.pieChart.rightEndDegree;
 			let leftSectorDegree = 2*Math.PI - this.animationParams.pieChart.meetDegree;
 			let rightSectorDegree = this.animationParams.pieChart.meetDegree;
-			let meetDegree = this.animationParams.pieChart.meetDegree - (1/2)*Math.PI;
+			let leftMeetDegree = this.animationParams.pieChart.meetDegree  - (1/2)*Math.PI;
+			let rightMeetDegree = this.animationParams.pieChart.meetDegree + (3/2)*Math.PI;
 			let meetSpeed = this.animationParams.pieChart.meetSpeed;
 			let items = this.animationParams.pieChart.items;
 			let sum = this.animationParams.pieChart.sectorNums[0] + this.animationParams.pieChart.sectorNums[1];
@@ -630,8 +631,8 @@ new Vue({
 			
 			let leftMidDegree = (leftBeginDegree + leftEndDegree)/2;
 			let rightMidDegree = (rightBeginDegree + rightEndDegree)/2;
-			let leftPointer = [x+r/2*Math.cos(leftMidDegree), y+r/2*Math.sin(leftMidDegree)];
-			let rightPointer = [x+r/2*Math.cos(rightMidDegree), y+r/2*Math.sin(rightMidDegree)];
+			let leftPointer = [x+r/2*(Math.cos(leftMidDegree)), y+r/2*(Math.sin(leftMidDegree))];
+			let rightPointer = [x+r/2*(Math.cos(rightMidDegree)), y+r/2*(Math.sin(rightMidDegree))];
 			
 			this.graph.beginPath();
 			this.graph.fillStyle = "gray";
@@ -664,7 +665,7 @@ new Vue({
 			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree), x+pointerLength*Math.sin(leftMidDegree));
 			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree)-r/3, x+pointerLength*Math.sin(leftMidDegree));
 			let currentNum = 0;
-			if (leftBeginDegree%(2*Math.PI) > meetDegree) {
+			if (leftBeginDegree > leftMeetDegree) {
 				currentNum = leftSectorNums;
 			} else {
 				currentNum = this.animationParams.pieChart.sectorNums[0];
@@ -678,7 +679,7 @@ new Vue({
 			this.graph.moveTo(rightPointer[0], rightPointer[1]);
 			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree));
 			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree)+r/3, x+pointerLength*Math.sin(rightMidDegree));
-			if (rightEndDegree < meetDegree+2*Math.PI) {
+			if (rightEndDegree < rightMeetDegree) {
 				currentNum = rightSectorNums;
 			} else {
 				currentNum = this.animationParams.pieChart.sectorNums[1];
@@ -688,10 +689,10 @@ new Vue({
 			this.graph.strokeText(text, x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree)-fontSize/2);
 			this.graph.stroke();
 			
-			if (leftBeginDegree%(2*Math.PI) > meetDegree) {
+			if (leftBeginDegree > leftMeetDegree) {
 				this.animationParams.pieChart.leftBeginDegree -= leftSectorDegree*meetSpeed;
 			}
-			if (rightEndDegree < meetDegree+2*Math.PI) {
+			if (rightEndDegree < rightMeetDegree) {
 				this.animationParams.pieChart.rightEndDegree += rightSectorDegree*meetSpeed;
 			}
 		},
