@@ -619,6 +619,8 @@ new Vue({
 			let rightBeginDegree = this.animationParams.pieChart.rightBeginDegree;
 			let leftEndDegree = this.animationParams.pieChart.leftEndDegree;
 			let rightEndDegree = this.animationParams.pieChart.rightEndDegree;
+			let leftSectorDegree = 2*Math.PI - this.animationParams.pieChart.meetDegree;
+			let rightSectorDegree = this.animationParams.pieChart.meetDegree;
 			let meetDegree = this.animationParams.pieChart.meetDegree  - (1/2)*Math.PI;
 			let meetSpeed = this.animationParams.pieChart.meetSpeed;
 			let items = this.animationParams.pieChart.items;
