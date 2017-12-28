@@ -12,6 +12,7 @@ html, body {
 	padding: 0;
 	margin: 0;
 	text-align: center;
+	font: bold 16px Arial;
 }
 [v-cloak] {
 	display: none;
@@ -524,19 +525,22 @@ new Vue({
 					x: 0,
 					y: 0,
 					r: 0,
-					meetDegree: (1.8/2)*Math.PI,
-					leftBeginDegree: (2/2)*Math.PI,
+					items: ['空置客房', '非空客房'],
+					sectorNums: [123,391],
+					meetDegree: (7/8)*2*Math.PI,
+					leftBeginDegree: (3/2)*Math.PI,
 					leftEndDegree: (3/2)*Math.PI,
 					rightBeginDegree: (3/2)*Math.PI,
-					rightEndDegree: (3.2/2)*Math.PI,
-					meetSpeed: (1/200)*Math.PI
+					rightEndDegree: (3/2)*Math.PI,
+					meetSpeed: (1/300)*2*Math.PI
 				},
 				verticalBarChart: {
 					x: 0,
 					y: 0,
 					width: 0,
 					height: 0,
-					barHeights: [324, 654, 584, 232, 323],
+					items: ['预定中订单', '交易中订单','完成订单'],
+					barNums: [5484, 6232, 2323],
 					animatedBarHeights: [],
 					pullback: [],
 					growthSpeed: 10
@@ -546,10 +550,11 @@ new Vue({
 					y: 0,
 					width: 0,
 					height: 0,
-					barHeights: [654, 584, 232],
+					items: ['住客人次', '用户人数'],
+					barNums: [5434,3845],
 					animatedBarHeights: [],
 					pullback: [],
-					growthSpeed: 25
+					growthSpeed: 20
 				}
 			},
 			statistic: {
@@ -564,7 +569,9 @@ new Vue({
 	mounted: function() {
 		this.board = document.getElementById('board');
 		this.graph = this.board.getContext('2d');
-		
+
+		let sum = this.animationParams.pieChart.sectorNums[0] + this.animationParams.pieChart.sectorNums[1];
+		let meetDegree = parseInt((this.animationParams.pieChart.sectorNums[0]/sum) * 2*Math.PI);
 		this.animationParams.pieChart.width = 6*(this.board.width/25);
 		this.animationParams.pieChart.height = 6*(this.board.height/25);
 		this.animationParams.pieChart.r = this.animationParams.pieChart.width/2;
@@ -576,17 +583,17 @@ new Vue({
 		this.animationParams.verticalBarChart.x = 12*(this.board.width/25);
 		this.animationParams.verticalBarChart.y = 2*(this.board.height/25) + 
 			this.animationParams.verticalBarChart.height;
-		for (let i = 0; i < this.animationParams.verticalBarChart.barHeights.length; i++) {
+		for (let i = 0; i < this.animationParams.verticalBarChart.barNums.length; i++) {
 			this.animationParams.verticalBarChart.animatedBarHeights[i] = 0;
 			this.animationParams.verticalBarChart.pullback[i] = false;
 		}
 		
 		this.animationParams.horizontalBarChart.width = 5*(this.board.height/25);
-		this.animationParams.horizontalBarChart.height = 22*(this.board.width/25);
-		this.animationParams.horizontalBarChart.x = 2*(this.board.height/25);
+		this.animationParams.horizontalBarChart.height = 20*(this.board.width/25);
+		this.animationParams.horizontalBarChart.x = 6*(this.board.height/25);
 		this.animationParams.horizontalBarChart.y = this.board.height - 
 			(this.animationParams.horizontalBarChart.width + 2*(this.board.height/25));
-		for (let i = 0; i < this.animationParams.horizontalBarChart.barHeights.length; i++) {
+		for (let i = 0; i < this.animationParams.horizontalBarChart.barNums.length; i++) {
 			this.animationParams.horizontalBarChart.animatedBarHeights[i] = 0;
 			this.animationParams.horizontalBarChart.pullback[i] = false;
 		}
@@ -616,6 +623,15 @@ new Vue({
 			let rightSectorDegree = this.animationParams.pieChart.meetDegree;
 			let meetDegree = this.animationParams.pieChart.meetDegree - (1/2)*Math.PI;
 			let meetSpeed = this.animationParams.pieChart.meetSpeed;
+			let items = this.animationParams.pieChart.items;
+			let sum = this.animationParams.pieChart.sectorNums[0] + this.animationParams.pieChart.sectorNums[1];
+			let leftSectorNums = parseInt((leftEndDegree - leftBeginDegree) / (2*Math.PI)*sum);
+			let rightSectorNums = parseInt((rightEndDegree - rightBeginDegree) / (2*Math.PI)*sum);
+			
+			let leftMidDegree = (leftBeginDegree + leftEndDegree)/2;
+			let rightMidDegree = (rightBeginDegree + rightEndDegree)/2;
+			let leftPointer = [x+r/2*Math.cos(leftMidDegree), y+r/2*Math.sin(leftMidDegree)];
+			let rightPointer = [x+r/2*Math.cos(rightMidDegree), y+r/2*Math.sin(rightMidDegree)];
 			
 			this.graph.beginPath();
 			this.graph.fillStyle = "gray";
@@ -638,11 +654,45 @@ new Vue({
 			this.graph.stroke();
 			this.graph.fill();
 			
+			let pointerLength = 1.2*r;
+			this.graph.beginPath();
+			let fontSize = 12;
+			this.graph.font = fontSize + 'px Arial';
+			this.graph.lineWidth = 1.5;
+			this.graph.strokeStyle = "orange";
+			this.graph.moveTo(leftPointer[0], leftPointer[1]);
+			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree), x+pointerLength*Math.sin(leftMidDegree));
+			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree)-r/3, x+pointerLength*Math.sin(leftMidDegree));
+			let currentNum = 0;
 			if (leftBeginDegree%(2*Math.PI) > meetDegree) {
-				this.animationParams.pieChart.leftBeginDegree -= leftSectorDegree/(1/meetSpeed);
+				currentNum = leftSectorNums;
+			} else {
+				currentNum = this.animationParams.pieChart.sectorNums[0];
+			}
+			let text = items[0] + ' ' + '(' + currentNum + ')';
+			let textWidth = this.graph.measureText(text).width;
+			this.graph.strokeText(text, x+pointerLength*Math.cos(leftMidDegree)-textWidth, x+pointerLength*Math.sin(leftMidDegree)-fontSize/2);
+			this.graph.stroke();
+			this.graph.beginPath();
+			this.graph.strokeStyle = "green";
+			this.graph.moveTo(rightPointer[0], rightPointer[1]);
+			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree));
+			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree)+r/3, x+pointerLength*Math.sin(rightMidDegree));
+			if (rightEndDegree < meetDegree+2*Math.PI) {
+				currentNum = rightSectorNums;
+			} else {
+				currentNum = this.animationParams.pieChart.sectorNums[1];
+			}
+			text = items[1] + ' ' + '(' + currentNum + ')';
+			textWidth = this.graph.measureText(items[1]).width;
+			this.graph.strokeText(text, x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree)-fontSize/2);
+			this.graph.stroke();
+			
+			if (leftBeginDegree%(2*Math.PI) > meetDegree) {
+				this.animationParams.pieChart.leftBeginDegree -= leftSectorDegree*meetSpeed;
 			}
 			if (rightEndDegree < meetDegree+2*Math.PI) {
-				this.animationParams.pieChart.rightEndDegree += rightSectorDegree/(1/meetSpeed);
+				this.animationParams.pieChart.rightEndDegree += rightSectorDegree*meetSpeed;
 			}
 		},
 		
@@ -653,16 +703,23 @@ new Vue({
 			let y = this.animationParams.verticalBarChart.y;
 			let width = this.animationParams.verticalBarChart.width;
 			let height = this.animationParams.verticalBarChart.height;
-			let barHeights = this.animationParams.verticalBarChart.barHeights;
+			let barHeights = [];
+			this.animationParams.verticalBarChart.barNums.forEach((val, idx, arr) => {
+				barHeights[idx] = val;
+			});
 			let max = Math.max.apply(null, barHeights);
 			let scale = (max/10 + 1)*10;
 			barHeights.forEach((val, idx, arr) => {
 				arr[idx] = val / scale * height;
 			});
 			let animatedBarHeights = this.animationParams.verticalBarChart.animatedBarHeights;
-			let span = width/8;
-			let barWidth = (width-span*(barHeights.length+1))/barHeights.length;
-			let growthSpeed = this.animationParams.verticalBarChart.growthSpeed
+			let span = width/(2*barHeights.length+1);
+			let barWidth = span;
+			let growthSpeed = [];
+			animatedBarHeights.forEach((val, idx, arr) => {
+				growthSpeed[idx] = this.animationParams.verticalBarChart.growthSpeed;
+			});
+			let items = this.animationParams.verticalBarChart.items;
 			
 			this.graph.beginPath();
 			this.graph.strokeStyle = 'green';
@@ -672,30 +729,41 @@ new Vue({
 			this.graph.stroke();
 			
 			let fillStyle = ['green', 'orange'];
-			for (let i = 0; i < barHeights.length; i++) {
+			for (let i = 0; i < animatedBarHeights.length; i++) {
 				this.graph.beginPath();
+				let fontSize = 16;
+				this.graph.font = 'bold ' + fontSize + 'px Arial';
 				this.graph.fillStyle = fillStyle[i%fillStyle.length >= fillStyle.length ? 0 : i%fillStyle.length] ;
 				this.graph.moveTo(x+(i+1)*span+i*barWidth, y);
 				this.graph.lineTo(x+(i+1)*span+i*barWidth, y-animatedBarHeights[i]);
+				let currentNum = 0;
+				if (growthSpeed[i] > 0) currentNum = parseInt(scale*(animatedBarHeights[i]/height))+0;
+				else currentNum = this.animationParams.verticalBarChart.barNums[i]+ 0;
+				let textWidth = this.graph.measureText(currentNum).width;
+				this.graph.fillText(currentNum, x+(i+1)*span+i*barWidth+barWidth/2-textWidth/2, y-animatedBarHeights[i]-fontSize);
 				this.graph.lineTo(x+(i+1)*span+i*barWidth+barWidth, y-animatedBarHeights[i]);
 				this.graph.lineTo(x+(i+1)*span+i*barWidth+barWidth, y);
 				this.graph.lineTo(x+(i+1)*span+i*barWidth, y);
+				textWidth = this.graph.measureText(items[i]).width;
+				this.graph.fillText(items[i], x+(i+1)*span+i*barWidth+barWidth/2-textWidth/2, y+2*fontSize);
 				this.graph.fill();
 			}
 			
 			this.animationParams.verticalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
-				if (!this.animationParams.verticalBarChart.pullback[idx] && 
-						arr[idx] <= (barHeights[idx] + barHeights[idx]/6)) {
-					arr[idx] += growthSpeed;
+				if (this.animationParams.verticalBarChart.pullback[idx] && arr[idx] <= barHeights[idx]){
+					this.animationParams.verticalBarChart.growthSpeed[idx] = 0;
 				} else {
-					this.animationParams.verticalBarChart.pullback[idx] = true;
-				}
-				if (arr[idx] >= barHeights[idx] && this.animationParams.verticalBarChart.pullback[idx]) {
-					arr[idx] -= growthSpeed;
+					if (!this.animationParams.verticalBarChart.pullback[idx] && 
+							arr[idx] <= (barHeights[idx] + barHeights[idx]/10)) {
+						arr[idx] += growthSpeed[idx];
+					} else {
+						this.animationParams.verticalBarChart.pullback[idx] = true;
+					}
+					if (arr[idx] >= barHeights[idx] && this.animationParams.verticalBarChart.pullback[idx]) {
+						arr[idx] -= growthSpeed[idx];
+					}
 				}
 			});
-			
-			this.animationParams.verticalBarChart.growthSpeed -= growthSpeed/150;
 		},
 		
 		drawHorizontalBarChart: function() {
@@ -705,16 +773,23 @@ new Vue({
 			let y = this.animationParams.horizontalBarChart.y;
 			let width = this.animationParams.horizontalBarChart.width;
 			let height = this.animationParams.horizontalBarChart.height;
-			let barHeights = this.animationParams.horizontalBarChart.barHeights;
+			let barHeights = [];
+			this.animationParams.horizontalBarChart.barNums.forEach((val, idx, arr) => {
+				barHeights[idx] = val;
+			});
 			let max = Math.max.apply(null, barHeights);
 			let scale = (max/10 + 1)*10;
 			barHeights.forEach((val, idx, arr) => {
 				arr[idx] = val / scale * height;
 			});
 			let animatedBarHeights = this.animationParams.horizontalBarChart.animatedBarHeights;
-			let span = width/3;
-			let barWidth = (width-span*(barHeights.length-1))/barHeights.length;
-			let growthSpeed = this.animationParams.horizontalBarChart.growthSpeed
+			let span = width/(2*barHeights.length-1);
+			let barWidth = span;
+			let growthSpeed = [];
+			animatedBarHeights.forEach((val, idx, arr) => {
+				growthSpeed[idx] = this.animationParams.horizontalBarChart.growthSpeed;
+			});
+			let items = this.animationParams.horizontalBarChart.items;
 			
 			this.graph.beginPath();
 			this.graph.strokeStyle = 'orange';
@@ -723,29 +798,40 @@ new Vue({
 			this.graph.stroke();
 			
 			let fillStyle = ['green', 'orange'];
-			for (let i = 0; i < barHeights.length; i++) {
+			for (let i = 0; i < animatedBarHeights.length; i++) {
 				this.graph.beginPath();
+				let fontSize = 16;
+				this.graph.font = 'bold ' + fontSize + 'px Arial';
 				this.graph.fillStyle = fillStyle[i%fillStyle.length >= fillStyle.length ? 0 : i%fillStyle.length] ;
 				this.graph.moveTo(x, y+i*span+i*barWidth);
 				this.graph.lineTo(x+animatedBarHeights[i], y+i*span+i*barWidth);
+				let currentNum = 0;
+				if (growthSpeed[i] > 0) currentNum = parseInt(scale*(animatedBarHeights[i]/height));
+				else currentNum = this.animationParams.horizontalBarChart.barNums[i];
+				this.graph.fillText(currentNum, x+animatedBarHeights[i]+fontSize, y+i*span+i*barWidth+fontSize+(barWidth/2-fontSize/2));
 				this.graph.lineTo(x+animatedBarHeights[i], y+i*span+i*barWidth+barWidth);
 				this.graph.lineTo(x, y+i*span+i*barWidth+barWidth);
 				this.graph.lineTo(x, y+i*span+i*barWidth);
+				let textWidth = this.graph.measureText(items[i]).width;
+				this.graph.fillText(items[i], x-(textWidth+fontSize), y+i*span+i*barWidth+fontSize+(barWidth/2-fontSize/2));
 				this.graph.fill();
 			}
 			
 			this.animationParams.horizontalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
-				if (!this.animationParams.horizontalBarChart.pullback[idx] && 
-						arr[idx] <= (barHeights[idx] + barHeights[idx]/16)) {
-					arr[idx] += growthSpeed;
+				if (this.animationParams.horizontalBarChart.pullback[idx] && arr[idx] <= barHeights[idx]){
+					this.animationParams.horizontalBarChart.growthSpeed[idx] = 0;
 				} else {
-					this.animationParams.horizontalBarChart.pullback[idx] = true;
-				}
-				if (arr[idx] >= barHeights[idx] && this.animationParams.horizontalBarChart.pullback[idx]) {
-					arr[idx] -= growthSpeed;
+					if (!this.animationParams.horizontalBarChart.pullback[idx] && 
+							arr[idx] <= (barHeights[idx] + barHeights[idx]/22)) {
+						arr[idx] += growthSpeed[idx];
+					} else {
+						this.animationParams.horizontalBarChart.pullback[idx] = true;
+					}
+					if (arr[idx] >= barHeights[idx] && this.animationParams.horizontalBarChart.pullback[idx]) {
+						arr[idx] -= growthSpeed[idx];
+					}
 				}
 			});
-			this.animationParams.horizontalBarChart.growthSpeed -= growthSpeed/100;
 		},
 		
 		draw: function() {
