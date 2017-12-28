@@ -22,7 +22,7 @@ public class JDBC {
 	 */
 	private static final ArrayList<String> STAFF_ROLES = new ArrayList<String>(Arrays.asList("经理", "前台"));
 	
-	private static Connection getConnection(ServletContext sc) {
+	public static Connection getConnection(ServletContext sc) {
 		Context ctx = null;
         try {
             ctx = new InitialContext();
@@ -226,7 +226,7 @@ public class JDBC {
 	      return sdf.format(genTime);
 	}
 	
-	private static String[] getDataTypes(Connection cn, String table) {
+	public static String[] getDataTypes(Connection cn, String table) {
 		ArrayList<String> dataTypes = new ArrayList<String>();
 		try {
 			String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
@@ -242,7 +242,7 @@ public class JDBC {
 		return dataTypes.toArray(new String[dataTypes.size()]);
 	}
 	
-	private static boolean setData(PreparedStatement st, String dataType, int idx, String value) {
+	public static boolean setData(PreparedStatement st, String dataType, int idx, String value) {
 		boolean success = false;
 		if (dataType == null) return success;
 		try {
@@ -269,27 +269,27 @@ public class JDBC {
 		return success;
 	}
 	
-	public static boolean insertRow(ServletContext sc, String table, ArrayList<String> values) {
+	public static boolean insertRow(ServletContext sc, String table, ArrayList<String> fullValues) {
 		boolean success = false;
 		try {
 			Connection cn = getConnection(sc);
 			String[] dataTypes = getDataTypes(cn, table);
-			int colNum = dataTypes.length;
 			StringBuilder dynamicSql = new StringBuilder();
 			dynamicSql.append("INSERT INTO ").append(table).append(" VALUES(");
+			int colNum = fullValues.size();
 			for (int i = 0; i < colNum; i++) {
 				if(i < colNum - 1) dynamicSql.append("?,");
 				else dynamicSql.append("?);");
 			}
 			PreparedStatement st = cn.prepareStatement(dynamicSql.toString());
 			for (int i = 0; i < colNum; i++) {
-				setData(st, dataTypes[i], i, values.get(i));
+				setData(st, dataTypes[i], i+1, fullValues.get(i));
 			}
 			success = st.execute();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// pass
 		}
 		return success;
 	}

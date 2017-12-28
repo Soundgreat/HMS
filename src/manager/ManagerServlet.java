@@ -116,7 +116,6 @@ public class ManagerServlet extends HttpServlet {
 			keyValue = request.getParameter("keyvalue");
 			String updatedValues = request.getParameter("updatedvalues");
 			JSONArray fieldValues = new JSONArray(updatedValues);
-			
 			ArrayList<String[]> fieldValuesList = new ArrayList<String[]>();
 			for (int i = 0; i < fieldValues.length(); i++) {
 				String[] subList = new String[2];
@@ -131,7 +130,6 @@ public class ManagerServlet extends HttpServlet {
 		default:
 			break;
 		}
-		
 		response.getWriter().print(res);
 	}
 	

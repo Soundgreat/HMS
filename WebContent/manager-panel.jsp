@@ -6,6 +6,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>MANAGER PANEL</title>
 <style>
+html, body {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+}
+[v-cloak] {
+	display: none;
+}
 td {
 	text-align: center;
 	padding: 5px;
@@ -14,10 +24,28 @@ td {
 td input {
 	border: none;
 }
+.warning {
+	color: red;
+}
+.cover {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 680px;
+	background-color: rgba(35,65,84,.6);
+}
 .dialog {
-	
+	width: 50%;
+	height: 60%;
+	position: absolute;
+	top: 20%;
+	left: 23%;
 	text-align: center;
+	padding: 25px;
+	background: white;
 	border: black solid 1px;
+	z-index: 999;
 }
 .bouncePage-enter-active {
     animation: bouncePage-in .3s;
@@ -44,48 +72,54 @@ td input {
 </style>
 </head>
 <body>
-<div id="manager-panel">
+<div v-cloak id="manager-panel">
 
 	<div id="search-bar">
-	<h3>数据管理</h3>
-		<label>范围</label>
-		<select name="table" v-model="queryBar.currentTable">
-		<option v-for="table in queryBar.tables" :value="table">{{table}}</option>
+	<transition-group name="bouncePage">
+	<h3 key="caption">数据管理</h3>
+	<div key="bar">
+		<label>查找范围</label>
+		<select name="table" v-model="multifunction.currentTable">
+		<option v-for="table in multifunction.tables" :value="table">{{table}}</option>
 		</select>
-		<label>字段</label>
+		<label>关键字</label>
 		<select name="field">
-		<option v-for="field in queryBar.tableInfo[queryBar.currentTable]['fields']" :value="field">{{field}}</option>
+		<option v-for="field in multifunction.tableInfo[multifunction.currentTable]['fields']" :value="field">{{field}}</option>
 		</select>
 		<input type="text" name="queryvalue" placeholder="直接点击搜索查询所有内容" required/>
-		<button @click="submitquery" :disabled="queryBar.exclusiveUpdating">搜索</button>
-		<button v-if="queryBar.tableInfo[queryBar.currentTable]['insertable']" @click="insertRow " :disabled="queryBar.exclusiveUpdating">添加{{queryBar.currentTable}}</button>
+		<button @click="submitquery" :disabled="multifunction.exclusiveUpdating">搜索</button>
+		<button v-if="multifunction.tableInfo[multifunction.currentTable]['insertable']" @click="insertRow " :disabled="multifunction.exclusiveUpdating">添加{{multifunction.currentTable}}</button>
+	</div>
+	</transition-group>	
 	</div>
 	
-<transition name="bouncePage">
-<div id="search-result">
-	<h5 v-if="queryBar.queryResult.length > 0">找到{{queryBar.queryResult.length-1}}条结果</h5>
-	<table v-if="queryBar.queryResult.length > 1">
-		<tr v-for="(row, rowIdx) in queryBar.queryResult">
-			<td v-for="(val, colIdx) in row"><input :name="rowIdx+'-'+colIdx" :value="val" @keyup="setUpdatingRowInfo(rowIdx, colIdx)" :readonly="!queryBar.isUpdating[rowIdx]"/></td>
-			<template v-if="(queryBar.tableInfo[queryBar.queriedTable]['removable'] || queryBar.tableInfo[queryBar.queriedTable]['updatable'])">
+<div id="search-result" v-if="multifunction.showQueryResult">
+<transition-group name="bouncePage">
+	<span key="caption" v-if="multifunction.queryResult.length > 0">找到{{multifunction.queryResult.length-1}}条结果</span>
+	<button key="hide" @click="hideQueryResult">X</button>
+	<table key="table" v-if="multifunction.queryResult.length > 1">
+		<tr v-for="(row, rowIdx) in multifunction.queryResult">
+			<td v-for="(val, colIdx) in row"><input :name="rowIdx+'-'+colIdx" :value="val" @keyup="setUpdatingRowInfo(rowIdx, colIdx)" :readonly="!multifunction.isUpdating[rowIdx]"/></td>
+			<template v-if="(multifunction.tableInfo[multifunction.queriedTable]['removable'] || multifunction.tableInfo[multifunction.queriedTable]['updatable'])">
 
 			<td v-if="rowIdx != 0 ">
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && !queryBar.isUpdating[rowIdx] " @click="updatingRow(rowIdx)" :disabled="queryBar.exclusiveUpdating">修改</button>
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && queryBar.isUpdating[rowIdx] " @click="updatedRow(rowIdx, 'confirm')">确认修改</button>
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['updatable'] && queryBar.isUpdating[rowIdx] " @click="updatedRow(rowIdx, 'cancel')">取消修改</button>
-			<button v-if="queryBar.tableInfo[queryBar.queriedTable]['removable'] && !queryBar.isUpdating[rowIdx] " @click="deleteRow(rowIdx)"  :disabled="queryBar.exclusiveUpdating">删除</button>
+			<button v-if="multifunction.tableInfo[multifunction.queriedTable]['updatable'] && !multifunction.isUpdating[rowIdx] " @click="updatingRow(rowIdx)" :disabled="multifunction.exclusiveUpdating">修改</button>
+			<button v-if="multifunction.tableInfo[multifunction.queriedTable]['updatable'] && multifunction.isUpdating[rowIdx] " @click="updatedRow(rowIdx, 'confirm')">确认修改</button>
+			<button v-if="multifunction.tableInfo[multifunction.queriedTable]['updatable'] && multifunction.isUpdating[rowIdx] " @click="updatedRow(rowIdx, 'cancel')">取消修改</button>
+			<button v-if="multifunction.tableInfo[multifunction.queriedTable]['removable'] && !multifunction.isUpdating[rowIdx] " @click="deleteRow(rowIdx)"  :disabled="multifunction.exclusiveUpdating">删除</button>
 			</td>
 
 			<td v-else>操作</td>
 			</template>
 		</tr>
 	</table>
+</transition-group>
 </div>
-</transition>
 
-	<div id="roomtype-dialog" v-if="roomTypeDialog.open" class="cover">
+	<div v-if="roomTypeDialog.open || roomDialog.open || staffDialog.open" class="cover"></div>
+	
 	<transition name="bouncePage">
-	<div class="dialog">
+	<div v-if="roomTypeDialog.open" class="dialog">
 	<h5>添加客房类型</h5>
 	<table>
 		<tr>
@@ -113,13 +147,12 @@ td input {
 			<td><button @click="closeDialog">退出</button></td>
 		</tr>
 	</table>
+	<span class="warning">{{submitHint}}</span>
 	</div>
 	</transition>
-	</div>
 	
-	<div id="room-dialog" v-if="roomDialog.open" class="cover" align="center">
 	<transition name="bouncePage">
-	<div class="dialog" align="center">
+	<div v-if="roomDialog.open" class="dialog">
 	<h5>添加客房</h5>
 	<table  align="center">
 		<tr>
@@ -160,13 +193,13 @@ td input {
 			<td><button @click="closeDialog">退出</button></td>
 		</tr>
 	</table>
+	<span class="warning">{{submitHint}}</span>
 	</div>
 	</transition>
-	</div>
 	
-	<div id="staff-dialog" v-if="staffDialog.open" class="cover">
+	
 	<transition name="bouncePage">
-	<div class="dialog">
+	<div v-if="staffDialog.open" class="dialog">
 	<h3>添加员工</h3>
 	<table>
 		<tr>
@@ -186,9 +219,13 @@ td input {
 			<td><button @click="closeDialog">退出</button></td>
 		</tr>
 	</table> 
+	<span class="warning">{{submitHint}}</span>
 	</div>
 	</transition>
-	</div>
+	
+<div v-cloak id="graph">
+<canvas id="board" width="1000" height="600"></canvas>
+</div>
 	
 </div>
 <script src="js/vue.js"></script>
@@ -198,12 +235,13 @@ new Vue({
 	el: '#manager-panel',
 	data: function() {
 		return {
-			queryBar: {
+			multifunction: {
 				currentTable: '',
 				queriedTable: '',
 				tableInfo: {},
 				tables: [],
 				queryResult: [],
+				showQueryResult: false,
 				isUpdating: [],
 				exclusiveUpdating: false,
 				previousRowInfo: {},
@@ -224,8 +262,10 @@ new Vue({
 				open: false,
 				roles: ['前台','经理']
 			},
+			statistic: {},
 			currentAction: '',
 			rowClickedInQueryResult: 0,
+			submitHint: '',
 			server: 'ManagerServlet'
 		}
 	},
@@ -239,20 +279,22 @@ new Vue({
 				resource: 'tableinfo'
 			},
 			success: (res) => {
-				if (!$.isEmptyObject(res)) this.queryBar.tableInfo = res;
+				if (!$.isEmptyObject(res)) this.multifunction.tableInfo = res;
 				else alert('系统暂无可查数据！');
 			},
 			error: (req, sta, err) => {
 				alert('服务端错误！请稍后再试');
 			}
 		});
-		for (var key in this.queryBar.tableInfo)
-			this.queryBar.tables.push(key);
-		this.queryBar.currentTable = this.queryBar.tables[0];
+		for (var key in this.multifunction.tableInfo)
+			this.multifunction.tables.push(key);
+		this.multifunction.currentTable = this.multifunction.tables[1];
+		
 	},
 	
 	methods: {
 		submitquery: function() {
+			this.multifunction.showQueryResult = true;
 			$.ajax({
 				url: this.server,
 				method: 'post',
@@ -265,18 +307,21 @@ new Vue({
 				},
 				success: (res) => {
 					if (res.queryresult.length > 1) {
-						this.queryBar.queryResult = res.queryresult;
-						for (let i = 0; i < this.queryBar.queryResult.length; i++) {
-							this.queryBar.isUpdating.push(false);
+						this.multifunction.queryResult = res.queryresult;
+						for (let i = 0; i < this.multifunction.queryResult.length; i++) {
+							this.multifunction.isUpdating.push(false);
 						}
-					}
-					else this.queryBar.queryResult = [''];
-					this.queryBar.queriedTable = this.queryBar.currentTable;
+					} else this.multifunction.queryResult = [''];
+					this.multifunction.queriedTable = this.multifunction.currentTable;
 				},
 				error: (req, sta, err) => {
 					alert('可能遇到一些问题');
 				}
 			});
+		}, 
+		
+		hideQueryResult: function() {
+			this.multifunction.showQueryResult = false;
 		},
 		
 		deleteRow: function(rowIdx) {
@@ -285,14 +330,14 @@ new Vue({
 				method: 'post',
 				data: {
 					action: 'deleterow',
-					table: this.queryBar.queriedTable,
-					primarykey: this.queryBar.queryResult[0][0],
-					keyvalue: this.queryBar.queryResult[rowIdx][0]
+					table: this.multifunction.queriedTable,
+					primarykey: this.multifunction.queryResult[0][0],
+					keyvalue: this.multifunction.queryResult[rowIdx][0]
 				},
 				success: (res) => {
-					let oldLength = this.queryBar.queryResult.length;
+					let oldLength = this.multifunction.queryResult.length;
 					this.submitquery();
-					if (oldLength == this.queryBar.queryResult.length) {
+					if (oldLength == this.multifunction.queryResult.length) {
 						alert('该项正在被引用，请解除后再作删除！');
 					}
 				},
@@ -308,27 +353,27 @@ new Vue({
 		},
 		
 		updatingRow: function(rowIdx) {
-			this.queryBar.isUpdating[rowIdx] = !this.queryBar.isUpdating[rowIdx];
-			this.queryBar.exclusiveUpdating = this.queryBar.isUpdating[rowIdx];
+			this.multifunction.isUpdating[rowIdx] = !this.multifunction.isUpdating[rowIdx];
+			this.multifunction.exclusiveUpdating = this.multifunction.isUpdating[rowIdx];
 
-			for (let i = 0; i < this.queryBar.queryResult[0].length; i++) {
-				this.queryBar.previousRowInfo[(this.queryBar.queryResult[0][i])] = this.queryBar.queryResult[rowIdx][i];
+			for (let i = 0; i < this.multifunction.queryResult[0].length; i++) {
+				this.multifunction.previousRowInfo[(this.multifunction.queryResult[0][i])] = this.multifunction.queryResult[rowIdx][i];
 			}
 		},
 		
 		setUpdatingRowInfo: function(rowIdx, colIdx) {
-			if (!this.queryBar.exclusiveUpdating) return;
-			this.queryBar.updatingRowInfo[this.queryBar.queryResult[0][colIdx]] = $("input[name='" + rowIdx + '-' + colIdx + "']").val();
+			if (!this.multifunction.exclusiveUpdating) return;
+			this.multifunction.updatingRowInfo[this.multifunction.queryResult[0][colIdx]] = $("input[name='" + rowIdx + '-' + colIdx + "']").val();
 		},
 		
 		updatedRow: function(rowIdx, actFlag) {
-			this.queryBar.isUpdating[rowIdx] = !this.queryBar.isUpdating[rowIdx];
-			this.queryBar.exclusiveUpdating = this.queryBar.isUpdating[rowIdx];
+			this.multifunction.isUpdating[rowIdx] = !this.multifunction.isUpdating[rowIdx];
+			this.multifunction.exclusiveUpdating = this.multifunction.isUpdating[rowIdx];
 			switch (actFlag) {
 			case 'confirm':
-				for (let key in this.queryBar.updatingRowInfo) {
-					if (this.queryBar.updatingRowInfo[key] != this.queryBar.previousRowInfo[key]) {
-						this.queryBar.updatedRowValues.push([key, this.queryBar.updatingRowInfo[key]]);
+				for (let key in this.multifunction.updatingRowInfo) {
+					if (this.multifunction.updatingRowInfo[key] != this.multifunction.previousRowInfo[key]) {
+						this.multifunction.updatedRowValues.push([key, this.multifunction.updatingRowInfo[key]]);
 					}
 				}
 				$.ajax({
@@ -336,10 +381,10 @@ new Vue({
 					method: 'post',
 					data: {
 						action: 'updaterow',
-						table: this.queryBar.queriedTable,
-						primarykey: this.queryBar.queryResult[0][0],
-						keyvalue: this.queryBar.queryResult[rowIdx][0],
-						updatedvalues: JSON.stringify(this.queryBar.updatedRowValues)
+						table: this.multifunction.queriedTable,
+						primarykey: this.multifunction.queryResult[0][0],
+						keyvalue: this.multifunction.queryResult[rowIdx][0],
+						updatedvalues: JSON.stringify(this.multifunction.updatedRowValues)
 					},
 					success: (res) => {
 						if (res.status == 200) {
@@ -355,13 +400,13 @@ new Vue({
 			case 'cancel':
 				break;
 			}
-			this.queryBar.previousRowInfo = {};
-			this.queryBar.updatingRowInfo = {};
-			this.queryBar.updatedRowValues = [];
+			this.multifunction.previousRowInfo = {};
+			this.multifunction.updatingRowInfo = {};
+			this.multifunction.updatedRowValues = [];
 		},
 		
 		openDialog: function() {
-			switch (this.queryBar.currentTable) {
+			switch (this.multifunction.currentTable) {
 			case '客房类型': 
 				this.roomTypeDialog.open = true;
 			break;
@@ -398,6 +443,7 @@ new Vue({
 			this.staffDialog.open = false;
 			this.currentAction = '';
 			this.indexClickedInQueryResult = 0;
+			this.submitHint = '';
 		},
 		
 		submitRoomType: function() {
@@ -439,12 +485,22 @@ new Vue({
 		},
 		
 		submit: function(values, callback) {
+			for (let idx in values) {
+				values[idx] = $.trim(values[idx]);
+				if (values[idx] == '') {
+					this.submitHint = '请提交完整信息！';
+					setTimeout(() => {
+						this.submitHint = '';
+					},1000);
+					return;
+				}
+			}
 			$.ajax({
 				url: this.server,
 				method: 'post',
 				data: {
 					action: 'insertrow',
-					table: this.queryBar.currentTable,
+					table: this.multifunction.currentTable,
 			    	values: JSON.stringify(values)
 				},
 				success: callback,
@@ -452,6 +508,251 @@ new Vue({
 					alert('可能遇到一些问题！请查询确认');
 				}
 			});
+		}
+	}
+});
+
+new Vue({
+	el: '#graph',
+	data: function() {
+		return {
+			board: null,
+			graph: null,
+			animationParams: {
+				animationChain: [true, false, false],
+				pieChart: {
+					x: 0,
+					y: 0,
+					r: 0,
+					meetDegree: (1.8/2)*Math.PI,
+					leftBeginDegree: (2/2)*Math.PI,
+					leftEndDegree: (3/2)*Math.PI,
+					rightBeginDegree: (3/2)*Math.PI,
+					rightEndDegree: (3.2/2)*Math.PI,
+					meetSpeed: (1/200)*Math.PI
+				},
+				verticalBarChart: {
+					x: 0,
+					y: 0,
+					width: 0,
+					height: 0,
+					barHeights: [324, 654, 584, 232, 323],
+					animatedBarHeights: [],
+					pullback: [],
+					growthSpeed: 10
+				},
+				horizontalBarChart: {
+					x: 0,
+					y: 0,
+					width: 0,
+					height: 0,
+					barHeights: [654, 584, 232],
+					animatedBarHeights: [],
+					pullback: [],
+					growthSpeed: 25
+				}
+			},
+			statistic: {
+				rooms: {
+					available: 100,
+					unavailable: 200
+				}
+			}
+		}
+	},
+	
+	mounted: function() {
+		this.board = document.getElementById('board');
+		this.graph = this.board.getContext('2d');
+		
+		this.animationParams.pieChart.width = 6*(this.board.width/25);
+		this.animationParams.pieChart.height = 6*(this.board.height/25);
+		this.animationParams.pieChart.r = this.animationParams.pieChart.width/2;
+		this.animationParams.pieChart.x = 2*(this.board.width/25)+ this.animationParams.pieChart.r;
+		this.animationParams.pieChart.y = (2.5)*this.board.height/25 + this.animationParams.pieChart.r;
+		
+		this.animationParams.verticalBarChart.width = 11*(this.board.width/25);
+		this.animationParams.verticalBarChart.height = 11*(this.board.height/25);
+		this.animationParams.verticalBarChart.x = 12*(this.board.width/25);
+		this.animationParams.verticalBarChart.y = 2*(this.board.height/25) + 
+			this.animationParams.verticalBarChart.height;
+		for (let i = 0; i < this.animationParams.verticalBarChart.barHeights.length; i++) {
+			this.animationParams.verticalBarChart.animatedBarHeights[i] = 0;
+			this.animationParams.verticalBarChart.pullback[i] = false;
+		}
+		
+		this.animationParams.horizontalBarChart.width = 5*(this.board.height/25);
+		this.animationParams.horizontalBarChart.height = 22*(this.board.width/25);
+		this.animationParams.horizontalBarChart.x = 2*(this.board.height/25);
+		this.animationParams.horizontalBarChart.y = this.board.height - 
+			(this.animationParams.horizontalBarChart.width + 2*(this.board.height/25));
+		for (let i = 0; i < this.animationParams.horizontalBarChart.barHeights.length; i++) {
+			this.animationParams.horizontalBarChart.animatedBarHeights[i] = 0;
+			this.animationParams.horizontalBarChart.pullback[i] = false;
+		}
+		
+		setInterval(this.draw, 16);
+		
+		setTimeout(() => {
+			this.animationParams.animationChain[1] = true;
+		},600);
+		setTimeout(() => {
+			this.animationParams.animationChain[2] = true;
+		},800);
+	},
+	
+	methods: {
+		drawPieChart: function() {
+			if (!this.animationParams.animationChain[0]) return;
+			
+			let x = this.animationParams.pieChart.x;
+			let y = this.animationParams.pieChart.y;
+			let r = this.animationParams.pieChart.r;
+			let leftBeginDegree = this.animationParams.pieChart.leftBeginDegree;
+			let rightBeginDegree = this.animationParams.pieChart.rightBeginDegree;
+			let leftEndDegree = this.animationParams.pieChart.leftEndDegree;
+			let rightEndDegree = this.animationParams.pieChart.rightEndDegree;
+			let leftSectorDegree = 2*Math.PI - this.animationParams.pieChart.meetDegree;
+			let rightSectorDegree = this.animationParams.pieChart.meetDegree;
+			let meetDegree = this.animationParams.pieChart.meetDegree - (1/2)*Math.PI;
+			let meetSpeed = this.animationParams.pieChart.meetSpeed;
+			
+			this.graph.beginPath();
+			this.graph.fillStyle = "gray";
+			this.graph.arc(x, y, r, 0, 2*Math.PI);
+			this.graph.fill();
+			
+			this.graph.beginPath();
+			this.graph.strokeStyle = this.graph.fillStyle = "green";
+			this.graph.arc(x, y, r, leftBeginDegree, leftEndDegree);
+			this.graph.lineTo(x, y);
+			this.graph.lineTo(x+r*Math.cos(leftBeginDegree),y+r*Math.sin(leftBeginDegree));
+			this.graph.stroke();
+			this.graph.fill();
+			
+			this.graph.beginPath();
+			this.graph.strokeStyle = this.graph.fillStyle = "orange";
+			this.graph.arc(x, y, r, rightBeginDegree, rightEndDegree);
+			this.graph.lineTo(x, y);
+			this.graph.lineTo(x+r*Math.cos(rightBeginDegree),y+r*Math.sin(rightBeginDegree));
+			this.graph.stroke();
+			this.graph.fill();
+			
+			if (leftBeginDegree%(2*Math.PI) > meetDegree) {
+				this.animationParams.pieChart.leftBeginDegree -= leftSectorDegree/(1/meetSpeed);
+			}
+			if (rightEndDegree < meetDegree+2*Math.PI) {
+				this.animationParams.pieChart.rightEndDegree += rightSectorDegree/(1/meetSpeed);
+			}
+		},
+		
+		drawVerticalBarChart: function() {
+			if (!this.animationParams.animationChain[1]) return;
+			
+			let x = this.animationParams.verticalBarChart.x;
+			let y = this.animationParams.verticalBarChart.y;
+			let width = this.animationParams.verticalBarChart.width;
+			let height = this.animationParams.verticalBarChart.height;
+			let barHeights = this.animationParams.verticalBarChart.barHeights;
+			let max = Math.max.apply(null, barHeights);
+			let scale = (max/10 + 1)*10;
+			barHeights.forEach((val, idx, arr) => {
+				arr[idx] = val / scale * height;
+			});
+			let animatedBarHeights = this.animationParams.verticalBarChart.animatedBarHeights;
+			let span = width/8;
+			let barWidth = (width-span*(barHeights.length+1))/barHeights.length;
+			let growthSpeed = this.animationParams.verticalBarChart.growthSpeed
+			
+			this.graph.beginPath();
+			this.graph.strokeStyle = 'green';
+			this.graph.moveTo(x, y-height);
+			this.graph.lineTo(x, y);
+			this.graph.lineTo(x+width, y);
+			this.graph.stroke();
+			
+			let fillStyle = ['green', 'orange'];
+			for (let i = 0; i < barHeights.length; i++) {
+				this.graph.beginPath();
+				this.graph.fillStyle = fillStyle[i%fillStyle.length >= fillStyle.length ? 0 : i%fillStyle.length] ;
+				this.graph.moveTo(x+(i+1)*span+i*barWidth, y);
+				this.graph.lineTo(x+(i+1)*span+i*barWidth, y-animatedBarHeights[i]);
+				this.graph.lineTo(x+(i+1)*span+i*barWidth+barWidth, y-animatedBarHeights[i]);
+				this.graph.lineTo(x+(i+1)*span+i*barWidth+barWidth, y);
+				this.graph.lineTo(x+(i+1)*span+i*barWidth, y);
+				this.graph.fill();
+			}
+			
+			this.animationParams.verticalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
+				if (!this.animationParams.verticalBarChart.pullback[idx] && 
+						arr[idx] <= (barHeights[idx] + barHeights[idx]/6)) {
+					arr[idx] += growthSpeed;
+				} else {
+					this.animationParams.verticalBarChart.pullback[idx] = true;
+				}
+				if (arr[idx] >= barHeights[idx] && this.animationParams.verticalBarChart.pullback[idx]) {
+					arr[idx] -= growthSpeed;
+				}
+			});
+			
+			this.animationParams.verticalBarChart.growthSpeed -= growthSpeed/150;
+		},
+		
+		drawHorizontalBarChart: function() {
+			if (!this.animationParams.animationChain[2]) return;
+			
+			let x = this.animationParams.horizontalBarChart.x;
+			let y = this.animationParams.horizontalBarChart.y;
+			let width = this.animationParams.horizontalBarChart.width;
+			let height = this.animationParams.horizontalBarChart.height;
+			let barHeights = this.animationParams.horizontalBarChart.barHeights;
+			let max = Math.max.apply(null, barHeights);
+			let scale = (max/10 + 1)*10;
+			barHeights.forEach((val, idx, arr) => {
+				arr[idx] = val / scale * height;
+			});
+			let animatedBarHeights = this.animationParams.horizontalBarChart.animatedBarHeights;
+			let span = width/3;
+			let barWidth = (width-span*(barHeights.length-1))/barHeights.length;
+			let growthSpeed = this.animationParams.horizontalBarChart.growthSpeed
+			
+			this.graph.beginPath();
+			this.graph.strokeStyle = 'orange';
+			this.graph.moveTo(x, y);
+			this.graph.lineTo(x, y+width);
+			this.graph.stroke();
+			
+			let fillStyle = ['green', 'orange'];
+			for (let i = 0; i < barHeights.length; i++) {
+				this.graph.beginPath();
+				this.graph.fillStyle = fillStyle[i%fillStyle.length >= fillStyle.length ? 0 : i%fillStyle.length] ;
+				this.graph.moveTo(x, y+i*span+i*barWidth);
+				this.graph.lineTo(x+animatedBarHeights[i], y+i*span+i*barWidth);
+				this.graph.lineTo(x+animatedBarHeights[i], y+i*span+i*barWidth+barWidth);
+				this.graph.lineTo(x, y+i*span+i*barWidth+barWidth);
+				this.graph.lineTo(x, y+i*span+i*barWidth);
+				this.graph.fill();
+			}
+			
+			this.animationParams.horizontalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
+				if (!this.animationParams.horizontalBarChart.pullback[idx] && 
+						arr[idx] <= (barHeights[idx] + barHeights[idx]/16)) {
+					arr[idx] += growthSpeed;
+				} else {
+					this.animationParams.horizontalBarChart.pullback[idx] = true;
+				}
+				if (arr[idx] >= barHeights[idx] && this.animationParams.horizontalBarChart.pullback[idx]) {
+					arr[idx] -= growthSpeed;
+				}
+			});
+			this.animationParams.horizontalBarChart.growthSpeed -= growthSpeed/100;
+		},
+		
+		draw: function() {
+			this.graph.clearRect(0, 0, this.board.width, this.board.height);
+			this.drawPieChart();
+			this.drawVerticalBarChart();
+			this.drawHorizontalBarChart();
 		}
 	}
 });
