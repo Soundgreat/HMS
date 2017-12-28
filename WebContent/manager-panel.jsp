@@ -526,8 +526,8 @@ new Vue({
 					y: 0,
 					r: 0,
 					items: ['空置客房', '非空客房'],
-					sectorNums: [7,443],
-					meetDegree: (7/8)*2*Math.PI,
+					sectorNums: [231,103],
+					meetDegree: 0,
 					leftBeginDegree: (3/2)*Math.PI,
 					leftEndDegree: (3/2)*Math.PI,
 					rightBeginDegree: -(1/2)*Math.PI,
@@ -571,7 +571,7 @@ new Vue({
 		this.graph = this.board.getContext('2d');
 
 		let sum = this.animationParams.pieChart.sectorNums[0] + this.animationParams.pieChart.sectorNums[1];
-		let meetDegree = parseInt((this.animationParams.pieChart.sectorNums[1]/sum) * 2*Math.PI);
+		this.animationParams.pieChart.meetDegree = (this.animationParams.pieChart.sectorNums[1]/sum) * 2*Math.PI;
 		this.animationParams.pieChart.width = 6*(this.board.width/25);
 		this.animationParams.pieChart.height = 6*(this.board.height/25);
 		this.animationParams.pieChart.r = this.animationParams.pieChart.width/2;
@@ -630,8 +630,8 @@ new Vue({
 			
 			let leftMidDegree = (leftBeginDegree + leftEndDegree)/2;
 			let rightMidDegree = (rightBeginDegree + rightEndDegree)/2;
-			let leftPointer = [x+r/2*(Math.cos(leftMidDegree)), y+r/2*(Math.sin(leftMidDegree))];
-			let rightPointer = [x+r/2*(Math.cos(rightMidDegree)), y+r/2*(Math.sin(rightMidDegree))];
+			let leftPointer = [x+r/2*Math.cos(leftMidDegree), y+r/2*Math.sin(leftMidDegree)];
+			let rightPointer = [x+r/2*Math.cos(rightMidDegree), y+r/2*Math.sin(rightMidDegree)];
 			
 			this.graph.beginPath();
 			this.graph.fillStyle = "gray";
