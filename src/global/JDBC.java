@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -22,6 +23,11 @@ public class JDBC {
 	 */
 	private static final ArrayList<String> STAFF_ROLES = new ArrayList<String>(Arrays.asList("经理", "前台"));
 	
+	/**
+	 * Connection
+	 * @param sc
+	 * @return
+	 */
 	public static Connection getConnection(ServletContext sc) {
 		Context ctx = null;
         try {
@@ -50,6 +56,21 @@ public class JDBC {
 	 * @param cn
 	 * @return
 	 */
+	public static String[] getDataTypes(Connection cn, String table) {
+		ArrayList<String> dataTypes = new ArrayList<String>();
+		try {
+			String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
+			PreparedStatement st = cn.prepareStatement(sql);
+			st.setString(1, table);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) dataTypes.add(rs.getString(1));
+			rs.close();
+			st.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dataTypes.toArray(new String[dataTypes.size()]);
+	}
 	
 	public static String[] getTables(ServletContext sc) {
 		ArrayList<String> tables = new ArrayList<String>();
@@ -226,22 +247,6 @@ public class JDBC {
 	      return sdf.format(genTime);
 	}
 	
-	public static String[] getDataTypes(Connection cn, String table) {
-		ArrayList<String> dataTypes = new ArrayList<String>();
-		try {
-			String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
-			PreparedStatement st = cn.prepareStatement(sql);
-			st.setString(1, table);
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) dataTypes.add(rs.getString(1));
-			rs.close();
-			st.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return dataTypes.toArray(new String[dataTypes.size()]);
-	}
-	
 	public static boolean setData(PreparedStatement st, String dataType, int idx, String value) {
 		boolean success = false;
 		if (dataType == null) return success;
@@ -341,4 +346,171 @@ public class JDBC {
 		}
 		return success;
 	}
+	
+	public static int[] getRoomNums(ServletContext sc) {
+			Connection cn = getConnection(sc);
+			String[] sqls = {"SELECT 房号  FROM 客房  WHERE 空置 = 1; ", "SELECT 房号 FROM 客房 WHERE 空置  = 0; "};
+			return getNums(cn, sqls);
+	}
+	
+	public static int[] getSpecificOrderNums(ServletContext sc) {
+		Connection cn = getConnection(sc);
+		String[] sqls = {"SELECT 订单号 FROM 预定中订单;", "SELECT 订单号 FROM 交易中订单;", "SELECT 订单号 FROM 已完成订单;" };
+		return getNums(cn, sqls);
+	}
+	
+	public static int[] getClientNums(ServletContext sc) {
+		Connection cn = getConnection(sc);
+		String[] sqls = {"SELECT 身份证号 FROM 用户 ;", "SELECT 身份证号 FROM 住客;"};
+		return getNums(cn, sqls);
+	}
+	
+	public static int[] getNums(Connection cn, String[] sqls) {
+		int[] nums = new int[sqls.length];
+		try {
+			PreparedStatement st = null;
+			ResultSet rs = null;
+			int count = 0;
+			for (int i = 0; i < sqls.length; i++) {
+				count = 0;
+				st = cn.prepareStatement(sqls[i]);
+				rs = st.executeQuery();
+				while (rs.next()) count++;
+				nums[i] = count;
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return nums; 
+	}
+	/**
+	 * 
+	 * @param sc
+	 * @param accountType
+	 * @param name
+	 * @param passwd
+	 * @return
+	 */
+	public static int permitSignUp(ServletContext sc, String accountType, String name, String passwd) {
+		int status = 404;
+		try {
+			String sql = null;
+			Connection cn = getConnection(sc);
+			PreparedStatement st = null;
+			ResultSet rs = null;
+			switch (accountType) {
+			case "user":
+				sql = "SELECT 身份证号  FROM 用户  WHERE 身份证号 = ?; ";
+				st = cn.prepareStatement(sql);
+				st.setString(1, name);
+				rs = st.executeQuery();
+				if (!rs.next()) {
+					ArrayList<String> values = new ArrayList<String>();
+					values.add(name);
+					values.add(passwd);
+					if (insertRow(sc, "用户", values)) return 1;
+					else status = -1;
+				} else status = 0;
+				break;
+			case "staff":
+				sql = "SELECT 员工号  FROM 员工  WHERE 员工号  = ?; ";
+				st = cn.prepareStatement(sql);
+				st.setString(1, name);
+				rs = st.executeQuery();
+				if (rs.next()) {
+					if (updateSingleValue(sc, "员工", "员工号", name, "密码", passwd)) return 1;
+					else status = -1;
+				} else status = 0;
+				break;
+			default:
+				break;
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	public static int permitLogin(ServletContext sc, String accountType, String name, String passwd) {
+		int status = 404;
+		try {
+			String sql = null;
+			Connection cn = getConnection(sc);
+			PreparedStatement st = null;
+			ResultSet rs = null;
+			switch (accountType) {
+			case "user":
+				sql = "SELECT 密码  FROM 用户  WHERE 身份证号 = ?; ";
+				st = cn.prepareStatement(sql);
+				st.setString(1, name);
+				rs = st.executeQuery();
+				if (!rs.next()) status = 0;
+				String idcard = rs.getString(1);
+				if (!idcard.equals(passwd)) status = -1;
+				break;
+			case "staff":
+				sql = "SELECT 密码  FROM 员工 WHERE 员工号 = ?; ";
+				st = cn.prepareStatement(sql);
+				st.setString(1, name);
+				rs = st.executeQuery();
+				if (!rs.next())status = 0;
+				String staffid = rs.getString(1);
+				if (!staffid.equals(passwd)) status = -1;
+				break;
+			default:
+				break;
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	public static HashMap<String, Integer> searchRoom(ServletContext sc, String roomType) {
+		HashMap<String, Integer> roomTypeInfo = new HashMap<String, Integer>();
+		try {
+			String sql = "SELECT 类型,余量 FROM 客房类型; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				if (rs.getInt(2) > 0) roomTypeInfo.put(rs.getString(1), rs.getInt(2));
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return roomTypeInfo;
+	}
+	
+	public static boolean bookRoom(ServletContext sc, String roomType) {
+		boolean success = false;
+		try {
+			String sql = "SELECT 余量 FROM 客房类型; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			int newSurplus = rs.getInt(1) - 1;
+			success = updateSingleValue(sc, "客房类型", "类型", roomType, "余量", String.valueOf(newSurplus));
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return success;
+	}
+	
+	
 }

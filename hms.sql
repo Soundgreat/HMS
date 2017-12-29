@@ -14,8 +14,8 @@ create table 员工
 create table 用户
 (
 身份证号 char(18) primary key,
-姓名 varchar(20) not null,
 密码 varchar(16) not null,
+姓名 varchar(20),
 性别 enum('男', '女'),
 年龄 int,
 联系方式 char(11)
@@ -26,7 +26,8 @@ create table  客房类型
 类型 varchar(10) primary key,
 容量 int not null,
 余量 int not null,
-价格 int not null
+价格 int not null,
+描述 varchar(140)
 );
 
 create table 客房

@@ -37,11 +37,11 @@ td input {
 	background-color: rgba(35,65,84,.6);
 }
 .dialog {
-	width: 50%;
-	height: 60%;
+	width: 25%;
+	height: 40%;
 	position: absolute;
-	top: 20%;
-	left: 23%;
+	top: 25%;
+	left: 36%;
 	text-align: center;
 	padding: 25px;
 	background: white;
@@ -64,6 +64,12 @@ td input {
     100% {
         transform: scale(1);
     }
+}
+.translatePage-enter-active {
+	animation: bouncePage-in .3s;
+}
+.translatePage-leave-active {
+	animation: bouncePage-in .3s reverse;
 }
 .length-limit {
     overflow: hidden;
@@ -94,11 +100,12 @@ td input {
 	</transition-group>	
 	</div>
 	
+
+<transition name="bouncePage">
 <div id="search-result" v-if="multifunction.showQueryResult">
-<transition-group name="bouncePage">
-	<span key="caption" v-if="multifunction.queryResult.length > 0">找到{{multifunction.queryResult.length-1}}条结果</span>
-	<button key="hide" @click="hideQueryResult">X</button>
-	<table key="table" v-if="multifunction.queryResult.length > 1">
+	<span v-if="multifunction.queryResult.length > 0">找到{{multifunction.queryResult.length-1}}条结果</span>
+	<button @click="hideQueryResult">X</button>
+	<table v-if="multifunction.queryResult.length > 1">
 		<tr v-for="(row, rowIdx) in multifunction.queryResult">
 			<td v-for="(val, colIdx) in row"><input :name="rowIdx+'-'+colIdx" :value="val" @keyup="setUpdatingRowInfo(rowIdx, colIdx)" :readonly="!multifunction.isUpdating[rowIdx]"/></td>
 			<template v-if="(multifunction.tableInfo[multifunction.queriedTable]['removable'] || multifunction.tableInfo[multifunction.queriedTable]['updatable'])">
@@ -114,8 +121,8 @@ td input {
 			</template>
 		</tr>
 	</table>
-</transition-group>
 </div>
+</transition>
 
 	<div v-if="roomTypeDialog.open || roomDialog.open || staffDialog.open" class="cover"></div>
 	
@@ -224,9 +231,11 @@ td input {
 	</div>
 	</transition>
 	
+<transition name="translatePage">
 <div v-cloak id="graph">
 <canvas id="board" width="1000" height="600"></canvas>
 </div>
+</transition>
 	
 </div>
 <script src="js/vue.js"></script>
@@ -323,6 +332,7 @@ new Vue({
 		
 		hideQueryResult: function() {
 			this.multifunction.showQueryResult = false;
+			Graph.bootAnimation();
 		},
 		
 		deleteRow: function(rowIdx) {
@@ -513,12 +523,27 @@ new Vue({
 	}
 });
 
-new Vue({
+let Graph = new Vue({
 	el: '#graph',
 	data: function() {
 		return {
 			board: null,
 			graph: null,
+			statistic: {
+				rooms: {
+					available: 100,
+					unavailable: 200
+				},
+				orders: {
+					advance: 0,
+					pending: 0,
+					completed: 0
+				},
+				clients: {
+					uers: 0,
+					lodgers: 0
+				}
+			},
 			animationParams: {
 				animationChain: [true, false, false],
 				pieChart: {
@@ -526,43 +551,36 @@ new Vue({
 					y: 0,
 					r: 0,
 					items: ['空置客房', '非空客房'],
-					sectorNums: [231,103],
+					sectorNums: [0, 0],
 					meetDegree: 0,
 					leftBeginDegree: (3/2)*Math.PI,
 					leftEndDegree: (3/2)*Math.PI,
 					rightBeginDegree: -(1/2)*Math.PI,
 					rightEndDegree: -(1/2)*Math.PI,
-					meetSpeed: (1/300)*2*Math.PI
+					meetSpeed: (1/200)*2*Math.PI
 				},
 				verticalBarChart: {
 					x: 0,
 					y: 0,
 					width: 0,
 					height: 0,
-					items: ['预定中订单', '交易中订单','完成订单'],
-					barNums: [5484, 6232, 2323],
+					items: ['预定中订单', '交易中订单','已完成订单'],
+					barNums: [0, 0, 0],
 					animatedBarHeights: [],
-					pullback: [],
-					growthSpeed: 10
+					growthSpeed: 25
 				},
 				horizontalBarChart: {
 					x: 0,
 					y: 0,
 					width: 0,
 					height: 0,
-					items: ['住客人次', '用户人数'],
-					barNums: [5434,3845],
+					items: ['用户人数', '住客人次'],
+					barNums: [0,0],
 					animatedBarHeights: [],
-					pullback: [],
-					growthSpeed: 20
+					growthSpeed: 15
 				}
 			},
-			statistic: {
-				rooms: {
-					available: 100,
-					unavailable: 200
-				}
-			}
+			server: 'ManagerServlet'
 		}
 	},
 	
@@ -570,45 +588,93 @@ new Vue({
 		this.board = document.getElementById('board');
 		this.graph = this.board.getContext('2d');
 
-		let sum = this.animationParams.pieChart.sectorNums[0] + this.animationParams.pieChart.sectorNums[1];
-		this.animationParams.pieChart.meetDegree = (this.animationParams.pieChart.sectorNums[1]/sum) * 2*Math.PI;
 		this.animationParams.pieChart.width = 6*(this.board.width/25);
 		this.animationParams.pieChart.height = 6*(this.board.height/25);
 		this.animationParams.pieChart.r = this.animationParams.pieChart.width/2;
-		this.animationParams.pieChart.x = 2*(this.board.width/25)+ this.animationParams.pieChart.r;
+		this.animationParams.pieChart.x = 3*(this.board.width/25)+ this.animationParams.pieChart.r;
 		this.animationParams.pieChart.y = (2.5)*this.board.height/25 + this.animationParams.pieChart.r;
 		
 		this.animationParams.verticalBarChart.width = 11*(this.board.width/25);
 		this.animationParams.verticalBarChart.height = 11*(this.board.height/25);
-		this.animationParams.verticalBarChart.x = 12*(this.board.width/25);
+		this.animationParams.verticalBarChart.x = 13*(this.board.width/25);
 		this.animationParams.verticalBarChart.y = 2*(this.board.height/25) + 
 			this.animationParams.verticalBarChart.height;
-		for (let i = 0; i < this.animationParams.verticalBarChart.barNums.length; i++) {
-			this.animationParams.verticalBarChart.animatedBarHeights[i] = 0;
-			this.animationParams.verticalBarChart.pullback[i] = false;
-		}
 		
 		this.animationParams.horizontalBarChart.width = 5*(this.board.height/25);
 		this.animationParams.horizontalBarChart.height = 20*(this.board.width/25);
 		this.animationParams.horizontalBarChart.x = 6*(this.board.height/25);
 		this.animationParams.horizontalBarChart.y = this.board.height - 
 			(this.animationParams.horizontalBarChart.width + 2*(this.board.height/25));
+		
+
+		for (let i = 0; i < this.animationParams.verticalBarChart.barNums.length; i++) {
+			this.animationParams.verticalBarChart.animatedBarHeights[i] = 0;
+		}
 		for (let i = 0; i < this.animationParams.horizontalBarChart.barNums.length; i++) {
 			this.animationParams.horizontalBarChart.animatedBarHeights[i] = 0;
-			this.animationParams.horizontalBarChart.pullback[i] = false;
 		}
+		
+		this.updateGraphData().setInterval(this.updateGraphData, 1000);
 		
 		setInterval(this.draw, 16);
 		
-		setTimeout(() => {
-			this.animationParams.animationChain[1] = true;
-		},600);
-		setTimeout(() => {
-			this.animationParams.animationChain[2] = true;
-		},800);
+		this.bootAnimation();
 	},
 	
 	methods: {
+		updateGraphData: function() {
+			$.ajax({
+				url: this.server,
+				method: 'get',
+				data: {
+					resource: 'graphdata'
+				},
+				success: (res) => {
+					this.statistic.rooms.available = res.roomnums[0];
+					this.statistic.rooms.unavailable = res.roomnums[1];
+					this.statistic.orders.advance = res.ordernums[0];
+					this.statistic.orders.pending = res.ordernums[1];
+					this.statistic.orders.compeleted = res.ordernums[2];
+					this.statistic.clients.users = res.clientnums[0];
+					this.statistic.clients.lodgers = res.clientnums[1];
+					this.animationParams.pieChart.sectorNums[0] = this.statistic.rooms.available;
+					this.animationParams.pieChart.sectorNums[1] = this.statistic.rooms.unavailable;
+					this.animationParams.verticalBarChart.barNums[0] = this.statistic.orders.advance;
+					this.animationParams.verticalBarChart.barNums[1] = this.statistic.orders.pending;
+					this.animationParams.verticalBarChart.barNums[2] = this.statistic.orders.compeleted;
+					this.animationParams.horizontalBarChart.barNums[0] = this.statistic.clients.users;
+					this.animationParams.horizontalBarChart.barNums[1] = this.statistic.clients.lodgers;
+					
+					let sum = this.animationParams.pieChart.sectorNums[0] + this.animationParams.pieChart.sectorNums[1];
+					this.animationParams.pieChart.meetDegree = (this.animationParams.pieChart.sectorNums[1]/sum) * 2*Math.PI;
+				},
+				error: (req, sta, err) => {
+					alert(err);
+				}
+			});	
+			return window;
+		},
+		
+		bootAnimation: function() {
+			this.animationParams.pieChart.leftBeginDegree = (3/2)*Math.PI;
+			this.animationParams.pieChart.rightEndDegree = -(1/2)*Math.PI;
+			this.animationParams.pieChart.rightBeginDegree = -(1/2)*Math.PI;
+			this.animationParams.pieChart.rightEndDegree = -(1/2)*Math.PI;
+			
+			setTimeout(() => {
+				this.animationParams.verticalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
+				arr[idx] = 0;
+				});
+				this.animationParams.animationChain[1] = true;
+			},600);
+			setTimeout(() => {
+				this.animationParams.horizontalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
+					arr[idx] = 0;
+				});
+				this.animationParams.animationChain[2] = true;
+			},800);
+		},
+		
 		drawPieChart: function() {
 			if (!this.animationParams.animationChain[0]) return;
 			
@@ -619,10 +685,12 @@ new Vue({
 			let rightBeginDegree = this.animationParams.pieChart.rightBeginDegree;
 			let leftEndDegree = this.animationParams.pieChart.leftEndDegree;
 			let rightEndDegree = this.animationParams.pieChart.rightEndDegree;
-			let leftSectorDegree = 2*Math.PI - this.animationParams.pieChart.meetDegree;
-			let rightSectorDegree = this.animationParams.pieChart.meetDegree;
-			let meetDegree = this.animationParams.pieChart.meetDegree  - (1/2)*Math.PI;
+			
+			let meetDegree = this.animationParams.pieChart.meetDegree  - (1/2)*Math.PI; //convert
+			let leftSectorDegree = meetDegree - leftBeginDegree;
+			let rightSectorDegree = meetDegree - rightEndDegree;
 			let meetSpeed = this.animationParams.pieChart.meetSpeed;
+			
 			let items = this.animationParams.pieChart.items;
 			let sum = this.animationParams.pieChart.sectorNums[0] + this.animationParams.pieChart.sectorNums[1];
 			let leftSectorNums = parseInt((leftEndDegree - leftBeginDegree) / (2*Math.PI)*sum);
@@ -662,7 +730,7 @@ new Vue({
 			this.graph.strokeStyle = "orange";
 			this.graph.moveTo(leftPointer[0], leftPointer[1]);
 			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree), x+pointerLength*Math.sin(leftMidDegree));
-			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree)-r/3, x+pointerLength*Math.sin(leftMidDegree));
+			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree)-(2/3)*r, x+pointerLength*Math.sin(leftMidDegree));
 			let currentNum = 0;
 			if (leftBeginDegree > meetDegree) {
 				currentNum = leftSectorNums;
@@ -677,7 +745,7 @@ new Vue({
 			this.graph.strokeStyle = "green";
 			this.graph.moveTo(rightPointer[0], rightPointer[1]);
 			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree));
-			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree)+r/3, x+pointerLength*Math.sin(rightMidDegree));
+			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree)+(2/3)*r, x+pointerLength*Math.sin(rightMidDegree));
 			if (rightEndDegree < meetDegree) {
 				currentNum = rightSectorNums;
 			} else {
@@ -688,12 +756,8 @@ new Vue({
 			this.graph.strokeText(text, x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree)-fontSize/2);
 			this.graph.stroke();
 			
-			if (leftBeginDegree > meetDegree) {
-				this.animationParams.pieChart.leftBeginDegree -= leftSectorDegree*meetSpeed;
-			}
-			if (rightEndDegree < meetDegree) {
-				this.animationParams.pieChart.rightEndDegree += rightSectorDegree*meetSpeed;
-			}
+			if (leftBeginDegree != meetDegree) this.animationParams.pieChart.leftBeginDegree += leftSectorDegree*meetSpeed;
+			if (rightEndDegree != meetDegree) this.animationParams.pieChart.rightEndDegree += rightSectorDegree*meetSpeed;
 		},
 		
 		drawVerticalBarChart: function() {
@@ -703,6 +767,7 @@ new Vue({
 			let y = this.animationParams.verticalBarChart.y;
 			let width = this.animationParams.verticalBarChart.width;
 			let height = this.animationParams.verticalBarChart.height;
+			
 			let barHeights = [];
 			this.animationParams.verticalBarChart.barNums.forEach((val, idx, arr) => {
 				barHeights[idx] = val;
@@ -713,12 +778,14 @@ new Vue({
 				arr[idx] = val / scale * height;
 			});
 			let animatedBarHeights = this.animationParams.verticalBarChart.animatedBarHeights;
+			let distances = [];
+			this.animationParams.verticalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
+				distances[idx] = barHeights[idx] - val;
+			});
+			
 			let span = width/(2*barHeights.length+1);
 			let barWidth = span;
-			let growthSpeed = [];
-			animatedBarHeights.forEach((val, idx, arr) => {
-				growthSpeed[idx] = this.animationParams.verticalBarChart.growthSpeed;
-			});
+			let growthSpeed = this.animationParams.verticalBarChart.growthSpeed;
 			let items = this.animationParams.verticalBarChart.items;
 			
 			this.graph.beginPath();
@@ -750,19 +817,7 @@ new Vue({
 			}
 			
 			this.animationParams.verticalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
-				if (this.animationParams.verticalBarChart.pullback[idx] && arr[idx] <= barHeights[idx]){
-					this.animationParams.verticalBarChart.growthSpeed[idx] = 0;
-				} else {
-					if (!this.animationParams.verticalBarChart.pullback[idx] && 
-							arr[idx] <= (barHeights[idx] + barHeights[idx]/10)) {
-						arr[idx] += growthSpeed[idx];
-					} else {
-						this.animationParams.verticalBarChart.pullback[idx] = true;
-					}
-					if (arr[idx] >= barHeights[idx] && this.animationParams.verticalBarChart.pullback[idx]) {
-						arr[idx] -= growthSpeed[idx];
-					}
-				}
+				if (val != barHeights[idx]) arr[idx] += distances[idx]/growthSpeed;
 			});
 		},
 		
@@ -773,6 +828,7 @@ new Vue({
 			let y = this.animationParams.horizontalBarChart.y;
 			let width = this.animationParams.horizontalBarChart.width;
 			let height = this.animationParams.horizontalBarChart.height;
+			
 			let barHeights = [];
 			this.animationParams.horizontalBarChart.barNums.forEach((val, idx, arr) => {
 				barHeights[idx] = val;
@@ -783,12 +839,14 @@ new Vue({
 				arr[idx] = val / scale * height;
 			});
 			let animatedBarHeights = this.animationParams.horizontalBarChart.animatedBarHeights;
+			let distances = [];
+			this.animationParams.horizontalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
+				distances[idx] = barHeights[idx] - val;
+			});
+			
 			let span = width/(2*barHeights.length-1);
 			let barWidth = span;
-			let growthSpeed = [];
-			animatedBarHeights.forEach((val, idx, arr) => {
-				growthSpeed[idx] = this.animationParams.horizontalBarChart.growthSpeed;
-			});
+			let growthSpeed = this.animationParams.horizontalBarChart.growthSpeed;
 			let items = this.animationParams.horizontalBarChart.items;
 			
 			this.graph.beginPath();
@@ -818,19 +876,7 @@ new Vue({
 			}
 			
 			this.animationParams.horizontalBarChart.animatedBarHeights.forEach((val, idx, arr) => {
-				if (this.animationParams.horizontalBarChart.pullback[idx] && arr[idx] <= barHeights[idx]){
-					this.animationParams.horizontalBarChart.growthSpeed[idx] = 0;
-				} else {
-					if (!this.animationParams.horizontalBarChart.pullback[idx] && 
-							arr[idx] <= (barHeights[idx] + barHeights[idx]/22)) {
-						arr[idx] += growthSpeed[idx];
-					} else {
-						this.animationParams.horizontalBarChart.pullback[idx] = true;
-					}
-					if (arr[idx] >= barHeights[idx] && this.animationParams.horizontalBarChart.pullback[idx]) {
-						arr[idx] -= growthSpeed[idx];
-					}
-				}
+				if (val != barHeights[idx]) arr[idx] += distances[idx]/growthSpeed;
 			});
 		},
 		

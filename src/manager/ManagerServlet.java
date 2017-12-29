@@ -62,6 +62,11 @@ public class ManagerServlet extends HttpServlet {
 		case "roomtypes":
 			res.put("roomtypes", JDBC.getRoomTypes(sc));
 			break;
+		case "graphdata":
+			res.put("roomnums", JDBC.getRoomNums(sc));
+			res.put("ordernums", JDBC.getSpecificOrderNums(sc));
+			res.put("clientnums", JDBC.getClientNums(sc));
+			break;
 		default:
 			break;
 		}
