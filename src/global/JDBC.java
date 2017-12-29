@@ -187,19 +187,19 @@ public class JDBC {
 	 * @param keyValue
 	 * @return
 	 */
-	public static boolean deleteRow(ServletContext sc, String table, String primaryKey, String keyValue) {
-		boolean success = false;
+	public static int deleteRow(ServletContext sc, String table, String primaryKey, String keyValue) {
+		int status = 0;
 		try {
 			String sql = "DELETE FROM " + table + " WHERE " + primaryKey + " = " + keyValue + "; ";
 			Connection cn= getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
-			success = st.execute();
+			status = st.executeUpdate();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
 			// pass
 		}
-		return success;
+		return status;
 	}
 	
 	/**
@@ -247,16 +247,16 @@ public class JDBC {
 	      return sdf.format(genTime);
 	}
 	
-	public static boolean setData(PreparedStatement st, String dataType, int idx, String value) {
-		boolean success = false;
-		if (dataType == null) return success;
+	public static int setData(PreparedStatement st, String dataType, int idx, String value) {
+		int status = 0;
+		if (dataType == null) return status;
 		try {
 			if (dataType.equals("int")) {
 				if (value == null) st.setNull(idx, java.sql.Types.INTEGER);
-				else st.setInt(idx, (int)Integer.valueOf(value));
+				else st.setInt(idx, Integer.valueOf(value));
 			} else if (dataType.equals("bit")) {
 				if (value == null) st.setNull(idx, java.sql.Types.BIT);
-				else st.setInt(idx, (int)Integer.valueOf(value));
+				else st.setInt(idx, Integer.valueOf(value));
 			} else if (dataType.equals("date")) {
 				if (value == null) st.setNull(idx, java.sql.Types.DATE);
 				else st.setString(idx, value);
@@ -267,15 +267,15 @@ public class JDBC {
 				if (value == null) st.setNull(idx, java.sql.Types.VARCHAR);
 				else st.setString(idx, value);
 			}
-			success = true;
+			status = 1;
 		} catch (SQLException e) {
 			// TODO: handle exception
 		}
-		return success;
+		return status;
 	}
 	
-	public static boolean insertRow(ServletContext sc, String table, ArrayList<String> fullValues) {
-		boolean success = false;
+	public static int insertRow(ServletContext sc, String table, ArrayList<String> fullValues) {
+		int status = 0;
 		try {
 			Connection cn = getConnection(sc);
 			String[] dataTypes = getDataTypes(cn, table);
@@ -290,13 +290,13 @@ public class JDBC {
 			for (int i = 0; i < colNum; i++) {
 				setData(st, dataTypes[i], i+1, fullValues.get(i));
 			}
-			success = st.execute();
+			status = st.executeUpdate();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
 			// pass
 		}
-		return success;
+		return status;
 	}
 	
 	/**
@@ -308,8 +308,8 @@ public class JDBC {
 	 * @return
 	 */
 	
-	private static boolean updateSingleValue(ServletContext sc, String table, String primaryKey, String keyValue, String field, String value) {
-		boolean success = false;
+	private static int updateSingleValue(ServletContext sc, String table, String primaryKey, String keyValue, String field, String value) {
+		int status = 0;
 		try {
 			String sql = "UPDATE " + table + " SET " + field + " = " + " ? WHERE " + primaryKey + " = " + keyValue + "; ";
 			Connection cn = getConnection(sc);
@@ -324,27 +324,27 @@ public class JDBC {
 				}
 			}
 			setData(st, dataType, 1, value);
-			success = st.execute();
+			status = st.executeUpdate();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
 			// TODO: handle exception
 		}
-		return success;
+		return status;
 	}
 	
-	public static boolean updateRow(ServletContext sc, String table, String primaryKey, String keyValue, ArrayList<String[]> fieldValues) {
-		boolean success = false;
+	public static int updateRow(ServletContext sc, String table, String primaryKey, String keyValue, ArrayList<String[]> fieldValues) {
+		int status = 0;
 		try {
 			Connection cn = getConnection(sc);
 			for (String[] fieldValue : fieldValues) {
-				updateSingleValue(sc, table, primaryKey, keyValue, fieldValue[0], fieldValue[1]);
+				status = updateSingleValue(sc, table, primaryKey, keyValue, fieldValue[0], fieldValue[1]);
 			}
 			cn.close();
 		} catch (SQLException e) {
 			// TODO: handle exception
 		}
-		return success;
+		return status;
 	}
 	
 	public static int[] getRoomNums(ServletContext sc) {
@@ -411,7 +411,7 @@ public class JDBC {
 					ArrayList<String> values = new ArrayList<String>();
 					values.add(name);
 					values.add(passwd);
-					if (insertRow(sc, "用户", values)) return 1;
+					if (insertRow(sc, "用户", values) > 1) return 1;
 					else status = -1;
 				} else status = 0;
 				break;
@@ -421,7 +421,7 @@ public class JDBC {
 				st.setString(1, name);
 				rs = st.executeQuery();
 				if (rs.next()) {
-					if (updateSingleValue(sc, "员工", "员工号", name, "密码", passwd)) return 1;
+					if (updateSingleValue(sc, "员工", "员工号", name, "密码", passwd) > 1) return 1;
 					else status = -1;
 				} else status = 0;
 				break;
@@ -494,22 +494,22 @@ public class JDBC {
 		return roomTypeInfo;
 	}
 	
-	public static boolean bookRoom(ServletContext sc, String roomType) {
-		boolean success = false;
+	public static int bookRoom(ServletContext sc, String roomType) {
+		int status = 0;
 		try {
 			String sql = "SELECT 余量 FROM 客房类型; ";
 			Connection cn = getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
 			ResultSet rs = st.executeQuery();
 			int newSurplus = rs.getInt(1) - 1;
-			success = updateSingleValue(sc, "客房类型", "类型", roomType, "余量", String.valueOf(newSurplus));
+			status = updateSingleValue(sc, "客房类型", "类型", roomType, "余量", String.valueOf(newSurplus));
 			rs.close();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return success;
+		return status;
 	}
 	
 	

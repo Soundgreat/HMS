@@ -165,7 +165,7 @@ td input {
 	<table  align="center">
 		<tr>
 			<td>房间号</td>
-			<td><input type="number" name="roomnum" required :disabled="roomDialog.disabled"></td>
+			<td><input type="number" name="roomnum" maxlength="4" required :disabled="roomDialog.disabled"></td>
 		</tr>
 		<tr>
 			<td>房间类型</td>
@@ -185,7 +185,7 @@ td input {
 		</tr>
 		<tr>
 			<td>房间特征描述</td>
-			<td><textarea name="description" :disabled="roomDialog.disabled"></textarea></td>
+			<td><textarea name="description" :disabled="roomDialog.disabled">尚无描述信息...</textarea></td>
 		</tr>
 		<tr>
 			<td>是否空置</td>
@@ -332,7 +332,7 @@ new Vue({
 		
 		hideQueryResult: function() {
 			this.multifunction.showQueryResult = false;
-			Graph.bootAnimation();
+			setTimeout(Graph.bootAnimation,200);
 		},
 		
 		deleteRow: function(rowIdx) {
@@ -346,11 +346,8 @@ new Vue({
 					keyvalue: this.multifunction.queryResult[rowIdx][0]
 				},
 				success: (res) => {
-					let oldLength = this.multifunction.queryResult.length;
-					this.submitquery();
-					if (oldLength == this.multifunction.queryResult.length) {
-						alert('该项正在被引用，请解除后再作删除！');
-					}
+					if (res.status == 1) this.submitquery();
+					else alert('不可接受的删除！');
 				},
 				error: (req, sta, err) => {
 					alert('可能遇到一些问题');
@@ -398,10 +395,13 @@ new Vue({
 						updatedvalues: JSON.stringify(this.multifunction.updatedRowValues)
 					},
 					success: (res) => {
-						if (res.status == 200) {
+						if (res.status == 1) {
+							this.submitquery();
 							alert('修改成功！');
 						}
-						this.submitquery();
+						if (res.status == 0) {
+							alert('不可接受的修改！');
+						}
 					},
 					error: (req, sta, err) => {
 						alert('可能遇到一些问题');
@@ -465,8 +465,8 @@ new Vue({
 			    	$("input[name='price']").val()
 				];
 			this.submit(values, (res) => {
-			    	if (res.status == 200) alert('添加成功！');
-			    	else alert('添加失败：' + res.status);
+				if (res.status == 1) alert('添加成功！');
+				else alert('添加失败! 请检查数据格式');
 			});
 		},
 		
@@ -479,8 +479,8 @@ new Vue({
 				$("textarea[name='description']").val()
 			];
 			this.submit(values, (res) => {
-					if (res.status == 200) alert('添加成功！');
-					else alert('添加失败：' + res.status);
+					if (res.status == 1) alert('添加成功！');
+					else alert('添加失败! 请检查数据格式');
 				});
 		},
 		
@@ -490,8 +490,8 @@ new Vue({
 				$("select[name='role']").val()
 			];
 			this.submit(values, (res) => {
-				if (res.staffid) alert('添加成功！ 员工号是：' + res.staffid);
-				else alert(res.status);
+				if (res.status == 1) alert('添加成功！ 员工号是：' + res.staffid);
+				else alert('添加失败！');
 			});
 		},
 		
@@ -574,7 +574,7 @@ let Graph = new Vue({
 					y: 0,
 					width: 0,
 					height: 0,
-					items: ['用户人数', '住客人次'],
+					items: ['用户人数', '房客人次'],
 					barNums: [0,0],
 					animatedBarHeights: [],
 					growthSpeed: 15
@@ -693,8 +693,8 @@ let Graph = new Vue({
 			
 			let items = this.animationParams.pieChart.items;
 			let sum = this.animationParams.pieChart.sectorNums[0] + this.animationParams.pieChart.sectorNums[1];
-			let leftSectorNums = parseInt((leftEndDegree - leftBeginDegree) / (2*Math.PI)*sum);
-			let rightSectorNums = parseInt((rightEndDegree - rightBeginDegree) / (2*Math.PI)*sum);
+			let leftSectorNum = parseInt((leftEndDegree - leftBeginDegree) / (2*Math.PI)*sum+0.5);
+			let rightSectorNum = parseInt((rightEndDegree - rightBeginDegree) / (2*Math.PI)*sum+0.5);
 			
 			let leftMidDegree = (leftBeginDegree + leftEndDegree)/2;
 			let rightMidDegree = (rightBeginDegree + rightEndDegree)/2;
@@ -731,13 +731,7 @@ let Graph = new Vue({
 			this.graph.moveTo(leftPointer[0], leftPointer[1]);
 			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree), x+pointerLength*Math.sin(leftMidDegree));
 			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree)-(2/3)*r, x+pointerLength*Math.sin(leftMidDegree));
-			let currentNum = 0;
-			if (leftBeginDegree > meetDegree) {
-				currentNum = leftSectorNums;
-			} else {
-				currentNum = this.animationParams.pieChart.sectorNums[0];
-			}
-			let text = items[0] + ' ' + '(' + currentNum + ')';
+			let text = items[0] + ' ' + '(' + leftSectorNum + ')';
 			let textWidth = this.graph.measureText(text).width;
 			this.graph.strokeText(text, x+pointerLength*Math.cos(leftMidDegree)-textWidth, x+pointerLength*Math.sin(leftMidDegree)-fontSize/2);
 			this.graph.stroke();
@@ -746,12 +740,7 @@ let Graph = new Vue({
 			this.graph.moveTo(rightPointer[0], rightPointer[1]);
 			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree));
 			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree)+(2/3)*r, x+pointerLength*Math.sin(rightMidDegree));
-			if (rightEndDegree < meetDegree) {
-				currentNum = rightSectorNums;
-			} else {
-				currentNum = this.animationParams.pieChart.sectorNums[1];
-			}
-			text = items[1] + ' ' + '(' + currentNum + ')';
+			text = items[1] + ' ' + '(' + rightSectorNum + ')';
 			textWidth = this.graph.measureText(items[1]).width;
 			this.graph.strokeText(text, x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree)-fontSize/2);
 			this.graph.stroke();
@@ -803,9 +792,7 @@ let Graph = new Vue({
 				this.graph.fillStyle = fillStyle[i%fillStyle.length >= fillStyle.length ? 0 : i%fillStyle.length] ;
 				this.graph.moveTo(x+(i+1)*span+i*barWidth, y);
 				this.graph.lineTo(x+(i+1)*span+i*barWidth, y-animatedBarHeights[i]);
-				let currentNum = 0;
-				if (growthSpeed[i] > 0) currentNum = parseInt(scale*(animatedBarHeights[i]/height))+0;
-				else currentNum = this.animationParams.verticalBarChart.barNums[i]+ 0;
+				let currentNum = parseInt(scale*(animatedBarHeights[i]/height)+0.5);
 				let textWidth = this.graph.measureText(currentNum).width;
 				this.graph.fillText(currentNum, x+(i+1)*span+i*barWidth+barWidth/2-textWidth/2, y-animatedBarHeights[i]-fontSize);
 				this.graph.lineTo(x+(i+1)*span+i*barWidth+barWidth, y-animatedBarHeights[i]);
@@ -863,9 +850,7 @@ let Graph = new Vue({
 				this.graph.fillStyle = fillStyle[i%fillStyle.length >= fillStyle.length ? 0 : i%fillStyle.length] ;
 				this.graph.moveTo(x, y+i*span+i*barWidth);
 				this.graph.lineTo(x+animatedBarHeights[i], y+i*span+i*barWidth);
-				let currentNum = 0;
-				if (growthSpeed[i] > 0) currentNum = parseInt(scale*(animatedBarHeights[i]/height));
-				else currentNum = this.animationParams.horizontalBarChart.barNums[i];
+				let currentNum = parseInt(scale*(animatedBarHeights[i]/height)+0.5);
 				this.graph.fillText(currentNum, x+animatedBarHeights[i]+fontSize, y+i*span+i*barWidth+fontSize+(barWidth/2-fontSize/2));
 				this.graph.lineTo(x+animatedBarHeights[i], y+i*span+i*barWidth+barWidth);
 				this.graph.lineTo(x, y+i*span+i*barWidth+barWidth);

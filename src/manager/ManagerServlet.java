@@ -80,6 +80,7 @@ public class ManagerServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
+		int status = 0;
 		ServletContext sc = getServletContext();
 		String action = request.getParameter("action");
 		String table = request.getParameter("table");
@@ -99,8 +100,8 @@ public class ManagerServlet extends HttpServlet {
 		case "deleterow":
 			primaryKey = request.getParameter("primarykey");
 			keyValue = request.getParameter("keyvalue");
-			boolean success = JDBC.deleteRow(sc, table, primaryKey, keyValue);
-			res.put("status", success);
+			status = JDBC.deleteRow(sc, table, primaryKey, keyValue);
+			res.put("status", status);
 			break;
 		case "insertrow":
 			String values = request.getParameter("values");
@@ -113,8 +114,8 @@ public class ManagerServlet extends HttpServlet {
 				valueList.add(staffid);
 				res.put("staffid", staffid);
 			} 
-			JDBC.insertRow(getServletContext(), table, valueList);
-			res.put("status", 200);
+			status = JDBC.insertRow(getServletContext(), table, valueList);
+			res.put("status", status);
 			break;
 		case "updaterow":
 			primaryKey = request.getParameter("primarykey");
@@ -129,8 +130,8 @@ public class ManagerServlet extends HttpServlet {
 				subList[1] = subJsonList.getString(1);
 				fieldValuesList.add(subList);
 			}
-			JDBC.updateRow(sc, table, primaryKey, keyValue, fieldValuesList);
-			res.put("status", 200);
+			status= JDBC.updateRow(sc, table, primaryKey, keyValue, fieldValuesList);
+			res.put("status", status);
 			break;
 		default:
 			break;
