@@ -5,6 +5,26 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>manager-statistic</title>
+<style type="text/css">
+#d1  {
+    width: 100%;
+    height: 42px;
+    padding-left: 10px;
+    border: 2px solid #7BA7AB;
+    border-radius: 5px;
+    outline: none;
+    background: #F9F0DA;
+    color: #9E9C9C;
+}
+button, input {
+    line-height: normal;
+}
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 100%;
+    margin: 0;
+}
+</style>
 </head>
 <body>
 <div id="vue">
@@ -29,6 +49,10 @@
 	</tr>
 </table>
 
+	  
+	  <input type="text" placeholder="搜索从这里开始...">
+	  <button type="submit">搜索</button>
+	 
 <table>
 	<tr v-for="ret in queryResult">
 		<td v-for="val in ret">{{val}}</td>
