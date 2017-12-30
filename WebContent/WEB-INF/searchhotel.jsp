@@ -59,11 +59,7 @@ $(function (){
 		Left : 0,//弹出时间停靠的左边位置
 		Top : -16,//弹出时间停靠的顶部边位置
 		fuhao : "-",//日期连接符默认为-
-<<<<<<< HEAD
 		isTime : false,//是否开启时间值默认为false
-=======
-		isTime : true,//是否开启时间值默认为false
->>>>>>> e4b6172c43556cf0c690db1d52f28fc1b65a0e7b
 		beginY : 2017,//年份的开始默认为2017
 		endY :2020//年份的结束默认为2020
 	});
@@ -101,16 +97,10 @@ $(document).ready(function(e){
 	<div class="list-screen">
 		
 		<div class="screen-top" style="position:relative;">
-<<<<<<< HEAD
 			<span>入住日期<input type="text" class="mh_date" readonly="true" id="ruzhu"/></span>
 			<span>退房日期<input type="text" class="mh_date" readonly="true" id="tuifang"/></span>
 			<!--  <span>酒店位置<input type="text" class="ju-adress"  /></span>
 			<span>酒店名称<input type="text" class="ju-name" /></span>-->
-=======
-			<span>入住日期<input type="text" class="mh_date" readonly="true" /></span>
-			<span>退房日期<input type="text" class="mh_date" readonly="true" /></span>
-			<span>关键词<input type="text" class="ju-adress"  placeholder="XXX/XXX/XXX等"/></span>
->>>>>>> e4b6172c43556cf0c690db1d52f28fc1b65a0e7b
 			<a href="#" id="submit-btn">搜索</a>
 		</div>
 		
@@ -175,7 +165,6 @@ $(document).ready(function(e){
 <div class="allroom">
 
 </div>
-<<<<<<< HEAD
 
 <div class="hotelbox">
 	<div class="img">
@@ -205,7 +194,7 @@ $(document).ready(function(e){
                                             </div>
                                         </div>
 
-    <div class="text-center" align="center">
+  "WebContent/hotelMain.jsp"  <div class="text-center" align="center">
     	<table class="table">
 		<thead>
 			<tr>
@@ -224,9 +213,6 @@ $(document).ready(function(e){
 			</tr>
 		</tbody>
 	</table>
-=======
-    <div class="text-center" align="center">
->>>>>>> e4b6172c43556cf0c690db1d52f28fc1b65a0e7b
             <ul class="pagination">
                 <li><a href="<c:url value="/list?page=1"/>" >首页</a></li>
                 <li><a href="<c:url value="/list?page=${page-1>1?page-1:1}"/>" >&laquo;</a></li>
@@ -249,26 +235,15 @@ $(document).ready(function(e){
     <div class="Mfoot">
         <div class="inner Lpb25 Lpt25">
             <div class="links Ltac">
-<<<<<<< HEAD
                 <a href="http://www.huazhu.com/MemberHkh">酒店介绍</a>
                 <a href="http://www.huazhu.com/Affiliate">酒店加盟</a>
                 <a href="http://huazhu.zhiye.com/home/">职位招聘</a>
                 <a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">意见反馈</a>
                 <a href="http://www.huazhu.com/AboutHZ?type=concat">联系我们</a>
-=======
-                <a href="#">酒店介绍</a>
-                <a href="#">酒店加盟</a>
-                <a href="#">职位招聘</a>
-                <a href="#">意见反馈</a>
-                <a href="#">联系我们</a>
->>>>>>> e4b6172c43556cf0c690db1d52f28fc1b65a0e7b
             </div>
         </div>
     </div>
 
-<script src="js/vue.js"></script>
-<script>
-console.log($("input[name='checkbox2']:checked a").html())
-</script>
+
 </body>
 </html>

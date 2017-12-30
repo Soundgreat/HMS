@@ -1,7 +1,6 @@
-package global;
+package user;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,16 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 /**
- * Servlet implementation class Test
+ * Servlet implementation class PushOrder
  */
-@WebServlet("/Test")
-public class Test extends HttpServlet {
+@WebServlet("/PushOrder")
+public class PushOrder extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Test() {
+    public PushOrder() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,9 +28,9 @@ public class Test extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/json");
+		response.setContentType("applicaiton/json");
 		JSONObject res = new JSONObject();
-
+		res.put("username", (String)request.getSession().getAttribute("loginName"));
 		response.getWriter().print(res);
 	}
 

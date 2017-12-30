@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -22,6 +23,11 @@ public class JDBC {
 	 */
 	private static final ArrayList<String> STAFF_ROLES = new ArrayList<String>(Arrays.asList("经理", "前台"));
 	
+	/**
+	 * Connection
+	 * @param sc
+	 * @return
+	 */
 	public static Connection getConnection(ServletContext sc) {
 		Context ctx = null;
         try {
@@ -50,6 +56,22 @@ public class JDBC {
 	 * @param cn
 	 * @return
 	 */
+	public static String[] getDataTypes(Connection cn, String table) {
+		ArrayList<String> dataTypes = new ArrayList<String>();
+		try {
+			String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
+			PreparedStatement st = cn.prepareStatement(sql);
+			st.setString(1, table);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) dataTypes.add(rs.getString(1));
+			rs.close();
+			st.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dataTypes.toArray(new String[dataTypes.size()]);
+	}
+	
 	public static String[] getTables(ServletContext sc) {
 		ArrayList<String> tables = new ArrayList<String>();
 		try {
@@ -87,6 +109,32 @@ public class JDBC {
 		return fields.toArray(new String[fields.size()]);
 	}
 	
+	public static String[] getSingleFieldValue(ServletContext sc, String table, String field, String key, String value) {
+		ArrayList<String> result = new ArrayList<String>();
+		try {
+			String sql = "SELECT " + field + " FROM " + table + " WHERE " + key + " = ?; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			String[] fileds = getFields(sc, table);
+			String[] dataTypes = getDataTypes(cn, table);
+			String dataType = null;
+			for(int i = 0; i < fileds.length; i++) {
+				if (fileds[i].equals(key)) {
+					dataType = dataTypes[i];
+					break;
+				}
+			}
+			if (setData(st, dataType, 1, value) == 1) {
+				ResultSet rs = st.executeQuery();
+				while (rs.next()) {
+					result.add(rs.getString(1));
+				}
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		return result.toArray(new String[result.size()]);
+	}
 	public static ArrayList<String> getRoomTypes(ServletContext sc) {
 		ArrayList<String> roomTypes = new ArrayList<String>();
 		Connection cn = JDBC.getConnection(sc);
@@ -165,19 +213,19 @@ public class JDBC {
 	 * @param keyValue
 	 * @return
 	 */
-	public static boolean deleteRow(ServletContext sc, String table, String primaryKey, String keyValue) {
-		boolean success = false;
+	public static int deleteRow(ServletContext sc, String table, String primaryKey, String keyValue) {
+		int status = 0;
 		try {
 			String sql = "DELETE FROM " + table + " WHERE " + primaryKey + " = " + keyValue + "; ";
 			Connection cn= getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
-			success = st.execute();
+			status = st.executeUpdate();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
 			// pass
 		}
-		return success;
+		return status;
 	}
 	
 	/**
@@ -209,6 +257,7 @@ public class JDBC {
 				count = currentRoleNumber;
 			}
 			newStaffid = roleid + new DecimalFormat("000").format(newRoleNumber);
+			rs.close();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
@@ -224,50 +273,56 @@ public class JDBC {
 	      return sdf.format(genTime);
 	}
 	
-	public static boolean insertRow(ServletContext sc, String table, ArrayList<String> values) {
-		boolean success = false;
+	public static int setData(PreparedStatement st, String dataType, int idx, String value) {
+		int status = 0;
+		if (dataType == null) return status;
 		try {
-			String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND TABLE_SCHEMA = 'hms'; ";
+			if (dataType.equals("int")) {
+				if (value == null) st.setNull(idx, java.sql.Types.INTEGER);
+				else st.setInt(idx, Integer.valueOf(value));
+			} else if (dataType.equals("bit")) {
+				if (value == null) st.setNull(idx, java.sql.Types.BIT);
+				else st.setInt(idx, Integer.valueOf(value));
+			} else if (dataType.equals("date")) {
+				if (value == null) st.setNull(idx, java.sql.Types.DATE);
+				else st.setString(idx, value);
+			} else if (dataType.equals("char")) {
+				if (value == null) st.setNull(idx, java.sql.Types.CHAR);
+				else st.setString(idx, value);
+			} else if (dataType.equals("varchar")) {
+				if (value == null) st.setNull(idx, java.sql.Types.VARCHAR);
+				else st.setString(idx, value);
+			}
+			status = 1;
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		return status;
+	}
+	
+	public static int insertRow(ServletContext sc, String table, ArrayList<String> fullValues) {
+		int status = 0;
+		try {
 			Connection cn = getConnection(sc);
-			PreparedStatement st = cn.prepareStatement(sql);
-			st.setString(1, table);
-			ResultSet dataTypesRs = st.executeQuery();
-			ArrayList<String> dataTypes = new ArrayList<String>();
-			while (dataTypesRs.next()) dataTypes.add(dataTypesRs.getString(1));
-			
-			int colNum = dataTypes.size();
+			String[] dataTypes = getDataTypes(cn, table);
 			StringBuilder dynamicSql = new StringBuilder();
 			dynamicSql.append("INSERT INTO ").append(table).append(" VALUES(");
+			int colNum = fullValues.size();
 			for (int i = 0; i < colNum; i++) {
 				if(i < colNum - 1) dynamicSql.append("?,");
 				else dynamicSql.append("?);");
 			}
-			st = cn.prepareStatement(dynamicSql.toString());
+			PreparedStatement st = cn.prepareStatement(dynamicSql.toString());
 			for (int i = 0; i < colNum; i++) {
-				if (dataTypes.get(i).contains("int")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.INTEGER);
-					else st.setInt(i+1, Integer.valueOf(values.get(i)));
-				} else if (dataTypes.get(i).contains("bit")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.BIT);
-					else st.setInt(i+1, Integer.valueOf(values.get(i)));
-				} else if (dataTypes.get(i).contains("date")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.DATE);
-					else st.setString(i+1, values.get(i));
-				} else if (dataTypes.get(i).contains("char")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.CHAR);
-					else st.setString(i+1, values.get(i));
-				} else if (dataTypes.get(i).contains("varchar")) {
-					if (values.get(i) == null) st.setNull(i+1, java.sql.Types.VARCHAR);
-					else st.setString(i+1, values.get(i));
-				}
+				setData(st, dataTypes[i], i+1, fullValues.get(i));
 			}
-			success = st.execute();
+			status = st.executeUpdate();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// pass
 		}
-		return success;
+		return status;
 	}
 	
 	/**
@@ -278,7 +333,193 @@ public class JDBC {
 	 * @param values
 	 * @return
 	 */
-	public static boolean updateRow(ServletContext sc, String primaryKey, String keyValue, String[] values) {
-		return false;
+	
+	private static int updateSingleValue(ServletContext sc, String table, String primaryKey, String keyValue, String field, String value) {
+		int status = 0;
+		try {
+			String sql = "UPDATE " + table + " SET " + field + " = " + " ? WHERE " + primaryKey + " = " + keyValue + "; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			String[] fields = getFields(sc, table);
+			String[] dataTypes = getDataTypes(cn, table);
+			String dataType = null;
+			for (int i = 0; i < fields.length; i++) {
+				if (fields[i].equals(field)) {
+					dataType = dataTypes[i];
+					break;
+				}
+			}
+			setData(st, dataType, 1, value);
+			status = st.executeUpdate();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		return status;
 	}
+	
+	public static int updateRow(ServletContext sc, String table, String primaryKey, String keyValue, ArrayList<String[]> fieldValues) {
+		int status = 0;
+		try {
+			Connection cn = getConnection(sc);
+			for (String[] fieldValue : fieldValues) {
+				status = updateSingleValue(sc, table, primaryKey, keyValue, fieldValue[0], fieldValue[1]);
+			}
+			cn.close();
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		return status;
+	}
+	
+	public static int[] getRoomNums(ServletContext sc) {
+			Connection cn = getConnection(sc);
+			String[] sqls = {"SELECT 房号  FROM 客房  WHERE 空置 = 1; ", "SELECT 房号 FROM 客房 WHERE 空置  = 0; "};
+			return getNums(cn, sqls);
+	}
+	
+	public static int[] getSpecificOrderNums(ServletContext sc) {
+		Connection cn = getConnection(sc);
+		String[] sqls = {"SELECT 订单号 FROM 预定中订单;", "SELECT 订单号 FROM 交易中订单;", "SELECT 订单号 FROM 已完成订单;" };
+		return getNums(cn, sqls);
+	}
+	
+	public static int[] getClientNums(ServletContext sc) {
+		Connection cn = getConnection(sc);
+		String[] sqls = {"SELECT 身份证号 FROM 用户 ;", "SELECT 身份证号 FROM 住客;"};
+		return getNums(cn, sqls);
+	}
+	
+	public static int[] getNums(Connection cn, String[] sqls) {
+		int[] nums = new int[sqls.length];
+		try {
+			PreparedStatement st = null;
+			ResultSet rs = null;
+			int count = 0;
+			for (int i = 0; i < sqls.length; i++) {
+				count = 0;
+				st = cn.prepareStatement(sqls[i]);
+				rs = st.executeQuery();
+				while (rs.next()) count++;
+				nums[i] = count;
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return nums; 
+	}
+	/**
+	 * 
+	 * @param sc
+	 * @param accountType
+	 * @param name
+	 * @param passwd
+	 * @return
+	 */
+	public static int permitSignUp(ServletContext sc, String accountType, String name, String passwd) {
+		int status = 1;
+		switch (accountType) {
+		case "user":
+			String[] idcards = getSingleFieldValue(sc, "用户", "身份证号", "身份证号", name);
+			if (idcards.length <= 0) {
+				ArrayList<String> values = new ArrayList<String>();
+				values.add(name);
+				values.add(passwd);
+				if (insertRow(sc, "用户", values) <= 0) status = -1;
+			} else status = 0;
+			break;
+		case "staff":
+			String[] staffids = getSingleFieldValue(sc, "用户", "员工号", "员工号", name);
+			if (staffids.length > 0) {
+				if (updateSingleValue(sc, "员工", "员工号", name, "密码", passwd) <= 0) status = -1;
+			} else status = 0;
+			break;
+		default:
+			break;
+		}
+		return status;
+	}
+	
+	/**
+	 * 
+	 * @param sc
+	 * @param accountType
+	 * @param name
+	 * @param passwd
+	 * @return -1(密码错误), 0(名称错误), 1(用户登陆成功), 2(经理登陆成功), 3(前台登陆成功)
+	 */
+	public static int permitSignIn(ServletContext sc, String accountType, String name, String passwd, String[] showingName) {
+		int status = 0;
+		switch (accountType) {
+		case "private":
+			String[] userPasswds = getSingleFieldValue(sc, "用户", "密码", "身份证号", name);
+			if (userPasswds.length <=0) status = 0;
+			else {
+				if (!userPasswds[0].equals(passwd)) status = -1;
+				else {
+					status = 1;
+					showingName[0] = getSingleFieldValue(sc, "用户", "姓名", "身份证号", name)[0];
+				}
+			}
+			break;
+		case "company":
+			String[] staffPasswds = getSingleFieldValue(sc, "员工", "密码", "员工号", name);
+			if (staffPasswds.length <= 0) status = 0;
+			else {
+				if (!staffPasswds[0].equals(passwd)) status = -1;
+				else {
+					if (name.startsWith("0")) status = 2;
+					if (name.startsWith("1")) status = 3;
+					showingName[0] = getSingleFieldValue(sc, "员工", "姓名", "员工号", name)[0];
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		return status;
+	}
+	
+	public static HashMap<String, Integer> searchRoom(ServletContext sc, String roomType) {
+		HashMap<String, Integer> roomTypeInfo = new HashMap<String, Integer>();
+		try {
+			String sql = "SELECT 类型,余量 FROM 客房类型; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				if (rs.getInt(2) > 0) roomTypeInfo.put(rs.getString(1), rs.getInt(2));
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return roomTypeInfo;
+	}
+	
+	public static int bookRoom(ServletContext sc, String roomType) {
+		int status = 0;
+		try {
+			String sql = "SELECT 余量 FROM 客房类型; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			int newSurplus = rs.getInt(1) - 1;
+			status = updateSingleValue(sc, "客房类型", "类型", roomType, "余量", String.valueOf(newSurplus));
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	
 }
