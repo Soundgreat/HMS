@@ -59,7 +59,7 @@ $(function (){
 		Left : 0,//弹出时间停靠的左边位置
 		Top : -16,//弹出时间停靠的顶部边位置
 		fuhao : "-",//日期连接符默认为-
-		isTime : true,//是否开启时间值默认为false
+		isTime : false,//是否开启时间值默认为false
 		beginY : 2017,//年份的开始默认为2017
 		endY :2020//年份的结束默认为2020
 	});
@@ -97,10 +97,10 @@ $(document).ready(function(e){
 	<div class="list-screen">
 		
 		<div class="screen-top" style="position:relative;">
-			<span>入住日期<input type="text" class="mh_date" readonly="true" /></span>
-			<span>退房日期<input type="text" class="mh_date" readonly="true" /></span>
-			<span>关键词<input type="text" class="ju-adress"  placeholder="XXX/XXX/XXX等"/></span>
-			<!--  <span>酒店名称<input type="text" class="ju-name" /></span>-->
+			<span>入住日期<input type="text" class="mh_date" readonly="true" id="ruzhu"/></span>
+			<span>退房日期<input type="text" class="mh_date" readonly="true" id="tuifang"/></span>
+			<!--  <span>酒店位置<input type="text" class="ju-adress"  /></span>
+			<span>酒店名称<input type="text" class="ju-name" /></span>-->
 			<a href="#" id="submit-btn">搜索</a>
 		</div>
 		
@@ -165,7 +165,54 @@ $(document).ready(function(e){
 <div class="allroom">
 
 </div>
-    <div class="text-center" align="center">
+
+<div class="hotelbox">
+	<div class="img">
+		<img src="http://ws-p.hantinghotels.com/f/m/6es4b1.jpg.190-160.jpg" width="190" height="160"/></div>
+	<div class="desc">
+		<div class="hotelname hasChildTag hasTaxBedge">
+			<a class="name" title="桔子精选上海静安酒店 + " href="" target="_blank">
+				<h2>桔子精选上海静安酒店</h2>
+            </a>
+            <span class="child_bedge bedge_16"><i class="arrow"></i></span>                                                                 <span class="tax_bedge tax_bedge_1" title="离店时可立即开具增值税专用发票，用于6%的进项抵\n扣，为企业节省差旅成本！\nPS：当您此次住宿为出差性质，且出差报销企业是一般\n纳税人的企业，酒店才可开具增值税专用发票。">&lt;i&gt;专票抵扣&lt;/i&gt;&lt;i class=&quot;percent&quot;&gt;6%&lt;/i&gt;</span>
+         </div>
+         <div class="address">上海静安区余姚路417号</div>                                                                                                   <div class="coming"><i class="Cicon hourglass"></i>即将开放预订</div>
+         <div class="lastorder"></div>
+         <div class="commentseg hasLabel"></div>
+         <div class="service">
+         		<i class="Cicon small_wifi" title="客房Wifi覆盖"></i>
+         		<i class="Cicon small_park" title="停车场"></i>
+                <i class="Cicon small_breakfast" title="餐厅"></i>
+                <span class="favor_count"><!--<i class="Cicon small_favor"></i>20132--></span>
+         </div>
+     </div>
+                                                <div class="rarea">
+                                                    <div class="score Ltar">
+                                                        <span class="Ldib Lpl5">5<i>/5分</i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+  "WebContent/hotelMain.jsp"  <div class="text-center" align="center">
+    	<table class="table">
+		<thead>
+			<tr>
+				<td>序号</td>
+				<td>模块</td>
+				<td>信息</td>
+				<td>时间</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr  ng-repeat="data in datas">
+				<td>{{data.order}}</td>
+				<td>{{data.module}}</td>
+				<td>{{data.message}}</td>
+				<td>{{data.time}}</td>
+			</tr>
+		</tbody>
+	</table>
             <ul class="pagination">
                 <li><a href="<c:url value="/list?page=1"/>" >首页</a></li>
                 <li><a href="<c:url value="/list?page=${page-1>1?page-1:1}"/>" >&laquo;</a></li>
@@ -188,11 +235,11 @@ $(document).ready(function(e){
     <div class="Mfoot">
         <div class="inner Lpb25 Lpt25">
             <div class="links Ltac">
-                <a href="#">酒店介绍</a>
-                <a href="#">酒店加盟</a>
-                <a href="#">职位招聘</a>
-                <a href="#">意见反馈</a>
-                <a href="#">联系我们</a>
+                <a href="http://www.huazhu.com/MemberHkh">酒店介绍</a>
+                <a href="http://www.huazhu.com/Affiliate">酒店加盟</a>
+                <a href="http://huazhu.zhiye.com/home/">职位招聘</a>
+                <a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">意见反馈</a>
+                <a href="http://www.huazhu.com/AboutHZ?type=concat">联系我们</a>
             </div>
         </div>
     </div>
