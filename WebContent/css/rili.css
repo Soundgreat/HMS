@@ -1,0 +1,66 @@
+@charset "UTF-8";
+	.Date_lr{width:50%;text-align:center;}
+	.span21{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		-webkit-transform: translate(-50%,-50%);
+		transform: translate(-50%,-50%);
+		font-size:14px;
+		color: #666;
+		border: 1px solid #e5e5e5;
+		padding:2px 8px;
+		line-height: 20px;
+		border-radius: .2rem;
+		background-color: #fff;
+	}
+	#checkinout{
+		height: 50px;
+		line-height: 30px;
+		position: relative;
+		margin: 5px;
+		padding: 2px 0;
+		display: -webkit-box;
+		display: flex;
+		border: 1px solid #e5e5e5;
+		border-radius: .02rem;
+		background-color: #fff;
+	}
+	#firstSelect p{line-height:25px;color: #999;font-size:12px;}
+	#startDate{border:0;position: absolute;left: 0;margin: 0 auto;width: 50%;font-size: 16px;color: #05c0ad;text-align: center;}
+	#endDate{border:0;position: absolute;right: 0;margin:auto 0;width:50%;font-size: 16px;color: #05c0ad;text-align: center;}
+	.mask_calendar {
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: rgba(0,0,0,.4);
+		display: none;
+		z-index: 9999;
+	}
+	.calendar {
+		height: 400px;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+	}
+	.animated {
+		animation-duration: 1s;
+		animation-fill-mode: both;
+	}
+	@keyframes slideInDown {
+		from {
+			transform: translate3d(0, -100%, 0);
+			visibility: visible;
+		}
+
+		to {
+			transform: translate3d(0, 0, 0);
+		}
+	}
+	.slideInDown {
+		animation-name: slideInDown;
+	}

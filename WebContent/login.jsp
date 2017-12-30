@@ -41,12 +41,20 @@
                         	<br/>
                             <i class="">&nbsp;</i>用户名：
                             
+<<<<<<< HEAD
                             <input name="username" type="text" v-model="username" placeholder="会员手机号/邮箱" class="input1" maxlength="20">
+=======
+                            <input name="username" type="text" placeholder="会员手机号/邮箱" class="input1" maxlength="20">
+>>>>>>> xixi
                             <br/><br/> <br/>        
                     </div>
                         <div class="">
                             <i class="">&nbsp;</i>密　码：
+<<<<<<< HEAD
                                 <input type="password" v-model="userpasswd" placeholder="请输入密码"  class="input1" maxlength="20">
+=======
+                                <input type="password" placeholder="请输入密码"  class="input1" maxlength="20">
+>>>>>>> xixi
                         </div> 
                  </div>
                     <br/><br/>
@@ -67,12 +75,20 @@
             	<div class="">
             		<br/>
             		<span class=""><i class="">&nbsp;</i>用户名：</span>
+<<<<<<< HEAD
                             <input type="text" v-model="staffname" placeholder="公司卡号" class="input1" maxlength="20">  
+=======
+                            <input type="text" placeholder="公司卡号" class="input1" maxlength="20">  
+>>>>>>> xixi
                  </div>
                  	<br/><br/>
                     <div class="">
                         <span class=""><i class="">&nbsp;</i>密　码：</span>
+<<<<<<< HEAD
                             <input type="password" v-model="staffpasswd" placeholder="请输入密码" class="input1" maxlength="20" autocomplete="off">
+=======
+                            <input type="password" placeholder="请输入密码" class="input1" maxlength="20" autocomplete="off">
+>>>>>>> xixi
                     </div>
                     <br/><br/>
                      <div class="item Lcfx container">
@@ -108,6 +124,7 @@
             <p><em class="error_img"></em><span class="error_intro">系统错误，请稍后哦～</span></p>
         </div>
     </div>
+<<<<<<< HEAD
 </div>
 
 <!-- 弹出极验验证 -->
@@ -173,6 +190,36 @@ $("#myTabContent div[class*='tab-pane']").find("button").click(() => {
 	});
 });
 </script>
+=======
+</div>
+
+<!-- 弹出极验验证 -->
+<div id="popup-captcha"></div>
+    <div class="Mfoot">
+        <div class="inner Lpb25 Lpt25">
+            <div class="links Ltac">
+                <a href="http://www.huazhu.com/MemberHkh">酒店介绍</a>
+                <a href="http://www.huazhu.com/Affiliate">酒店加盟</a>
+                <a href="http://huazhu.zhiye.com/home/">职位招聘</a>
+                <a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">意见反馈</a>
+                <a href="http://www.huazhu.com/AboutHZ?type=concat">联系我们</a>
+            </div>
+        </div>
+    </div>
+<div id="scriptArea" data-page-id="home/signup">
+    
+        <script type="text/javascript" src="https://static.geetest.com/static/tools/gt.js"></script>
+    <script type="text/javascript" data-track-script="true" src="https://wshantinghotels.huazhu.com/wa/site/huazhu_track.js"></script>
+    <script src="https://ws-staticresource.huazhu.com/passportStatic/content/js/library.js"></script>
+    <script src="/content/js/gtcode.js"></script>
+<script src="/Scripts/tLt3hVNpbTQQ82j5crQP2KAIPGbFg7fV8ekI6U4jGwDzH9ezCF017XqAAaFRVk85PWuTuQakng967m0GDc237FNbQB77EED7n7Bv=1.2.6137.17955"></script>
+    <!--[if lte IE 9]><script src="/Content/js/jquery.placeholder.min.js"></script>
+        <script>$('input:not(".notplaceholder"), textarea').placeholder();</script><![endif]-->
+</div>
+<!-- 头部背景 -->
+       
+
+>>>>>>> xixi
              
 </body>
 </html>
