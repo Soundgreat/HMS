@@ -52,7 +52,7 @@ $(function() {
                             <div class="useenter">
                                         <span  id="loginBefore">
                                             <a rel="nofollow" href="login.jsp" class="login">登录</a>
-                                            <a rel="nofollow" href="#" class="register">注册</a>
+                                            <a rel="nofollow" href="register.jsp" class="register">注册</a>
                                         </span>
                             </div>
                         </div>
@@ -122,22 +122,6 @@ $(function() {
 	</ol>
 	
 </div>
-
-        <!-- 首页居中搜索框-->
-       <!--  <div id="checkinout">
-	<div id="firstSelect" style="width:100%;">
-		<div class="Date_lr" style="float:left;">
-			<P>入住</p>
-				<input id="startDate" type="text" value=""style="" readonly>
-			</div>
-			<div class="Date_lr" style="float:right;">
-				<p>离店</p>
-				<input id="endDate" type="text" value="" style="" readonly>
-							<span style="float:right;"><a id="searchHotel" href="searchhotel.jsp" class=""> 搜索房间</a></span>
-			</div>
-			<span class="span21">共<span class="NumDate">1</span>晚</span>
-		</div>
-	</div> --> 
 <div class="mask_calendar">
 	<div class="calendar"></div>
 </div>

@@ -133,17 +133,6 @@ $(document).ready(function(e){
 								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">单人床房</a></label>
 							</dd>
 						</dl>
-						<!--  <dl class="listIndex">
-						<dt>主题风格</dt>
-							<dd>
-								<label><a href="javascript:;" attrval="不限">不限</a></label>
-								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">客栈</a></label>
-								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">精品酒店</a> </label>
-								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">情侣酒店</a> </label>
-								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">园林庭院</a></label>
-								<span class="more"><em class="open"></em>更多</span>
-							</dd> 
-						</dl>-->
 					</div>
 				</div>   
 			</div>
