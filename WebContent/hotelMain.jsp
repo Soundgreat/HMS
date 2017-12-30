@@ -62,7 +62,7 @@ $(function() {
                             <nav class="navlinks">
                                 <div class="navcont Lposr">
                                     <a href="hotelMain.jsp" class="nav-1 Ldib item">首页</a>
-                                    <a href="#" class="nav-2 Ldib item">酒店简介</a>
+                                    <a href="introduction.jsp" class="nav-2 Ldib item">酒店简介</a>
                                     <a href="#" class="nav-2 Ldib item">房间搜索</a>
                                     <a href="#" class="nav-4 Ldib item">XXX</a>
                                     <a href="searchhotel.jsp" class="active nav-3 Ldib item brandIts">在线预订</a>
@@ -108,7 +108,7 @@ $(function() {
 			<a title="" href="#">
 				<img width="1920" height="482" alt="" style="background: url(images/lunbo3.jpg) no-repeat center;" src="images/alpha.png">
 			</a>
-		</li>		
+		</li>	
 	</ul>
 	<ul class="flex-direction-nav">
 		<li><a class="flex-prev" href="javascript:;">Previous</a></li>
