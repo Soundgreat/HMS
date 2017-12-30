@@ -30,10 +30,8 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
 </style>
 <title>酒店查询</title>
 <link rel="stylesheet" type="text/css" href="css/list.css"/>
-<link rel="stylesheet" type="text/css" href="css/search.css"/>
 <link rel="stylesheet" type="text/css" href="css/manhuaDate.1.0.css"/>
 <link href="css/main.css" rel="stylesheet"/>
- <link rel="shortcut icon" href="http://ws-www.hantinghotels.com/newweb/hotels/img/favicon.c14a5d56.ico" type="image/x-icon" />
 
 <script type="text/javascript" src="js/jquery-1.5.1.js"></script><!--日期控件，JS库版本不能过高否则tab会失效-->
 
@@ -133,6 +131,17 @@ $(document).ready(function(e){
 								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">单人床房</a></label>
 							</dd>
 						</dl>
+						<!--  <dl class="listIndex">
+						<dt>主题风格</dt>
+							<dd>
+								<label><a href="javascript:;" attrval="不限">不限</a></label>
+								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">客栈</a></label>
+								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">精品酒店</a> </label>
+								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">情侣酒店</a> </label>
+								<label><input name="checkbox2" type="checkbox" value="" /><a href="javascript:;">园林庭院</a></label>
+								<span class="more"><em class="open"></em>更多</span>
+							</dd> 
+						</dl>-->
 					</div>
 				</div>   
 			</div>
@@ -158,28 +167,34 @@ $(document).ready(function(e){
 </div>
 
 <div class="hotelbox">
-<br/>
-<div class="roombox" >
 	<div class="img">
 		<img src="http://ws-p.hantinghotels.com/f/m/6es4b1.jpg.190-160.jpg" width="190" height="160"/></div>
 	<div class="desc">
 		<div class="hotelname hasChildTag hasTaxBedge">
-				<p class="roomtitle">XXXXX（房间类型）</p>
+			<a class="name" title="桔子精选上海静安酒店 + " href="" target="_blank">
+				<h2>桔子精选上海静安酒店</h2>
+            </a>
+            <span class="child_bedge bedge_16"><i class="arrow"></i></span>                                                                 <span class="tax_bedge tax_bedge_1" title="离店时可立即开具增值税专用发票，用于6%的进项抵\n扣，为企业节省差旅成本！\nPS：当您此次住宿为出差性质，且出差报销企业是一般\n纳税人的企业，酒店才可开具增值税专用发票。">&lt;i&gt;专票抵扣&lt;/i&gt;&lt;i class=&quot;percent&quot;&gt;6%&lt;/i&gt;</span>
          </div>
-         <div class="address">XXXXXXXXXX（房间介绍）</div>                                                                                                 
+         <div class="address">上海静安区余姚路417号</div>                                                                                                   <div class="coming"><i class="Cicon hourglass"></i>即将开放预订</div>
          <div class="lastorder"></div>
          <div class="commentseg hasLabel"></div>
+         <div class="service">
+         		<i class="Cicon small_wifi" title="客房Wifi覆盖"></i>
+         		<i class="Cicon small_park" title="停车场"></i>
+                <i class="Cicon small_breakfast" title="餐厅"></i>
+                <span class="favor_count"><!--<i class="Cicon small_favor"></i>20132--></span>
+         </div>
      </div>
-<div class="rarea">
-<div class="score Ltar">
-<a href="javascript:;" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
-</div>
-</div>
-</div>
-</div>
-                                        
+                                                <div class="rarea">
+                                                    <div class="score Ltar">
+                                                        <span class="Ldib Lpl5">5<i>/5分</i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
- <div class="text-center" align="center">
+  "WebContent/hotelMain.jsp"  <div class="text-center" align="center">
     	<table class="table">
 		<thead>
 			<tr>

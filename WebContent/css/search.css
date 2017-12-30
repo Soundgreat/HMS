@@ -1,21 +1,4 @@
 @charset "UTF-8";
-.roombox{
-	position: relative;
-	border:1px solid #C0C0C0;
-	min-height: 150px;
-	width:560px;
-	margin: 20px auto 0 auto;
-	padding: 30px 190px 20px 224px;
-}
-.roomtitle{
-	display: block;
-    font-size: 1.5em;
-    -webkit-margin-before: 0.83em;
-    -webkit-margin-after: 0.83em;
-    -webkit-margin-start: 0px;
-    -webkit-margin-end: 0px;
-    font-weight: bold;
-}
 .Cback .item, .Cmbox {
     background-color: #fff;
 }
@@ -112,21 +95,4 @@ Plist_checkin .item {
 }
 a {
     outline: 0;
-}
-.Cicon{
-	background-position: -25px -50px;
-	width: 24px;
-    height: 24px;
-    line-height: 24px;
-    display: inline-block;
-    background-repeat: no-repeat;	
-}
-.small_wifi {
-    background-image: url(../images/coin07.png);
-}
-.hotelbox .rarea {
-    width: 152px;
-    position: absolute;
-    top: 15px;
-    right: 30px;
 }
