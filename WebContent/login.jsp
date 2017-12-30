@@ -140,6 +140,7 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 	<div id="scriptArea" data-page-id="home/signup">
     <!-- 引入封装了failback的接口--initGeetest -->
     
@@ -207,6 +208,13 @@ $("#myTabContent div[class*='tab-pane']").find("button").click(() => {
         </div>
     </div>
 <div id="scriptArea" data-page-id="home/signup">
+=======
+<div id="scriptArea" data-page-id="home/signup">
+<<<<<<< HEAD
+    <!-- 引入封装了failback的接口--initGeetest -->
+=======
+>>>>>>> xixi
+>>>>>>> 35b1e4e0d6dac2f328511d995ec682fbc87f17da
     
         <script type="text/javascript" src="https://static.geetest.com/static/tools/gt.js"></script>
     <script type="text/javascript" data-track-script="true" src="https://wshantinghotels.huazhu.com/wa/site/huazhu_track.js"></script>

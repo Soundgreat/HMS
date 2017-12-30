@@ -133,7 +133,13 @@
                         </a>
                         <ul class="nav nav-second-level">
                              <li>
+<<<<<<< HEAD
                             	<a class="J_menuItem" href="manager-setaccount.jsp">账户设置</a>
+=======
+                            	<a class="J_menuItem" href="manager-addstaff.jsp">添加员工</a>
+                            	<a class="J_menuItem" href="manager-removestaff.jsp">移除员工</a>
+                            	<a class="J_menuItem" href="manager-setaccount.jsp">注销用户</a>
+>>>>>>> 35b1e4e0d6dac2f328511d995ec682fbc87f17da
                             </li>
                         </ul>
                     </li>
