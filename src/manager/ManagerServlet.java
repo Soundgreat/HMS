@@ -66,7 +66,7 @@ public class ManagerServlet extends HttpServlet {
 			res.put("roomnums", JDBC.getRoomNums(sc));
 			res.put("ordernums", JDBC.getSpecificOrderNums(sc));
 			res.put("clientnums", JDBC.getClientNums(sc));
-			res.put("name", request.getSession().getAttribute("showingName"));
+			res.put("alias", request.getSession().getAttribute("alias"));
 			break;
 		default:
 			break;

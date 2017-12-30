@@ -43,9 +43,9 @@ public class Login extends HttpServlet {
 		String accountType = request.getParameter("accounttype");
 		String name = request.getParameter("name");
 		String passwd = request.getParameter("passwd");
-		String[] showingName = new String[1];
-		int status = JDBC.permitSignIn(getServletContext(), accountType, name, passwd, showingName);
-		if (status > 0) request.getSession().setAttribute("showingName", showingName[0]);
+		String[] alias = new String[1];
+		int status = JDBC.permitSignIn(getServletContext(), accountType, name, passwd, alias);
+		if (status > 0) request.getSession().setAttribute("alias", alias[0]);
 		if (status > 0) {
 			request.getSession().setAttribute("loginName", name);
 		}

@@ -559,7 +559,7 @@ let Graph = new Vue({
 					leftEndDegree: (3/2)*Math.PI,
 					rightBeginDegree: -(1/2)*Math.PI,
 					rightEndDegree: -(1/2)*Math.PI,
-					meetSpeed: (1/200)*2*Math.PI
+					meetSpeed: (1/120)*2*Math.PI
 				},
 				verticalBarChart: {
 					x: 0,
@@ -569,7 +569,7 @@ let Graph = new Vue({
 					items: ['预定中订单', '交易中订单','已完成订单'],
 					barNums: [0, 0, 0],
 					animatedBarHeights: [],
-					growthSpeed: 25
+					growthSpeed: 20
 				},
 				horizontalBarChart: {
 					x: 0,
@@ -579,7 +579,7 @@ let Graph = new Vue({
 					items: ['用户人数', '房客人次'],
 					barNums: [0,0],
 					animatedBarHeights: [],
-					growthSpeed: 15
+					growthSpeed: 10
 				}
 			},
 			server: 'ManagerServlet'
@@ -632,7 +632,7 @@ let Graph = new Vue({
 					resource: 'graphdata'
 				},
 				success: (res) => {
-					Panel.managerName = res.name;
+					Panel.managerName = res.alias;
 					
 					this.statistic.rooms.available = res.roomnums[0];
 					this.statistic.rooms.unavailable = res.roomnums[1];
@@ -726,27 +726,27 @@ let Graph = new Vue({
 			this.graph.stroke();
 			this.graph.fill();
 			
-			let pointerLength = 1.2*r;
+			let pointerLength = 0.7*r;
 			this.graph.beginPath();
 			let fontSize = 12;
 			this.graph.font = fontSize + 'px Arial';
 			this.graph.lineWidth = 1.5;
 			this.graph.strokeStyle = "orange";
 			this.graph.moveTo(leftPointer[0], leftPointer[1]);
-			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree), x+pointerLength*Math.sin(leftMidDegree));
-			this.graph.lineTo(x+pointerLength*Math.cos(leftMidDegree)-(2/3)*r, x+pointerLength*Math.sin(leftMidDegree));
+			this.graph.lineTo(leftPointer[0]+pointerLength*Math.cos(leftMidDegree), leftPointer[1]+pointerLength*Math.sin(leftMidDegree));
 			let text = items[0] + ' ' + '(' + leftSectorNum + ')';
 			let textWidth = this.graph.measureText(text).width;
-			this.graph.strokeText(text, x+pointerLength*Math.cos(leftMidDegree)-textWidth, x+pointerLength*Math.sin(leftMidDegree)-fontSize/2);
+			this.graph.lineTo(leftPointer[0]+pointerLength*Math.cos(leftMidDegree)-textWidth, leftPointer[1]+pointerLength*Math.sin(leftMidDegree));
+			this.graph.strokeText(text, leftPointer[0]+pointerLength*Math.cos(leftMidDegree)-textWidth, leftPointer[1]+pointerLength*Math.sin(leftMidDegree)-fontSize/2);
 			this.graph.stroke();
 			this.graph.beginPath();
 			this.graph.strokeStyle = "green";
 			this.graph.moveTo(rightPointer[0], rightPointer[1]);
-			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree));
-			this.graph.lineTo(x+pointerLength*Math.cos(rightMidDegree)+(2/3)*r, x+pointerLength*Math.sin(rightMidDegree));
+			this.graph.lineTo(rightPointer[0]+pointerLength*Math.cos(rightMidDegree), rightPointer[1]+pointerLength*Math.sin(rightMidDegree));
 			text = items[1] + ' ' + '(' + rightSectorNum + ')';
-			textWidth = this.graph.measureText(items[1]).width;
-			this.graph.strokeText(text, x+pointerLength*Math.cos(rightMidDegree), x+pointerLength*Math.sin(rightMidDegree)-fontSize/2);
+			textWidth = this.graph.measureText(text).width;
+			this.graph.lineTo(rightPointer[0]+pointerLength*Math.cos(rightMidDegree)+textWidth, rightPointer[1]+pointerLength*Math.sin(rightMidDegree));
+			this.graph.strokeText(text, rightPointer[0]+pointerLength*Math.cos(rightMidDegree), rightPointer[1]+pointerLength*Math.sin(rightMidDegree)-fontSize/2);
 			this.graph.stroke();
 			
 			if (leftBeginDegree != meetDegree) this.animationParams.pieChart.leftBeginDegree += leftSectorDegree*meetSpeed;

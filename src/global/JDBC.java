@@ -285,7 +285,10 @@ public class JDBC {
 				else st.setInt(idx, Integer.valueOf(value));
 			} else if (dataType.equals("date")) {
 				if (value == null) st.setNull(idx, java.sql.Types.DATE);
-				else st.setString(idx, value);
+				else {
+					long date = Long.valueOf(value);
+					st.setDate(idx, new java.sql.Date(date));
+				}
 			} else if (dataType.equals("char")) {
 				if (value == null) st.setNull(idx, java.sql.Types.CHAR);
 				else st.setString(idx, value);
@@ -521,5 +524,24 @@ public class JDBC {
 		return status;
 	}
 	
-	
+	public static int generateOrder(ServletContext sc, String roomType, String checkinDate, String checkoutDate, String phoneNum, HashMap<String, HashMap<String, String>> lodgers) {
+		int status = 0;
+		String orderid = getOrderid();
+		ArrayList<String> fullValues = new ArrayList<String>();
+		fullValues.add(orderid);
+		int lodgersNum = lodgers.size();
+		fullValues.add(String.valueOf(lodgersNum));
+		fullValues.add(checkinDate);
+		fullValues.add(checkoutDate);
+		int price = Integer.valueOf(getSingleFieldValue(sc, "客房类型", "价格", "客房类型", roomType)[0]);
+		int days = (int)((new Date(Long.valueOf(checkoutDate)).getTime() - new Date(Long.valueOf(checkinDate)).getTime())/(1000*3600*24)+0.5);
+		int totalPrice = price * days;
+		fullValues.add(String.valueOf(totalPrice));
+		fullValues.add(phoneNum);
+		fullValues.add(null);
+		fullValues.add(null);
+		fullValues.add("预订中");
+		status = insertRow(sc, "订单", fullValues);
+		return status;
+	}
 }
