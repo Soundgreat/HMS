@@ -124,7 +124,6 @@
         </div>
     </div>
 <div id="scriptArea" data-page-id="home/signup">
-    <!-- 引入封装了failback的接口--initGeetest -->
     
         <script type="text/javascript" src="https://static.geetest.com/static/tools/gt.js"></script>
     <script type="text/javascript" data-track-script="true" src="https://wshantinghotels.huazhu.com/wa/site/huazhu_track.js"></script>

@@ -20,55 +20,6 @@
  <script src='http://sdk.appadhoc.com/ab.plus.js'></script>
  <script type="text/javascript" src="js/jquery.mintwo.js"></script>
 <script type="text/javascript" src="js/date.js"></script>
-<script>
-	$(function(){
-		$('#firstSelect').on('click',function () {
-			$('.mask_calendar').show();
-		});
-		$('.mask_calendar').on('click',function (e) {
-			if(e.target.className == "mask_calendar"){
-				$('.calendar').slideUp(200);
-				$('.mask_calendar').fadeOut(200);
-			}
-		})
-		$('#firstSelect').calendarSwitch({
-			selectors : {
-				sections : ".calendar"
-			},
-			index : 4,      //展示的月份个数
-			animateFunction : "slideToggle",        //动画效果
-			controlDay:true,//知否控制在daysnumber天之内，这个数值的设置前提是总显示天数大于90天
-			daysnumber : "90",     //控制天数
-			comeColor : "#2EB6A8",       //入住颜色
-			outColor : "#2EB6A8",      //离店颜色
-			comeoutColor : "#E0F4F2",        //入住和离店之间的颜色
-			callback :function(){//回调函数
-				$('.mask_calendar').fadeOut(200);
-				var startDate = $('#startDate').val();  //入住的天数
-				var endDate = $('#endDate').val();      //离店的天数
-				var NumDate = $('.NumDate').text();    //共多少晚
-				console.log(startDate);
-				console.log(endDate);
-				console.log(NumDate);
-			}  ,   
-			comfireBtn:'.comfire'//确定按钮的class或者id
-		});
-		var b=new Date();
-		var ye=b.getFullYear();
-		var mo=b.getMonth()+1;
-		mo = mo<10?"0"+mo:mo;
-		var da=b.getDate();
-		da = da<10?"0"+da:da;
-		$('#startDate').val(ye+'-'+mo+'-'+da);
-		b=new Date(b.getTime()+24*3600*1000);
-		var ye=b.getFullYear();
-		var mo=b.getMonth()+1;
-		mo = mo<10?"0"+mo:mo;
-		var da=b.getDate();
-		da = da<10?"0"+da:da;
-		$('#endDate').val(ye+'-'+mo+'-'+da);
-	});
-</script>
 <script src="js/jquery-1.10.2.min.js"></script>
 <script src="js/slider.js"></script>
 <script type="text/javascript">
@@ -101,7 +52,7 @@ $(function() {
                             <div class="useenter">
                                         <span  id="loginBefore">
                                             <a rel="nofollow" href="login.jsp" class="login">登录</a>
-                                            <a rel="nofollow" href="#" class="register">注册</a>
+                                            <a rel="nofollow" href="register.jsp" class="register">注册</a>
                                         </span>
                             </div>
                         </div>
@@ -111,7 +62,7 @@ $(function() {
                             <nav class="navlinks">
                                 <div class="navcont Lposr">
                                     <a href="hotelMain.jsp" class="nav-1 Ldib item">首页</a>
-                                    <a href="#" class="nav-2 Ldib item">酒店简介</a>
+                                    <a href="introduction.jsp" class="nav-2 Ldib item">酒店简介</a>
                                     <a href="#" class="nav-2 Ldib item">房间搜索</a>
                                     <a href="#" class="nav-4 Ldib item">XXX</a>
                                     <a href="searchhotel.jsp" class="active nav-3 Ldib item brandIts">在线预订</a>
@@ -157,7 +108,7 @@ $(function() {
 			<a title="" href="#">
 				<img width="1920" height="482" alt="" style="background: url(images/lunbo3.jpg) no-repeat center;" src="images/alpha.png">
 			</a>
-		</li>		
+		</li>	
 	</ul>
 	<ul class="flex-direction-nav">
 		<li><a class="flex-prev" href="javascript:;">Previous</a></li>
@@ -171,22 +122,6 @@ $(function() {
 	</ol>
 	
 </div>
-
-        <!-- 首页居中搜索框-->
-       <!--  <div id="checkinout">
-	<div id="firstSelect" style="width:100%;">
-		<div class="Date_lr" style="float:left;">
-			<P>入住</p>
-				<input id="startDate" type="text" value=""style="" readonly>
-			</div>
-			<div class="Date_lr" style="float:right;">
-				<p>离店</p>
-				<input id="endDate" type="text" value="" style="" readonly>
-							<span style="float:right;"><a id="searchHotel" href="searchhotel.jsp" class=""> 搜索房间</a></span>
-			</div>
-			<span class="span21">共<span class="NumDate">1</span>晚</span>
-		</div>
-	</div> --> 
 <div class="mask_calendar">
 	<div class="calendar"></div>
 </div>
@@ -233,7 +168,7 @@ $(function() {
                     </h2>
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_tianjin.jpg"></div>
                     <div class="words">
-                        <p class="hotelsummary">....................</p>
+                        <p class="hotelsummary">旅途中还有身边的你陪伴</p>
                         <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/2003362">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
@@ -244,7 +179,7 @@ $(function() {
                     </h2>
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_beijingtiantan.jpg"></div>
                     <div class="words">
-                        <p class="hotelsummary">.............</p>
+                        <p class="hotelsummary">家的感觉 真好</p>
                         <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/1000051">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
@@ -255,7 +190,7 @@ $(function() {
                     </h2>
                     <div class="hotelpic"><img src="images/memberHZ-01.png"></div>
                     <div class="words">
-                        <p class="hotelsummary">。。。。。。。。。。。。</p>
+                        <p class="hotelsummary">就算一个人 也要霸占一张大床</p>
                         <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/3100063">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
