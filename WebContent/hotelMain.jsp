@@ -20,55 +20,6 @@
  <script src='http://sdk.appadhoc.com/ab.plus.js'></script>
  <script type="text/javascript" src="js/jquery.mintwo.js"></script>
 <script type="text/javascript" src="js/date.js"></script>
-<script>
-	$(function(){
-		$('#firstSelect').on('click',function () {
-			$('.mask_calendar').show();
-		});
-		$('.mask_calendar').on('click',function (e) {
-			if(e.target.className == "mask_calendar"){
-				$('.calendar').slideUp(200);
-				$('.mask_calendar').fadeOut(200);
-			}
-		})
-		$('#firstSelect').calendarSwitch({
-			selectors : {
-				sections : ".calendar"
-			},
-			index : 4,      //展示的月份个数
-			animateFunction : "slideToggle",        //动画效果
-			controlDay:true,//知否控制在daysnumber天之内，这个数值的设置前提是总显示天数大于90天
-			daysnumber : "90",     //控制天数
-			comeColor : "#2EB6A8",       //入住颜色
-			outColor : "#2EB6A8",      //离店颜色
-			comeoutColor : "#E0F4F2",        //入住和离店之间的颜色
-			callback :function(){//回调函数
-				$('.mask_calendar').fadeOut(200);
-				var startDate = $('#startDate').val();  //入住的天数
-				var endDate = $('#endDate').val();      //离店的天数
-				var NumDate = $('.NumDate').text();    //共多少晚
-				console.log(startDate);
-				console.log(endDate);
-				console.log(NumDate);
-			}  ,   
-			comfireBtn:'.comfire'//确定按钮的class或者id
-		});
-		var b=new Date();
-		var ye=b.getFullYear();
-		var mo=b.getMonth()+1;
-		mo = mo<10?"0"+mo:mo;
-		var da=b.getDate();
-		da = da<10?"0"+da:da;
-		$('#startDate').val(ye+'-'+mo+'-'+da);
-		b=new Date(b.getTime()+24*3600*1000);
-		var ye=b.getFullYear();
-		var mo=b.getMonth()+1;
-		mo = mo<10?"0"+mo:mo;
-		var da=b.getDate();
-		da = da<10?"0"+da:da;
-		$('#endDate').val(ye+'-'+mo+'-'+da);
-	});
-</script>
 <script src="js/jquery-1.10.2.min.js"></script>
 <script src="js/slider.js"></script>
 <script type="text/javascript">
@@ -233,7 +184,7 @@ $(function() {
                     </h2>
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_tianjin.jpg"></div>
                     <div class="words">
-                        <p class="hotelsummary">....................</p>
+                        <p class="hotelsummary">旅途中还有身边的你陪伴</p>
                         <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/2003362">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
@@ -244,7 +195,7 @@ $(function() {
                     </h2>
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_beijingtiantan.jpg"></div>
                     <div class="words">
-                        <p class="hotelsummary">.............</p>
+                        <p class="hotelsummary">家的感觉 真好</p>
                         <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/1000051">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
@@ -255,7 +206,7 @@ $(function() {
                     </h2>
                     <div class="hotelpic"><img src="images/memberHZ-01.png"></div>
                     <div class="words">
-                        <p class="hotelsummary">。。。。。。。。。。。。</p>
+                        <p class="hotelsummary">就算一个人 也要霸占一张大床</p>
                         <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/3100063">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
