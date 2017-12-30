@@ -19,7 +19,7 @@
     <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div class="wrap-body">
+<div class="wrap-body"></div>
 
 <!--////////////////////////////////////Header-->
 
