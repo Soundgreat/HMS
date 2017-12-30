@@ -66,11 +66,11 @@ public class ManagerServlet extends HttpServlet {
 			res.put("roomnums", JDBC.getRoomNums(sc));
 			res.put("ordernums", JDBC.getSpecificOrderNums(sc));
 			res.put("clientnums", JDBC.getClientNums(sc));
+			res.put("name", request.getSession().getAttribute("showingName"));
 			break;
 		default:
 			break;
 		}
-			
 		response.getWriter().print(res);
 	}
 

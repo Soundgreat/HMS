@@ -163,7 +163,12 @@ $("#myTabContent div[class*='tab-pane']").find("button").click(() => {
 		data: {
 			accounttype: accountType,
 			name: name,
-			passwd: type
+			passwd: passwd
+		},
+		success: (res) => {
+			if (res.status == 0) alert("该账号不存在！");
+			else if (res.status == -1) alert("密码错误！");
+			else window.location = res.newpage;
 		}
 	});
 });

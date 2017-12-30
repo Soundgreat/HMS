@@ -266,6 +266,9 @@ $(document).ready(function(e){
         </div>
     </div>
 
-
+<script src="js/vue.js"></script>
+<script>
+console.log($("input[name='checkbox2']:checked a").html())
+</script>
 </body>
 </html>

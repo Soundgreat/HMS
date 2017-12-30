@@ -109,6 +109,32 @@ public class JDBC {
 		return fields.toArray(new String[fields.size()]);
 	}
 	
+	public static String[] getSingleFieldValue(ServletContext sc, String table, String field, String key, String value) {
+		ArrayList<String> result = new ArrayList<String>();
+		try {
+			String sql = "SELECT " + field + " FROM " + table + " WHERE " + key + " = ?; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			String[] fileds = getFields(sc, table);
+			String[] dataTypes = getDataTypes(cn, table);
+			String dataType = null;
+			for(int i = 0; i < fileds.length; i++) {
+				if (fileds[i].equals(key)) {
+					dataType = dataTypes[i];
+					break;
+				}
+			}
+			if (setData(st, dataType, 1, value) == 1) {
+				ResultSet rs = st.executeQuery();
+				while (rs.next()) {
+					result.add(rs.getString(1));
+				}
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
+		return result.toArray(new String[result.size()]);
+	}
 	public static ArrayList<String> getRoomTypes(ServletContext sc) {
 		ArrayList<String> roomTypes = new ArrayList<String>();
 		Connection cn = JDBC.getConnection(sc);
@@ -395,82 +421,65 @@ public class JDBC {
 	 * @return
 	 */
 	public static int permitSignUp(ServletContext sc, String accountType, String name, String passwd) {
-		int status = 404;
-		try {
-			String sql = null;
-			Connection cn = getConnection(sc);
-			PreparedStatement st = null;
-			ResultSet rs = null;
-			switch (accountType) {
-			case "user":
-				sql = "SELECT 身份证号  FROM 用户  WHERE 身份证号 = ?; ";
-				st = cn.prepareStatement(sql);
-				st.setString(1, name);
-				rs = st.executeQuery();
-				if (!rs.next()) {
-					ArrayList<String> values = new ArrayList<String>();
-					values.add(name);
-					values.add(passwd);
-					if (insertRow(sc, "用户", values) > 1) return 1;
-					else status = -1;
-				} else status = 0;
-				break;
-			case "staff":
-				sql = "SELECT 员工号  FROM 员工  WHERE 员工号  = ?; ";
-				st = cn.prepareStatement(sql);
-				st.setString(1, name);
-				rs = st.executeQuery();
-				if (rs.next()) {
-					if (updateSingleValue(sc, "员工", "员工号", name, "密码", passwd) > 1) return 1;
-					else status = -1;
-				} else status = 0;
-				break;
-			default:
-				break;
-			}
-			rs.close();
-			st.close();
-			cn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		int status = 1;
+		switch (accountType) {
+		case "user":
+			String[] idcards = getSingleFieldValue(sc, "用户", "身份证号", "身份证号", name);
+			if (idcards.length <= 0) {
+				ArrayList<String> values = new ArrayList<String>();
+				values.add(name);
+				values.add(passwd);
+				if (insertRow(sc, "用户", values) <= 0) status = -1;
+			} else status = 0;
+			break;
+		case "staff":
+			String[] staffids = getSingleFieldValue(sc, "用户", "员工号", "员工号", name);
+			if (staffids.length > 0) {
+				if (updateSingleValue(sc, "员工", "员工号", name, "密码", passwd) <= 0) status = -1;
+			} else status = 0;
+			break;
+		default:
+			break;
 		}
 		return status;
 	}
 	
-	public static int permitLogin(ServletContext sc, String accountType, String name, String passwd) {
-		int status = 404;
-		try {
-			String sql = null;
-			Connection cn = getConnection(sc);
-			PreparedStatement st = null;
-			ResultSet rs = null;
-			switch (accountType) {
-			case "user":
-				sql = "SELECT 密码  FROM 用户  WHERE 身份证号 = ?; ";
-				st = cn.prepareStatement(sql);
-				st.setString(1, name);
-				rs = st.executeQuery();
-				if (!rs.next()) status = 0;
-				String idcard = rs.getString(1);
-				if (!idcard.equals(passwd)) status = -1;
-				break;
-			case "staff":
-				sql = "SELECT 密码  FROM 员工 WHERE 员工号 = ?; ";
-				st = cn.prepareStatement(sql);
-				st.setString(1, name);
-				rs = st.executeQuery();
-				if (!rs.next())status = 0;
-				String staffid = rs.getString(1);
-				if (!staffid.equals(passwd)) status = -1;
-				break;
-			default:
-				break;
+	/**
+	 * 
+	 * @param sc
+	 * @param accountType
+	 * @param name
+	 * @param passwd
+	 * @return -1(密码错误), 0(名称错误), 1(用户登陆成功), 2(经理登陆成功), 3(前台登陆成功)
+	 */
+	public static int permitSignIn(ServletContext sc, String accountType, String name, String passwd, String[] showingName) {
+		int status = 0;
+		switch (accountType) {
+		case "private":
+			String[] userPasswds = getSingleFieldValue(sc, "用户", "密码", "身份证号", name);
+			if (userPasswds.length <=0) status = 0;
+			else {
+				if (!userPasswds[0].equals(passwd)) status = -1;
+				else {
+					status = 1;
+					showingName[0] = getSingleFieldValue(sc, "用户", "姓名", "身份证号", name)[0];
+				}
 			}
-			rs.close();
-			st.close();
-			cn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			break;
+		case "company":
+			String[] staffPasswds = getSingleFieldValue(sc, "员工", "密码", "员工号", name);
+			if (staffPasswds.length <= 0) status = 0;
+			else {
+				if (!staffPasswds[0].equals(passwd)) status = -1;
+				else {
+					if (name.startsWith("0")) status = 2;
+					if (name.startsWith("1")) status = 3;
+					showingName[0] = getSingleFieldValue(sc, "员工", "姓名", "员工号", name)[0];
+				}
+			}
+			break;
+		default:
+			break;
 		}
 		return status;
 	}

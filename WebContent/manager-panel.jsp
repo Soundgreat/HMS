@@ -84,6 +84,7 @@ td input {
 	<div id="search-bar">
 	<transition-group name="bouncePage">
 	<h3 key="caption">数据管理</h3>
+	<h5 key="greeting">你好！{{managerName}}</h5>
 	<div key="bar">
 		<label>查找范围</label>
 		<select name="table" v-model="multifunction.currentTable">
@@ -241,10 +242,11 @@ td input {
 <script src="js/vue.js"></script>
 <script src="js/jquery.js"></script>
 <script>
-new Vue({
+let Panel = new Vue({
 	el: '#manager-panel',
 	data: function() {
 		return {
+			managerName: '',
 			multifunction: {
 				currentTable: '',
 				queriedTable: '',
@@ -630,6 +632,8 @@ let Graph = new Vue({
 					resource: 'graphdata'
 				},
 				success: (res) => {
+					Panel.managerName = res.name;
+					
 					this.statistic.rooms.available = res.roomnums[0];
 					this.statistic.rooms.unavailable = res.roomnums[1];
 					this.statistic.orders.advance = res.ordernums[0];

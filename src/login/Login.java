@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
+import global.JDBC;
+
 /**
  * Servlet implementation class Login
  */
@@ -34,8 +38,28 @@ public class Login extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		response.setContentType("application/json");
+		JSONObject res = new JSONObject();
+		String accountType = request.getParameter("accounttype");
+		String name = request.getParameter("name");
+		String passwd = request.getParameter("passwd");
+		String[] showingName = new String[1];
+		int status = JDBC.permitSignIn(getServletContext(), accountType, name, passwd, showingName);
+		if (status > 0) request.getSession().setAttribute("showingName", showingName[0]);
+		if (status > 0) {
+			request.getSession().setAttribute("loginName", name);
+		}
+		if (status == 1) {
+			res.put("newpage", "neworder.jsp"); 
+		}
+		if (status == 2) {
+			res.put("newpage", "manager-panel.jsp"); 
+		}
+		if (status == 3) {
+			res.put("newpage", "manager-panel.jsp"); 
+		}
+		res.put("status", status);
+		response.getWriter().print(res);
 	}
 
 }
