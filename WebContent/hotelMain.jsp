@@ -20,6 +20,7 @@
  <script src='http://sdk.appadhoc.com/ab.plus.js'></script>
  <script type="text/javascript" src="js/jquery.mintwo.js"></script>
 <script type="text/javascript" src="js/date.js"></script>
+<<<<<<< HEAD
 <script>
 	$(function(){
 		$('#firstSelect').on('click',function () {
@@ -69,6 +70,8 @@
 		$('#endDate').val(ye+'-'+mo+'-'+da);
 	});
 </script>
+=======
+>>>>>>> xixi
 <script src="js/jquery-1.10.2.min.js"></script>
 <script src="js/slider.js"></script>
 <script type="text/javascript">
@@ -111,7 +114,11 @@ $(function() {
                             <nav class="navlinks">
                                 <div class="navcont Lposr">
                                     <a href="hotelMain.jsp" class="nav-1 Ldib item">首页</a>
+<<<<<<< HEAD
                                     <a href="#" class="nav-2 Ldib item">酒店简介</a>
+=======
+                                    <a href="introduction.jsp" class="nav-2 Ldib item">酒店简介</a>
+>>>>>>> xixi
                                     <a href="#" class="nav-2 Ldib item">房间搜索</a>
                                     <a href="#" class="nav-4 Ldib item">XXX</a>
                                     <a href="searchhotel.jsp" class="active nav-3 Ldib item brandIts">在线预订</a>
@@ -157,7 +164,11 @@ $(function() {
 			<a title="" href="#">
 				<img width="1920" height="482" alt="" style="background: url(images/lunbo3.jpg) no-repeat center;" src="images/alpha.png">
 			</a>
+<<<<<<< HEAD
 		</li>		
+=======
+		</li>	
+>>>>>>> xixi
 	</ul>
 	<ul class="flex-direction-nav">
 		<li><a class="flex-prev" href="javascript:;">Previous</a></li>
@@ -233,7 +244,7 @@ $(function() {
                     </h2>
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_tianjin.jpg"></div>
                     <div class="words">
-                        <p class="hotelsummary">....................</p>
+                        <p class="hotelsummary">旅途中还有身边的你陪伴</p>
                         <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/2003362">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
@@ -244,7 +255,7 @@ $(function() {
                     </h2>
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_beijingtiantan.jpg"></div>
                     <div class="words">
-                        <p class="hotelsummary">.............</p>
+                        <p class="hotelsummary">家的感觉 真好</p>
                         <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/1000051">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
@@ -255,7 +266,7 @@ $(function() {
                     </h2>
                     <div class="hotelpic"><img src="images/memberHZ-01.png"></div>
                     <div class="words">
-                        <p class="hotelsummary">。。。。。。。。。。。。</p>
+                        <p class="hotelsummary">就算一个人 也要霸占一张大床</p>
                         <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/3100063">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>

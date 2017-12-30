@@ -30,8 +30,10 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
 </style>
 <title>酒店查询</title>
 <link rel="stylesheet" type="text/css" href="css/list.css"/>
+<link rel="stylesheet" type="text/css" href="css/search.css"/>
 <link rel="stylesheet" type="text/css" href="css/manhuaDate.1.0.css"/>
 <link href="css/main.css" rel="stylesheet"/>
+ <link rel="shortcut icon" href="http://ws-www.hantinghotels.com/newweb/hotels/img/favicon.c14a5d56.ico" type="image/x-icon" />
 
 <script type="text/javascript" src="js/jquery-1.5.1.js"></script><!--日期控件，JS库版本不能过高否则tab会失效-->
 
@@ -60,10 +62,14 @@ $(function (){
 		Top : -16,//弹出时间停靠的顶部边位置
 		fuhao : "-",//日期连接符默认为-
 <<<<<<< HEAD
+<<<<<<< HEAD
 		isTime : false,//是否开启时间值默认为false
 =======
 		isTime : true,//是否开启时间值默认为false
 >>>>>>> e4b6172c43556cf0c690db1d52f28fc1b65a0e7b
+=======
+		isTime : false,//是否开启时间值默认为false
+>>>>>>> xixi
 		beginY : 2017,//年份的开始默认为2017
 		endY :2020//年份的结束默认为2020
 	});
@@ -102,15 +108,21 @@ $(document).ready(function(e){
 		
 		<div class="screen-top" style="position:relative;">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> xixi
 			<span>入住日期<input type="text" class="mh_date" readonly="true" id="ruzhu"/></span>
 			<span>退房日期<input type="text" class="mh_date" readonly="true" id="tuifang"/></span>
 			<!--  <span>酒店位置<input type="text" class="ju-adress"  /></span>
 			<span>酒店名称<input type="text" class="ju-name" /></span>-->
+<<<<<<< HEAD
 =======
 			<span>入住日期<input type="text" class="mh_date" readonly="true" /></span>
 			<span>退房日期<input type="text" class="mh_date" readonly="true" /></span>
 			<span>关键词<input type="text" class="ju-adress"  placeholder="XXX/XXX/XXX等"/></span>
 >>>>>>> e4b6172c43556cf0c690db1d52f28fc1b65a0e7b
+=======
+>>>>>>> xixi
 			<a href="#" id="submit-btn">搜索</a>
 		</div>
 		
@@ -176,12 +188,20 @@ $(document).ready(function(e){
 
 </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <div class="hotelbox">
+=======
+
+<div class="hotelbox">
+<br/>
+<div class="roombox" >
+>>>>>>> xixi
 	<div class="img">
 		<img src="http://ws-p.hantinghotels.com/f/m/6es4b1.jpg.190-160.jpg" width="190" height="160"/></div>
 	<div class="desc">
 		<div class="hotelname hasChildTag hasTaxBedge">
+<<<<<<< HEAD
 			<a class="name" title="桔子精选上海静安酒店 + " href="" target="_blank">
 				<h2>桔子精选上海静安酒店</h2>
             </a>
@@ -206,6 +226,24 @@ $(document).ready(function(e){
                                         </div>
 
     <div class="text-center" align="center">
+=======
+				<p class="roomtitle">XXXXX（房间类型）</p>
+         </div>
+         <div class="address">XXXXXXXXXX（房间介绍）</div>                                                                                                 
+         <div class="lastorder"></div>
+         <div class="commentseg hasLabel"></div>
+     </div>
+<div class="rarea">
+<div class="score Ltar">
+<a href="javascript:;" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
+</div>
+</div>
+</div>
+</div>
+                                        
+
+ <div class="text-center" align="center">
+>>>>>>> xixi
     	<table class="table">
 		<thead>
 			<tr>
@@ -224,9 +262,12 @@ $(document).ready(function(e){
 			</tr>
 		</tbody>
 	</table>
+<<<<<<< HEAD
 =======
     <div class="text-center" align="center">
 >>>>>>> e4b6172c43556cf0c690db1d52f28fc1b65a0e7b
+=======
+>>>>>>> xixi
             <ul class="pagination">
                 <li><a href="<c:url value="/list?page=1"/>" >首页</a></li>
                 <li><a href="<c:url value="/list?page=${page-1>1?page-1:1}"/>" >&laquo;</a></li>
@@ -250,11 +291,15 @@ $(document).ready(function(e){
         <div class="inner Lpb25 Lpt25">
             <div class="links Ltac">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> xixi
                 <a href="http://www.huazhu.com/MemberHkh">酒店介绍</a>
                 <a href="http://www.huazhu.com/Affiliate">酒店加盟</a>
                 <a href="http://huazhu.zhiye.com/home/">职位招聘</a>
                 <a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">意见反馈</a>
                 <a href="http://www.huazhu.com/AboutHZ?type=concat">联系我们</a>
+<<<<<<< HEAD
 =======
                 <a href="#">酒店介绍</a>
                 <a href="#">酒店加盟</a>
@@ -262,6 +307,8 @@ $(document).ready(function(e){
                 <a href="#">意见反馈</a>
                 <a href="#">联系我们</a>
 >>>>>>> e4b6172c43556cf0c690db1d52f28fc1b65a0e7b
+=======
+>>>>>>> xixi
             </div>
         </div>
     </div>
