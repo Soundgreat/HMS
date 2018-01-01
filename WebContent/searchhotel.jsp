@@ -36,7 +36,7 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
  <link rel="shortcut icon" href="http://ws-www.hantinghotels.com/newweb/hotels/img/favicon.c14a5d56.ico" type="image/x-icon" />
 
 <script type="text/javascript" src="js/jquery-1.5.1.js" charset="utf-8"></script><!--日期控件，JS库版本不能过高否则tab会失效-->
-
+<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js"></script>
 <script type="text/javascript" src="js/ui.tab.js" charset="utf-8"></script>
 <script type="text/javascript">
 <!--选项卡切换-->
@@ -67,7 +67,18 @@ $(function (){
 	});
 });
 </script>
-
+        <script>
+            var app = angular.module("tableApp",[]);
+            app.controller("tableCon",function($scope){
+                $scope.datas = [
+                    {type:"双人间",describe:"...."},
+                    {type:"大床房",describe:"22"},
+                    {type:"家庭套房",describe:"21"},
+                    {type:"总统套房",describe:"24"},
+                    {type:"五月",describe:"25"}
+                ]
+            });
+        </script>
 </head>
 
 <body>
@@ -139,8 +150,8 @@ $(function (){
 </div>
 
 <br/>
-<div class="roombox" >
-<div class="table-area">
+<div class="roombox" ng-app="tableApp">
+<div class="table-area" ng-controller="tableCon">
     <!--  <table class="search-table">
     <tr >
 	<td class="search-td">
@@ -174,8 +185,28 @@ $(function (){
 	</td>		
 	</tr>
 </table> -->
-
-<table class="search-table" ng-repeat="data in datas">
+<table class="search-table" ng-repeat="data in datas" > <!-- 循环 输出房间-->
+    <tr >
+	<td class="search-td">
+		<img src="images/banner-img3.jpg"  /></td> <!-- 这里从数据库获取数据！！！再决定调用哪张图片！！！ -->
+	
+	
+	<td class="search-td">
+		<p class="roomtitle">{{data.type}}XXXXX（房间类型4）</p></td>
+	
+	
+	<td class="search-td">
+		<div class="address">{{data.describe}}XXXXXXXXXX（房间介绍4）</div> </td>
+	<td class="search-td">
+		<div class="address"></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+	<td class="search-td">
+			<div class="yuding"><br/><br/><a class="viewroomtype"    style="color: #7f1f59;" href="javascript:;"><span>展开全部房型</span><i class="arrow"></i></a></div>
+			<!--  <div class="yuding"><a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">展开查看房间</a></div>-->
+			<!--  <div class="yuding"><a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a></div>-->
+	</td>		
+	</tr>			
+</table>
+<!--  <table class="search-table" ng-repeat="data in datas" >
     <tr >
 	<td class="search-td">
 		<img src="images/banner-img3.jpg"  /></td>
@@ -192,7 +223,7 @@ $(function (){
 	</tr>
 	<tr>
 	<td class="search-td">
-		<div class="address">XXXXXXXXXX（房间介绍4）</div> </td>
+		<div class="address">{{data.describe}}XXXXXXXXXX（房间介绍4）</div> </td>
 	<td class="search-td">	<div class="address">XXXXXXXXXX（房间介绍5）</div> </td>
 	<td class="search-td">	<div class="address">XXXXXXXXXX（房间介绍6）</div> </td>
 	</tr>
@@ -208,6 +239,7 @@ $(function (){
 	</td>		
 	</tr>	
 </table>
+-->
 </div>
 </div>
                                         

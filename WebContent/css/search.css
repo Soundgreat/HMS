@@ -121,6 +121,7 @@ Plist_checkin .item {
     background-color: #7f1f59;
     padding: 0 20px;
     text-align: center;
+    width:120px;
 }
 .Cbtn {
     cursor: pointer;
