@@ -33,6 +33,7 @@
 <section class="US_signup">
     <div class="inner Cwrap">
         <div class="mbox Lcfx Lpb30">
+        <div style="margin-left:96%"><a href="hotelMain.jsp" >返回首页</a></div>
             <div class="lbox Lmt30 Lfll">
                 <div class="item Lcfx">
                     <span class="label Lfll Lfz14 Ltar"><i>*</i>姓 &nbsp;&nbsp;&nbsp; 名</span>

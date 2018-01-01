@@ -41,20 +41,15 @@
                         	<br/>
                             <i class="">&nbsp;</i>用户名：
                             
-<<<<<<< HEAD
                             <input name="username" type="text" v-model="username" placeholder="会员手机号/邮箱" class="input1" maxlength="20">
-=======
-                            <input name="username" type="text" placeholder="会员手机号/邮箱" class="input1" maxlength="20">
->>>>>>> xixi
+                            
                             <br/><br/> <br/>        
                     </div>
                         <div class="">
                             <i class="">&nbsp;</i>密　码：
-<<<<<<< HEAD
+
                                 <input type="password" v-model="userpasswd" placeholder="请输入密码"  class="input1" maxlength="20">
-=======
-                                <input type="password" placeholder="请输入密码"  class="input1" maxlength="20">
->>>>>>> xixi
+
                         </div> 
                  </div>
                     <br/><br/>
@@ -75,20 +70,18 @@
             	<div class="">
             		<br/>
             		<span class=""><i class="">&nbsp;</i>用户名：</span>
-<<<<<<< HEAD
+
                             <input type="text" v-model="staffname" placeholder="公司卡号" class="input1" maxlength="20">  
-=======
-                            <input type="text" placeholder="公司卡号" class="input1" maxlength="20">  
->>>>>>> xixi
+
+
                  </div>
                  	<br/><br/>
                     <div class="">
                         <span class=""><i class="">&nbsp;</i>密　码：</span>
-<<<<<<< HEAD
+
                             <input type="password" v-model="staffpasswd" placeholder="请输入密码" class="input1" maxlength="20" autocomplete="off">
-=======
-                            <input type="password" placeholder="请输入密码" class="input1" maxlength="20" autocomplete="off">
->>>>>>> xixi
+
+
                     </div>
                     <br/><br/>
                      <div class="item Lcfx container">
@@ -140,7 +133,6 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
 	<div id="scriptArea" data-page-id="home/signup">
     <!-- 引入封装了failback的接口--initGeetest -->
     
@@ -191,30 +183,12 @@ $("#myTabContent div[class*='tab-pane']").find("button").click(() => {
 	});
 });
 </script>
-=======
+
 </div>
 
-<!-- 弹出极验验证 -->
-<div id="popup-captcha"></div>
-    <div class="Mfoot">
-        <div class="inner Lpb25 Lpt25">
-            <div class="links Ltac">
-                <a href="http://www.huazhu.com/MemberHkh">酒店介绍</a>
-                <a href="http://www.huazhu.com/Affiliate">酒店加盟</a>
-                <a href="http://huazhu.zhiye.com/home/">职位招聘</a>
-                <a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">意见反馈</a>
-                <a href="http://www.huazhu.com/AboutHZ?type=concat">联系我们</a>
-            </div>
-        </div>
-    </div>
-<div id="scriptArea" data-page-id="home/signup">
-=======
-<div id="scriptArea" data-page-id="home/signup">
-<<<<<<< HEAD
     <!-- 引入封装了failback的接口--initGeetest -->
-=======
->>>>>>> xixi
->>>>>>> 35b1e4e0d6dac2f328511d995ec682fbc87f17da
+
+
     
         <script type="text/javascript" src="https://static.geetest.com/static/tools/gt.js"></script>
     <script type="text/javascript" data-track-script="true" src="https://wshantinghotels.huazhu.com/wa/site/huazhu_track.js"></script>
@@ -226,8 +200,6 @@ $("#myTabContent div[class*='tab-pane']").find("button").click(() => {
 </div>
 <!-- 头部背景 -->
        
-
->>>>>>> xixi
              
 </body>
 </html>

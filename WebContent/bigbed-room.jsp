@@ -68,5 +68,6 @@
 			</div>
 		</div>
 	</section>
+	<%@include file="/bottom.jsp" %>
 </body>
 </html>

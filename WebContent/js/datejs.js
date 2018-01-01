@@ -7,8 +7,8 @@ $(function() {
 			Top : 22,				//弹出时间停靠的上边位置
 			fuhao : "-",			//日期之间的连接符号
 			isTime : false,			//是否开启时间值默认为false
-			beginY : 1949,			//年份的开始默认为1949
-			endY : 2049				//年份的结束默认为2049
+			beginY : 2018,			//年份的开始默认为1949
+			endY : 2020				//年份的结束默认为2049
 		};
 		var options = $.extend(defaults,options);		
 		var stc;
@@ -189,7 +189,7 @@ $(function() {
 			stc = setTimeout(function (){			
 				$(".calender").hide();
 				clearTimeout(stc);
-			},2000);	
+			},3000);	
 		});
 		//当鼠标移到控件上面的时候显示
 		$(".calender").live("mousemove",function(){     

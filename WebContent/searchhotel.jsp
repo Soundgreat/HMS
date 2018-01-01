@@ -35,9 +35,9 @@ ul.pagination li a:hover:not(.active) {background-color: #ddd;}
 <link href="css/main.css" rel="stylesheet"/>
  <link rel="shortcut icon" href="http://ws-www.hantinghotels.com/newweb/hotels/img/favicon.c14a5d56.ico" type="image/x-icon" />
 
-<script type="text/javascript" src="js/jquery-1.5.1.js"></script><!--日期控件，JS库版本不能过高否则tab会失效-->
+<script type="text/javascript" src="js/jquery-1.5.1.js" charset="utf-8"></script><!--日期控件，JS库版本不能过高否则tab会失效-->
 
-<script type="text/javascript" src="js/ui.tab.js"></script>
+<script type="text/javascript" src="js/ui.tab.js" charset="utf-8"></script>
 <script type="text/javascript">
 <!--选项卡切换-->
 $(document).ready(function(){
@@ -52,8 +52,8 @@ $(document).ready(function(){
 });	
 </script>
 
-<script type="text/javascript" src="js/datejs.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" src="js/datejs.js" charset="GBK"></script>
+<script type="text/javascript" charset="GBK">
 <!--日历选择器-->
 $(function (){
 	$("input.mh_date").datejs({					       
@@ -62,21 +62,8 @@ $(function (){
 		Top : -16,//弹出时间停靠的顶部边位置
 		fuhao : "-",//日期连接符默认为-
 		isTime : false,//是否开启时间值默认为false
-		beginY : 2017,//年份的开始默认为2017
+		beginY : 2018,//年份的开始默认为2018
 		endY :2020//年份的结束默认为2020
-	});
-});
-</script>
-
-<script type="text/javascript">
-<!--点击更多-->
-$(document).ready(function(e){
-	$("#selectList").find(".more").toggle(function(){
-		$(this).addClass("more_bg");
-		$(".more-none").show()
-	},function(){
-		$(this).removeClass("more_bg");
-		$(".more-none").hide();
 	});
 });
 </script>
@@ -88,22 +75,20 @@ $(document).ready(function(e){
     <div class="inner Cwrap">
         <div class="mbox">
             <div class="content Lcfx Ltar">
-                <div class="h3 pagename Lfll Lmt30 Lpl25"></div><span class="otherlink Ldib Lmt30 Lpr25"><a href="http://www.huazhu.com/AboutHZ">了解更多</a><i>|</i><a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">反馈意见</a>
+                <div class="h3 pagename Lfll Lmt30 Lpl25">预定房间</div><span class="otherlink Ldib Lmt30 Lpr25"><a href="http://www.huazhu.com/AboutHZ">了解更多</a><i>|</i><a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">反馈意见</a>
             </div>
         </div>
     </div>
 </header>
-<br/>
+<div style="margin-left:93%"><a href="hotelMain.jsp" >返回首页</a></div>
 <div style="width:980px;margin:20px auto 0 auto;">
 
 	<div class="list-screen">
-		
+		<form action="SearchServlet.do" method="post"><!-- 提交数据 -->
 		<div class="screen-top" style="position:relative;">
 			<span>入住日期<input type="text" class="mh_date" readonly="true" id="ruzhu"/></span>
 			<span>退房日期<input type="text" class="mh_date" readonly="true" id="tuifang"/></span>
-			<!--  <span>酒店位置<input type="text" class="ju-adress"  /></span>
-			<span>酒店名称<input type="text" class="ju-name" /></span>-->
-			<a href="#" id="submit-btn">搜索</a>
+			<input type="submit" id="submit-btn" value="搜索"/>
 		</div>
 		
 		<div style="padding:10px 30px 10px 10px;">
@@ -137,7 +122,7 @@ $(document).ready(function(e){
 				</div>   
 			</div>
 		</div>
-	
+	</form>
 		<div class="hasBeenSelected clearfix">
 			<span id="time-num">为你找到<font>XX</font>个房间</span>
 			<div style="float:right;" class="eliminateCriteria">【清空全部】</div>
@@ -148,7 +133,6 @@ $(document).ready(function(e){
 				</dd>
 			</dl>
 		</div>
-		
 		<script type="text/javascript" src="js/shaixuan.js"></script> 
 	
 	</div>
@@ -160,19 +144,19 @@ $(document).ready(function(e){
 <div class="hotelbox">
 <br/>
 <div class="roombox" >
-	<div class="img">
-		<img src="http://ws-p.hantinghotels.com/f/m/6es4b1.jpg.190-160.jpg" width="190" height="160"/></div>
-	<div class="desc">
-		<div class="hotelname hasChildTag hasTaxBedge">
+	<div class="img-search">
+		<img src="images/banner-img3.jpg" width="230" height="160"/></div>
+<div class="rarea">
+	<!--  <div class="desc" style="border-right: 1px dashed #eeeae9;"></div> -->
+		<div class="hoteldiv">
 				<p class="roomtitle">XXXXX（房间类型）</p>
-         </div>
-         <div class="address">XXXXXXXXXX（房间介绍）</div>                                                                                                 
+         <div class="address">XXXXXXXXXX（房间介绍）</div> 
+         </div>                                                                                                
          <div class="lastorder"></div>
          <div class="commentseg hasLabel"></div>
-     </div>
-<div class="rarea">
+   
 <div class="score Ltar">
-<a href="javascript:;" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
+<a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
 </div>
 </div>
 </div>
@@ -180,7 +164,7 @@ $(document).ready(function(e){
                                         
 
  <div class="text-center" align="center">
-    	<table class="table">
+    	<!--  <table class="table">
 		<thead>
 			<tr>
 				<td>序号</td>
@@ -197,7 +181,7 @@ $(document).ready(function(e){
 				<td>{{data.time}}</td>
 			</tr>
 		</tbody>
-	</table>
+	</table>-->
             <ul class="pagination">
                 <li><a href="<c:url value="/list?page=1"/>" >首页</a></li>
                 <li><a href="<c:url value="/list?page=${page-1>1?page-1:1}"/>" >&laquo;</a></li>
@@ -217,18 +201,6 @@ $(document).ready(function(e){
 <div class="hotellist_box Lvh">
 </div>
 <div id="popup-captcha"></div>
-    <div class="Mfoot">
-        <div class="inner Lpb25 Lpt25">
-            <div class="links Ltac">
-                <a href="http://www.huazhu.com/MemberHkh">酒店介绍</a>
-                <a href="http://www.huazhu.com/Affiliate">酒店加盟</a>
-                <a href="http://huazhu.zhiye.com/home/">职位招聘</a>
-                <a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">意见反馈</a>
-                <a href="http://www.huazhu.com/AboutHZ?type=concat">联系我们</a>
-            </div>
-        </div>
-    </div>
-
-
+<%@include file="/bottom.jsp" %>
 </body>
 </html>

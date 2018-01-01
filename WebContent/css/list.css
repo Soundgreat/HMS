@@ -54,7 +54,7 @@ a:hover{text-decoration:none;color:#118ecc;}
 .screen-top span{font-size:14px;padding-left:15px;}
 .screen-top span input{padding:3px;margin-left:10px;height:22px;width:90px;}
 .jiud-name{font-weight:600;padding-top:6px;text-align:left;width:80px;float:left;}
-.list-screen{border:1px solid #ddd;border-top:2px solid #7f1f59;}
+.list-screen{border:1px solid #ddd;border-top:2px solid #ffa63c;}
 #submit-btn{background:url(../images/jdlist_432.png) no-repeat;width:86px;height:30px;text-indent:-999em;display:block;position:absolute;right:10px;top:8px;}
 
 .selectedInfor{border-bottom:#f60 1px solid;position:relative;border-left:#f60 1px solid;padding-bottom:1px;margin:4px 10px 0px 0px;padding-left:5px;padding-right:17px;display:block;white-space:nowrap;background:#fff;float:left;height:17px;border-top:#f60 1px solid;border-right:#f60 1px solid;padding-top:1px;}
