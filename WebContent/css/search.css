@@ -1,8 +1,14 @@
 @charset "UTF-8";
 .img-search{
-	position: absolute;
-	left: 20px;
-	top: 20px;
+	position: relative;
+	left: -200px;
+	width:200px;
+}
+.hotelbox{
+	min-height: 180px;
+	width:560px;
+	border:1px solid #C0C0C0;
+	left:10px;
 }
 .roombox{
 	position: relative;
@@ -14,7 +20,8 @@
 }
 .hoteldiv{
 	min-height: 150px;
-	width:160px;
+	width:260px;
+	left: 220px;
 }
 .roomtitle{
 	display: block;
@@ -24,6 +31,8 @@
     -webkit-margin-start: 0px;
     -webkit-margin-end: 0px;
     font-weight: bold;
+    margin: auto;
+    
 }
 .Cback .item, .Cmbox {
     background-color: #fff;
@@ -137,5 +146,27 @@ a {
     width: 152px;
     position: absolute;
     top: 15px;
-    right: 30px;
+    right: 100px;
 }
+.yuding{
+	
+	padding: 10px 32px;
+	right: 10px;
+	top:10px;
+}
+.search-table{
+	<!--border:0px solid #F00;-->
+	width: 300px;
+	text-align:center;
+}
+.search-td{
+	border:0px solid black;
+	width: 70px;
+	padding:15px;
+}
+.table-area{
+	position: relative;
+	left:-200px;
+	
+}
+

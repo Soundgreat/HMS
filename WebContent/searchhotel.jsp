@@ -137,28 +137,77 @@ $(function (){
 	
 	</div>
 </div>
-<div class="allroom">
 
-</div>
-
-<div class="hotelbox">
 <br/>
 <div class="roombox" >
-	<div class="img-search">
-		<img src="images/banner-img3.jpg" width="230" height="160"/></div>
-<div class="rarea">
-	<!--  <div class="desc" style="border-right: 1px dashed #eeeae9;"></div> -->
-		<div class="hoteldiv">
-				<p class="roomtitle">XXXXX（房间类型）</p>
-         <div class="address">XXXXXXXXXX（房间介绍）</div> 
-         </div>                                                                                                
-         <div class="lastorder"></div>
-         <div class="commentseg hasLabel"></div>
-   
-<div class="score Ltar">
-<a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
-</div>
-</div>
+<div class="table-area">
+    <!--  <table class="search-table">
+    <tr >
+	<td class="search-td">
+		<img src="images/banner-img3.jpg"  /></td>
+	<td class="search-td">
+		<img src="images/banner-img3.jpg" /></td>
+	<td class="search-td">
+	<img src="images/banner-img3.jpg"/></td>
+	</tr>
+	<tr>
+	<td class="search-td">
+		<p class="roomtitle">XXXXX（房间类型1）</p></td>
+	<td class="search-td">	<p class="roomtitle">XXXXX（房间类型2）</p></td>
+	<td class="search-td">	<p class="roomtitle">XXXXX（房间类型3）</p></td>
+	</tr>
+	<tr>
+	<td class="search-td">
+		<div class="address">XXXXXXXXXX（房间介绍1）</div> </td>
+	<td class="search-td">	<div class="address">XXXXXXXXXX（房间介绍2）</div> </td>
+	<td class="search-td">	<div class="address">XXXXXXXXXX（房间介绍3）</div> </td>
+	</tr>
+	<tr>
+	<td class="search-td">
+			<a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
+	</td>
+	<td class="search-td">
+			<a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
+	</td>
+	<td class="search-td">
+			<a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
+	</td>		
+	</tr>
+</table> -->
+
+<table class="search-table" ng-repeat="data in datas">
+    <tr >
+	<td class="search-td">
+		<img src="images/banner-img3.jpg"  /></td>
+	<td class="search-td">
+		<img src="images/banner-img4.jpg" /></td>
+	<td class="search-td">
+	<img src="images/banner-img2.jpg"/></td>
+	</tr>
+	<tr>
+	<td class="search-td">
+		<p class="roomtitle">{{data.type}}XXXXX（房间类型4）</p></td>
+	<td class="search-td">	<p class="roomtitle">XXXXX（房间类型5）</p></td>
+	<td class="search-td">	<p class="roomtitle">XXXXX（房间类型6）</p></td>
+	</tr>
+	<tr>
+	<td class="search-td">
+		<div class="address">XXXXXXXXXX（房间介绍4）</div> </td>
+	<td class="search-td">	<div class="address">XXXXXXXXXX（房间介绍5）</div> </td>
+	<td class="search-td">	<div class="address">XXXXXXXXXX（房间介绍6）</div> </td>
+	</tr>
+	<tr>
+	<td class="search-td">
+			<a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
+	</td>
+	<td class="search-td">
+			<a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
+	</td>
+	<td class="search-td">
+			<a href="order.jsp" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
+	</td>		
+	</tr>	
+</table>
 </div>
 </div>
                                         
