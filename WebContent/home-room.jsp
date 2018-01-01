@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>双人房简介</title>
+<title>家庭套房简介</title>
   	<link rel="stylesheet" href="css/zerogrid.css">
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/menu.css">
@@ -38,28 +38,28 @@
 					<div class="zerogrid" style="box-shadow: 0 4px 8px 0 rgba(0, 1, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
 						<article>
 							<div class="art-content t-center">
-									<h4 class="outlinedA">双人间</h4>
+									<h4 class="outlinedA">家庭套房</h4>
 								</div>
 							<div class="col-1-2">
 								<div class="art-header">
-									<img src="images/12.jpg"/>
+									<img src="images/13.jpg"/>
 								</div>
 							</div>	
 					
 								<div class="art-content" style="margin-left:54%">
 									<ul>
-									<li><h5 >推荐指数：★★★★★</h5></li>
-									<li><h>床型：双床</h></li>
-									<li><h>面积：29</h></li>
+									<li><h5 >推荐指数：★★★★</h5></li>
+									<li><h>床型：大床+小床</h></li>
+									<li><h>面积：38</h></li>
 									<li><h>窗户：有</h></li>
-									<li><h>入住人数：2人(可加床)</h></li>
-									<li><h>￥108起</h></li>
+									<li><h>入住人数：3人</h></li>
+									<li><h>￥198起</h></li>
 									<br/>
 									<li><h5>我们还将为您提供：</h5>
 									<p>&ensp;&ensp;&ensp;&ensp;24hours wifi &ensp; 独立卫生间</p></li>
 									</ul>
 									<br/><br/><br/><br/>
-									<p>tips:闺蜜&情侣的最佳选择</p>
+									<p>tips:旅途 依然是家的感觉</p>
 								</div>
 													
 						</article>

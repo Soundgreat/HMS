@@ -150,17 +150,16 @@ $(function() {
 		</li>
 		<li>
 			<a title="" href="#">
-				<img width="1920" height="482" alt="" style="background: url(images/lunbo2.jpg) no-repeat center;" src="images/alpha.png">
+				<img width="1920" height="482" alt="" style="background: url(images/lunbo3.jpg) no-repeat center;" src="images/alpha.png">
 			</a>
 		</li>
 		<li>
 			<a title="" href="#">
-				<img width="1920" height="482" alt="" style="background: url(images/lunbo3.jpg) no-repeat center;" src="images/alpha.png">
+				<img width="1920" height="482" alt="" style="background: url(images/3.jpg) no-repeat center;" src="images/alpha.png">
 			</a>
 
 		</li>		
-
-		</li>	
+	
 
 	</ul>
 	<ul class="flex-direction-nav">
@@ -223,29 +222,29 @@ $(function() {
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_tianjin.jpg"></div>
                     <div class="words">
                         <p class="hotelsummary">旅途中还有身边的你陪伴</p>
-                        <p class="hoteldetail"><a target="_blank" href="double-room.jsp">查看房间<i class="arrowright"></i></a></p>
+                        <p class="hoteldetail"><a  href="double-room.jsp">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
                 <li class="item Lposr Lfll">
                     <h2 class="hotelname Lposa">
-                        <a href="javascript:;">家庭套房</a>
+                        <a href="home-room.jsp">家庭套房</a>
                         <div class="bg"></div>
                     </h2>
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_beijingtiantan.jpg"></div>
                     <div class="words">
                         <p class="hotelsummary">家的感觉 真好</p>
-                        <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/1000051">查看房间<i class="arrowright"></i></a></p>
+                        <p class="hoteldetail"><a href="home-room.jsp">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
                 <li class="item Lposr Lfll">
                     <h2 class="hotelname Lposa">
-                        <a href="javascript:;">大床房</a>
+                        <a href="bigbed-room.jsp">大床房</a>
                         <div class="bg"></div>
                     </h2>
                     <div class="hotelpic"><img src="images/memberHZ-01.png"></div>
                     <div class="words">
                         <p class="hotelsummary">就算一个人 也要霸占一张大床</p>
-                        <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/3100063">查看房间<i class="arrowright"></i></a></p>
+                        <p class="hoteldetail"><a href="bigbed-room.jsp">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
             </ul>

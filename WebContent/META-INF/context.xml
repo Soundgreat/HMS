@@ -7,7 +7,7 @@
         minIdle = "2"
         maxWait = "5000"
         username = "root"
-        password = "123123"
+        password = "123456"
         driverClassName = "com.mysql.jdbc.Driver"
         url = "jdbc:mysql://localhost:3306/hms?useSSL=false"/>
 </Context>

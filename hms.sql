@@ -77,7 +77,7 @@ create table 住客
 姓名 varchar(20) not null,
 性别 enum('男', '女'),
 年龄 int,
-联系方式 char(11),
+联系方式 char(11)
 );
 
 create table 预定中订单
