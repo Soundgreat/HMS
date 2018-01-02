@@ -8,6 +8,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * Servlet Filter implementation class Filter
@@ -16,11 +18,10 @@ import javax.servlet.annotation.WebInitParam;
 		filterName = "authorityFilter",
 		urlPatterns = { "/*" },
 		initParams = {
-				@WebInitParam(name = "encoding", value = "utf-8"),
-				@WebInitParam(name = "loginPage", value = "login.jsp"),
-				@WebInitParam(name = "homePage", value = "login.jsp"),
-				@WebInitParam(name = "managerPage", value = "login.jsp"),
-				@WebInitParam(name = "receptionistPage", value = "login.jsp")
+				@WebInitParam(name = "register", value = "register.jsp"),
+				@WebInitParam(name = "login", value = "login.jsp"),
+				@WebInitParam(name = "home", value = "hotelMain.jsp"),
+				@WebInitParam(name = "search", value = "searchhotel.jsp")
 		})
 public class AuthorityFilter implements javax.servlet.Filter {
 	private FilterConfig config; 
@@ -42,10 +43,19 @@ public class AuthorityFilter implements javax.servlet.Filter {
 	 * @see AuthorityFilter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		// TODO Auto-generated method stub
-		// place your code here
-
-		// pass the request along the filter chain
+		HttpServletRequest hRequest = (HttpServletRequest) request;
+		String path = hRequest.getServletPath();
+		ClientBean user = (ClientBean)hRequest.getSession().getAttribute("user");
+		String register = config.getInitParameter("register");
+		String login = config.getInitParameter("login");
+		String home = config.getInitParameter("home");
+		String search = config.getInitParameter("search");
+		if (user == null) {
+			if (!path.endsWith(register) && !path.endsWith(login)
+					&& !path.endsWith(home) && !path.endsWith(search)) {
+				hRequest.getRequestDispatcher("login.jsp").forward(request, response);
+			}
+		}
 		chain.doFilter(request, response);
 	}
 

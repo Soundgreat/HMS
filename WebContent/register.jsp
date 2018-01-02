@@ -33,40 +33,39 @@
 <section class="US_signup">
     <div class="inner Cwrap">
         <div class="mbox Lcfx Lpb30">
-        <div style="margin-left:96%"><a href="hotelMain.jsp" >返回首页</a></div>
             <div class="lbox Lmt30 Lfll">
                 <div class="item Lcfx">
                     <span class="label Lfll Lfz14 Ltar"><i>*</i>姓 &nbsp;&nbsp;&nbsp; 名</span>
                     <div class="inputbox signUp_userName Lfll">
-                        <input type="text" placeholder="请填写身份证中的姓名" class="input1" maxlength="25">
+                        <input type="text" name="username" placeholder="请填写身份证中的姓名" class="input1" maxlength="25">
                     </div>
                     <div class="tips error Lfll Lfz12 Lpl5 Lpr5"><i class="Cicon small_error">&nbsp;</i><em>请填写您有效证件上的姓名</em></div>
                 </div>
                 <div class="item Lcfx">
                     <span class="label Lfll Lfz14 Ltar"><i>*</i>身 份 证 号 码</span>
                     <div class="inputbox signUp_userName Lfll">
-                        <input type="text" placeholder="请填写身份证号码" class="input1" maxlength="25">
+                        <input type="number" name="idcard" placeholder="请填写身份证号码" class="input1" maxlength="25">
                     </div>
                     <div class="tips error Lfll Lfz12 Lpl5 Lpr5"><i class="Cicon small_error">&nbsp;</i><em>请填写您有效证件上的号码</em></div>
                 </div>
                 <div class="item Lcfx">
                     <span class="label Lfll Lfz14 Ltar"><i>*</i>手 机 号</span>
                     <div class="inputbox signUp_tel Lfll">
-                        <input type="text" placeholder="可作为登录名" class="input1" maxlength="11">
+                        <input type="text" name="phone" placeholder="可作为登录名" class="input1" maxlength="11">
                     </div>
                     <div class="tips notice Lfll Lfz12 Lpl5 Lpr5"><i class="Cicon small_notice">&nbsp;</i><em>请填写手机号</em></div>
                 </div>
                 <div class="item Lcfx">
                     <span class="label Lfll Lfz14 Ltar"><i>*</i>密 &nbsp;&nbsp;&nbsp; 码</span>
                     <div class="inputbox signUp_psw Lfll">
-                        <input type="password" placeholder="6~16个字符，区分大小写" class="input1 notplaceholder" maxlength="18">
+                        <input type="password" name="passwd1" placeholder="6~16个字符，区分大小写" class="input1 notplaceholder" maxlength="18">
                     </div>
                     <div class="tips ok Lfll Lfz12 Lpl5 Lpr5"><i class="Cicon small_ok">&nbsp;</i><em></em></div>
                 </div>
                 <div class="item Lcfx">
                     <span class="label Lfll Lfz14 Ltar"><i>*</i>确认密码</span>
                     <div class="inputbox signUp_aPsw Lfll">
-                        <input type="password" placeholder="请再次填写密码" class="input1 notplaceholder" maxlength="18">
+                        <input type="password" name="passwd2" placeholder="请再次填写密码" class="input1 notplaceholder" maxlength="18">
                     </div>
                     <div class="tips notice Lfll Lfz12 Lpl5 Lpr5"><i class="Cicon small_notice">&nbsp;</i><em>两次填写的密码不一致</em></div>
                 </div>             
@@ -131,6 +130,6 @@
     <!--[if lte IE 9]><script src="/Content/js/jquery.placeholder.min.js"></script>
         <script>$('input:not(".notplaceholder"), textarea').placeholder();</script><![endif]-->
 </div>
-    
+<script src="js/register.js"></script>
 </body>
 </html>

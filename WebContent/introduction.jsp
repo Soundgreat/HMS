@@ -19,7 +19,7 @@
     <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div class="wrap-body"></div>
+<div class="wrap-body">
 
 <!--////////////////////////////////////Header-->
 
@@ -58,9 +58,7 @@
 			</div>
 		</div>
 	</section>
-
-<%@include file="/bottom.jsp" %>
-
+	
 <!--////////////////////////////////////Footer-->
 <!--<footer>
 	  <div class="zerogrid">

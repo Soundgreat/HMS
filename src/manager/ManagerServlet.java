@@ -45,16 +45,16 @@ public class ManagerServlet extends HttpServlet {
 				JSONObject tableJobj = new JSONObject();
 				String[] allFields = JDBC.getFields(sc, table);
 				ArrayList<String> fields = new ArrayList<String>();
-				for (String s : allFields) if (!s.equals("密码")) fields.add(s);
+				for (String s : allFields) if (!s.equals("瀵嗙爜")) fields.add(s);
 				tableJobj.put("fields", fields);
-				if (table.equals("员工") || table.equals("客房") || table.equals("客房类型")) {
+				if (table.equals("瀹㈡埧绫诲瀷") || table.equals("瀹㈡埧") || table.equals("鍛樺伐")) {
 					tableJobj.put("insertable", true);
 					tableJobj.put("updatable", true);
 					tableJobj.put("removable", true);
 				} else {
-					tableJobj.put("insertable", false);
-					tableJobj.put("updatable", false);
-					tableJobj.put("removable", false);
+					tableJobj.put("insertable", true);
+					tableJobj.put("updatable", true);
+					tableJobj.put("removable", true);
 				}
 				res.put(table, tableJobj);
 			}
@@ -90,7 +90,7 @@ public class ManagerServlet extends HttpServlet {
 			String field = request.getParameter("field");
 			String queryValue = request.getParameter("queryvalue");
 			String[][] result = null;
-			if (table.contains("订单") && !table.equals("订单")) {
+			if (table.contains("璁㈠崟") && !table.equals("璁㈠崟")) {
 				result = JDBC.querySpecificOrder(sc, table, field, queryValue);
 			} else {
 				result = JDBC.queryDirectly(sc, table, field, queryValue);
@@ -108,7 +108,7 @@ public class ManagerServlet extends HttpServlet {
 			JSONArray list = new JSONArray(values);
 			ArrayList<String> valueList = new ArrayList<String>();
 			for (int i = 0; i < list.length(); i++) valueList.add(list.getString(i));
-			if (table.equals("员工")) {
+			if (table.equals("鍛樺伐")) {
 				String staffid = JDBC.getStaffid(sc, valueList.get(1));
 				valueList.add(0, staffid);
 				valueList.add(staffid);

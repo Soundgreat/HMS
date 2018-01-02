@@ -1,14 +1,15 @@
 package global;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.naming.Context;
@@ -17,11 +18,13 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
+import customer.RoomBean;
+
 public class JDBC {
 	/**
 	 * 	ENUMS
 	 */
-	private static final ArrayList<String> STAFF_ROLES = new ArrayList<String>(Arrays.asList("æ≠¿Ì", "«∞Ã®"));
+	private static final ArrayList<String> STAFF_ROLES = new ArrayList<String>(Arrays.asList("ÁªèÁêÜ", "ÂâçÂè∞"));
 	
 	/**
 	 * Connection
@@ -80,7 +83,7 @@ public class JDBC {
 			PreparedStatement st = cn.prepareStatement(sql);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
-				if (!rs.getString(1).equals("◊°øÕ_∂©µ•")) tables.add(rs.getString(1));	
+				if (!rs.getString(1).equals("‰ΩèÂÆ¢_ËÆ¢Âçï")) tables.add(rs.getString(1));	
 			}
 			rs.close();
 			st.close();
@@ -138,12 +141,12 @@ public class JDBC {
 	public static ArrayList<String> getRoomTypes(ServletContext sc) {
 		ArrayList<String> roomTypes = new ArrayList<String>();
 		Connection cn = JDBC.getConnection(sc);
-		String sql = "SELECT ¿‡–Õ FROM øÕ∑ø¿‡–Õ;";
+		String sql = "SELECT Á±ªÂûã  FROM ÂÆ¢ÊàøÁ±ªÂûã;";
 		try {
 			PreparedStatement st = cn.prepareStatement(sql);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
-				roomTypes.add(rs.getString("¿‡–Õ"));
+				roomTypes.add(rs.getString("Á±ªÂûã"));
 			}
             rs.close();
 			st.close();
@@ -182,7 +185,7 @@ public class JDBC {
 	public static String[][] querySpecificOrder(ServletContext sc, String table, String field, String queryValue){
 		String[][] result = null;
 		try {
-			String referencedTable = "∂©µ•";
+			String referencedTable = "ËÆ¢Âçï";
 			String sql = "SELECT * FROM " + referencedTable + " NATURAL JOIN " + table + " WHERE " + field + " LIKE '%" + queryValue + "%'; "; 
 			Connection cn = getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
@@ -239,7 +242,7 @@ public class JDBC {
 		String newStaffid = null;
 		try {
 			Connection cn = getConnection(sc);
-			String sql = "SELECT ‘±π§∫≈ FROM ‘±π§ WHERE ‘±π§∫≈ LIKE ?; ";
+			String sql = "SELECT ÂëòÂ∑•Âè∑ FROM ÂëòÂ∑•  WHERE ÂëòÂ∑•Âè∑  LIKE ?; ";
 			PreparedStatement st = cn.prepareStatement(sql);
 			st.setString(1,roleid+"%");
 			ResultSet rs = st.executeQuery();
@@ -247,7 +250,7 @@ public class JDBC {
 			String currentStaffid = null;
 			Integer currentRoleNumber = null, newRoleNumber = count + 1;
 			while (rs.next()) {
-				currentStaffid = rs.getString("‘±π§∫≈");
+				currentStaffid = rs.getString("ÂëòÂ∑•Âè∑");
 				currentRoleNumber = Integer.valueOf(currentStaffid.substring(1, currentStaffid.length()));
 				if (currentRoleNumber > count + 1) {
 					newRoleNumber = count + 1;
@@ -268,11 +271,20 @@ public class JDBC {
 	}
 	
 	public static String getOrderid() {
-		Date genTime = new Date( );
-	      SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMddhhmmssS");
-	      return sdf.format(genTime);
+		java.util.Date genTime = new java.util.Date( );
+	    SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMddHHmmssS");
+	    return sdf.format(genTime);
 	}
 	
+	public static java.util.Date getDate(String datestr) {
+		java.util.Date date = null;
+		try {
+			date = new SimpleDateFormat("yyyy-MM-dd").parse(datestr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
 	public static int setData(PreparedStatement st, String dataType, int idx, String value) {
 		int status = 0;
 		if (dataType == null) return status;
@@ -283,22 +295,22 @@ public class JDBC {
 			} else if (dataType.equals("bit")) {
 				if (value == null) st.setNull(idx, java.sql.Types.BIT);
 				else st.setInt(idx, Integer.valueOf(value));
-			} else if (dataType.equals("date")) {
-				if (value == null) st.setNull(idx, java.sql.Types.DATE);
-				else {
-					long date = Long.valueOf(value);
-					st.setDate(idx, new java.sql.Date(date));
-				}
+			} else if (dataType.equals("enum")) {
+				if (value == null) st.setNull(idx, java.sql.Types.CHAR);
+				else st.setString(idx, value);
 			} else if (dataType.equals("char")) {
 				if (value == null) st.setNull(idx, java.sql.Types.CHAR);
 				else st.setString(idx, value);
 			} else if (dataType.equals("varchar")) {
 				if (value == null) st.setNull(idx, java.sql.Types.VARCHAR);
 				else st.setString(idx, value);
+			} else if (dataType.equals("date")) {
+				if (value == null) st.setNull(idx, java.sql.Types.DATE);
+				else st.setDate(idx, new java.sql.Date(getDate(value).getTime()));
 			}
 			status = 1;
 		} catch (SQLException e) {
-			// TODO: handle exception
+			// pass
 		}
 		return status;
 	}
@@ -310,7 +322,7 @@ public class JDBC {
 			String[] dataTypes = getDataTypes(cn, table);
 			StringBuilder dynamicSql = new StringBuilder();
 			dynamicSql.append("INSERT INTO ").append(table).append(" VALUES(");
-			int colNum = fullValues.size();
+			int colNum = dataTypes.length;
 			for (int i = 0; i < colNum; i++) {
 				if(i < colNum - 1) dynamicSql.append("?,");
 				else dynamicSql.append("?);");
@@ -378,19 +390,19 @@ public class JDBC {
 	
 	public static int[] getRoomNums(ServletContext sc) {
 			Connection cn = getConnection(sc);
-			String[] sqls = {"SELECT ∑ø∫≈  FROM øÕ∑ø  WHERE ø’÷√ = 1; ", "SELECT ∑ø∫≈ FROM øÕ∑ø WHERE ø’÷√  = 0; "};
+			String[] sqls = {"SELECT ÊàøÂè∑  FROM ÂÆ¢Êàø  WHERE Á©∫ÁΩÆ = 1; ", "SELECT ÊàøÂè∑ FROM ÂÆ¢Êàø  WHERE Á©∫ÁΩÆ  = 0; "};
 			return getNums(cn, sqls);
 	}
 	
 	public static int[] getSpecificOrderNums(ServletContext sc) {
 		Connection cn = getConnection(sc);
-		String[] sqls = {"SELECT ∂©µ•∫≈ FROM ‘§∂®÷–∂©µ•;", "SELECT ∂©µ•∫≈ FROM Ωª“◊÷–∂©µ•;", "SELECT ∂©µ•∫≈ FROM “—ÕÍ≥…∂©µ•;" };
+		String[] sqls = {"SELECT ËÆ¢ÂçïÂè∑ FROM È¢ÑÂÆö‰∏≠ËÆ¢Âçï;", "SELECT ËÆ¢ÂçïÂè∑ FROM ‰∫§Êòì‰∏≠ËÆ¢Âçï;", "SELECT ËÆ¢ÂçïÂè∑ FROM Â∑≤ÂÆåÊàêËÆ¢Âçï;" };
 		return getNums(cn, sqls);
 	}
 	
 	public static int[] getClientNums(ServletContext sc) {
 		Connection cn = getConnection(sc);
-		String[] sqls = {"SELECT …Ì∑›÷§∫≈ FROM ”√ªß ;", "SELECT …Ì∑›÷§∫≈ FROM ◊°øÕ;"};
+		String[] sqls = {"SELECT Ë∫´‰ªΩËØÅÂè∑  FROM Áî®Êà∑ ;", "SELECT ÂëòÂ∑•Âè∑  FROM ÂëòÂ∑•;"};
 		return getNums(cn, sqls);
 	}
 	
@@ -421,25 +433,30 @@ public class JDBC {
 	 * @param accountType
 	 * @param name
 	 * @param passwd
-	 * @return
+	 * @return -1(IDÂ∑≤Ë¢´Ê≥®ÂÜå), 0(Ê≥®ÂÜåÂ§±Ë¥•), 1(Ê≥®ÂÜåÊàêÂäü)
 	 */
-	public static int permitSignUp(ServletContext sc, String accountType, String name, String passwd) {
+	public static int permitSignUp(ServletContext sc, String accountType, String id, String name, String phone, String passwd) {
 		int status = 1;
 		switch (accountType) {
-		case "user":
-			String[] idcards = getSingleFieldValue(sc, "”√ªß", "…Ì∑›÷§∫≈", "…Ì∑›÷§∫≈", name);
+		case "private":
+			String[] idcards = getSingleFieldValue(sc, "Áî®Êà∑", "Ë∫´‰ªΩËØÅÂè∑", "Ë∫´‰ªΩËØÅÂè∑", id);
 			if (idcards.length <= 0) {
 				ArrayList<String> values = new ArrayList<String>();
-				values.add(name);
+				values.add(id);
 				values.add(passwd);
-				if (insertRow(sc, "”√ªß", values) <= 0) status = -1;
-			} else status = 0;
+				values.add(name);
+				values.add(null);
+				values.add(null);
+				values.add(phone);
+				if (insertRow(sc, "Áî®Êà∑", values) <= 0) status = 0;
+			} else status = -1;
 			break;
-		case "staff":
-			String[] staffids = getSingleFieldValue(sc, "”√ªß", "‘±π§∫≈", "‘±π§∫≈", name);
+		case "company":
+			String[] staffids = getSingleFieldValue(sc, "ÂëòÂ∑•", "ÂëòÂ∑•Âè∑", "ÂëòÂ∑•Âè∑", id);
 			if (staffids.length > 0) {
-				if (updateSingleValue(sc, "‘±π§", "‘±π§∫≈", name, "√‹¬Î", passwd) <= 0) status = -1;
-			} else status = 0;
+				if (updateSingleValue(sc, "ÂëòÂ∑•", "ÂëòÂ∑•Âè∑", id, "ÂØÜÁ†Å", passwd) <= 0 ||
+						updateSingleValue(sc, "ÂëòÂ∑•", "ÂëòÂ∑•Âè∑", id, "ËÅîÁ≥ªÊñπÂºè", phone) <= 0) status = 0;
+			} else status = -1;
 			break;
 		default:
 			break;
@@ -453,31 +470,33 @@ public class JDBC {
 	 * @param accountType
 	 * @param name
 	 * @param passwd
-	 * @return -1(√‹¬Î¥ÌŒÛ), 0(√˚≥∆¥ÌŒÛ), 1(”√ªßµ«¬Ω≥…π¶), 2(æ≠¿Ìµ«¬Ω≥…π¶), 3(«∞Ã®µ«¬Ω≥…π¶)
+	 * @return -1(ÂØÜÁ†ÅÈîôËØØ), 0(Ë¥¶Âè∑‰∏çÂ≠òÂú®), 1(Áî®Êà∑ÁôªÈôÜ), 2(ÁªèÁêÜÁôªÈôÜ), 3(ÂâçÂè∞ÁôªÈôÜ)
 	 */
-	public static int permitSignIn(ServletContext sc, String accountType, String name, String passwd, String[] showingName) {
+	public static int permitSignIn(ServletContext sc, String accountType, String id, String passwd, String[] name, String[] phone) {
 		int status = 0;
 		switch (accountType) {
 		case "private":
-			String[] userPasswds = getSingleFieldValue(sc, "”√ªß", "√‹¬Î", "…Ì∑›÷§∫≈", name);
-			if (userPasswds.length <=0) status = 0;
+			String[] userPasswds = getSingleFieldValue(sc, "Áî®Êà∑", "ÂØÜÁ†Å", "Ë∫´‰ªΩËØÅÂè∑", id);
+			if (userPasswds.length <= 0) status = 0;
 			else {
 				if (!userPasswds[0].equals(passwd)) status = -1;
 				else {
 					status = 1;
-					showingName[0] = getSingleFieldValue(sc, "”√ªß", "–’√˚", "…Ì∑›÷§∫≈", name)[0];
+					name[0] = getSingleFieldValue(sc, "Áî®Êà∑", "ÂßìÂêç", "Ë∫´‰ªΩËØÅÂè∑", id)[0];
+					phone[0] = getSingleFieldValue(sc, "Áî®Êà∑", "ËÅîÁ≥ªÊñπÂºè", "Ë∫´‰ªΩËØÅÂè∑", id)[0];
 				}
 			}
 			break;
 		case "company":
-			String[] staffPasswds = getSingleFieldValue(sc, "‘±π§", "√‹¬Î", "‘±π§∫≈", name);
+			String[] staffPasswds = getSingleFieldValue(sc, "ÂëòÂ∑•", "ÂØÜÁ†Å", "ÂëòÂ∑•Âè∑", id);
 			if (staffPasswds.length <= 0) status = 0;
 			else {
 				if (!staffPasswds[0].equals(passwd)) status = -1;
 				else {
-					if (name.startsWith("0")) status = 2;
-					if (name.startsWith("1")) status = 3;
-					showingName[0] = getSingleFieldValue(sc, "‘±π§", "–’√˚", "‘±π§∫≈", name)[0];
+					if (id.startsWith("0")) status = 2;
+					if (id.startsWith("1")) status = 3;
+					name[0] = getSingleFieldValue(sc, "ÂëòÂ∑•", "ÂßìÂêç", "ÂëòÂ∑•Âè∑", id)[0];
+					phone[0] = getSingleFieldValue(sc, "ÂëòÂ∑•", "ËÅîÁ≥ªÊñπÂºè", "ÂëòÂ∑•Âè∑", id)[0];
 				}
 			}
 			break;
@@ -487,15 +506,34 @@ public class JDBC {
 		return status;
 	}
 	
-	public static HashMap<String, Integer> searchRoom(ServletContext sc, String roomType) {
-		HashMap<String, Integer> roomTypeInfo = new HashMap<String, Integer>();
+	public static ArrayList<RoomBean> searchRoom(ServletContext sc, String checkinDate, String checkoutDate, String roomType) {
+		ArrayList<RoomBean> searchedRooms = new ArrayList<RoomBean>();
 		try {
-			String sql = "SELECT ¿‡–Õ,”‡¡ø FROM øÕ∑ø¿‡–Õ; ";
+			String sql = "SELECT DISTINCT O.ËÆ¢ÂçïÁä∂ÊÄÅ, O.ÂÖ•‰ΩèÊó•Êúü, O.Á¶ªÂ∫óÊó•Êúü, M.Á©∫ÁΩÆ, M.ÊàøÂè∑, \n" + 
+					"M.Á±ªÂûã, T.ÊèèËø∞ AS Á±ªÂûãÊèèËø∞, M.ÊèèËø∞ AS ÂÆ¢ÊàøÊèèËø∞, M.ÊúùÂêë, T.ÂÆπÈáè, T.‰ª∑Ê†º\n" + 
+					"FROM ÂÆ¢Êàø AS M\n" + 
+					"JOIN ÂÆ¢ÊàøÁ±ªÂûã AS T ON M.Á±ªÂûã = T.Á±ªÂûã\n" + 
+					"JOIN ÂÆ¢Êàø_ËÆ¢Âçï AS R ON M.ÊàøÂè∑ = R.ÊàøÂè∑\n" + 
+					"LEFT JOIN ËÆ¢Âçï AS O ON R.ËÆ¢ÂçïÂè∑ = O.ËÆ¢ÂçïÂè∑\n" + 
+					"WHERE NOT (M.Á±ªÂûã != ?  OR M.Á©∫ÁΩÆ = 0\n" + 
+					"OR (O.ËÆ¢ÂçïÁä∂ÊÄÅ = '‰∫§Êòì‰∏≠' AND (O.ÂÖ•‰ΩèÊó•Êúü >= ? OR O.Á¶ªÂ∫óÊó•Êúü < ?)))\n" + 
+					"GROUP BY M.ÊàøÂè∑ HAVING COUNT(M.ÊàøÂè∑) >= 1; ";
 			Connection cn = getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
+			setData(st, "varchar", 1, roomType);
+			setData(st, "date", 2, checkoutDate);
+			setData(st, "date", 3, checkinDate);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
-				if (rs.getInt(2) > 0) roomTypeInfo.put(rs.getString(1), rs.getInt(2));
+				RoomBean room = new RoomBean();
+				room.setRoomId(rs.getString("ÊàøÂè∑"));
+				room.setRoomType(rs.getString("Á±ªÂûã"));
+				room.setTypeDesc(rs.getString("Á±ªÂûãÊèèËø∞"));
+				room.setRoomDesc(rs.getString("ÂÆ¢ÊàøÊèèËø∞"));
+				room.setOrientation(rs.getString("ÊúùÂêë"));
+				room.setCapacity(rs.getInt("ÂÆπÈáè"));
+				room.setPrice(rs.getInt("‰ª∑Ê†º"));
+				searchedRooms.add(room);
 			}
 			rs.close();
 			st.close();
@@ -503,45 +541,76 @@ public class JDBC {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return roomTypeInfo;
+		return searchedRooms;
 	}
 	
-	public static int bookRoom(ServletContext sc, String roomType) {
-		int status = 0;
+	public static String bookRoom(ServletContext sc, String roomType) {
+		String roomId = null;
 		try {
-			String sql = "SELECT ”‡¡ø FROM øÕ∑ø¿‡–Õ; ";
+			String sql = "SELECT ÊàøÂè∑ FROM ÂÆ¢Êàø  AS A NATURAL JOIN ÂÆ¢ÊàøÁ±ªÂûã  AS B ON A.Á±ªÂûã  = B.Á±ªÂûã; ";
 			Connection cn = getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
 			ResultSet rs = st.executeQuery();
-			int newSurplus = rs.getInt(1) - 1;
-			status = updateSingleValue(sc, "øÕ∑ø¿‡–Õ", "¿‡–Õ", roomType, "”‡¡ø", String.valueOf(newSurplus));
+			if (rs.next()) {
+				int newSurplus = rs.getInt(1) - 1;
+				if (updateSingleValue(sc, "ÂÆ¢ÊàøÁ±ªÂûã", "Á±ªÂûã", roomType, "‰ª∑Ê†º", String.valueOf(newSurplus)) > 0) {
+					roomId = rs.getString("ÊàøÂè∑");
+				}
+			}
 			rs.close();
 			st.close();
 			cn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return status;
+		return roomId;
 	}
 	
-	public static int generateOrder(ServletContext sc, String roomType, String checkinDate, String checkoutDate, String phoneNum, HashMap<String, HashMap<String, String>> lodgers) {
-		int status = 0;
+	public static String generateOrder(ServletContext sc, String[] checkDate, RoomBean room, ArrayList<ClientBean> lodgers) {
 		String orderid = getOrderid();
 		ArrayList<String> fullValues = new ArrayList<String>();
 		fullValues.add(orderid);
 		int lodgersNum = lodgers.size();
 		fullValues.add(String.valueOf(lodgersNum));
-		fullValues.add(checkinDate);
-		fullValues.add(checkoutDate);
-		int price = Integer.valueOf(getSingleFieldValue(sc, "øÕ∑ø¿‡–Õ", "º€∏Ò", "øÕ∑ø¿‡–Õ", roomType)[0]);
-		int days = (int)((new Date(Long.valueOf(checkoutDate)).getTime() - new Date(Long.valueOf(checkinDate)).getTime())/(1000*3600*24)+0.5);
+		fullValues.add(checkDate[0]);
+		fullValues.add(checkDate[1]);
+		int price = room.getPrice();
+		int days = (int)((getDate(checkDate[1]).getTime() - getDate(checkDate[0]).getTime())/(1000*3600*24)+0.5);
 		int totalPrice = price * days;
 		fullValues.add(String.valueOf(totalPrice));
-		fullValues.add(phoneNum);
+		fullValues.add(lodgers.get(0).getPhone());
 		fullValues.add(null);
 		fullValues.add(null);
-		fullValues.add("‘§∂©÷–");
-		status = insertRow(sc, "∂©µ•", fullValues);
-		return status;
+		fullValues.add("È¢ÑÂÆö‰∏≠");
+		insertRow(sc, "ËÆ¢Âçï", fullValues);
+
+		for (ClientBean lodger : lodgers) {
+			String[] idcards = getSingleFieldValue(sc, "‰ΩèÂÆ¢", "Ë∫´‰ªΩËØÅÂè∑", "Ë∫´‰ªΩËØÅÂè∑", lodger.getId());
+			if (idcards.length <= 0) {
+				ArrayList<String> values = new ArrayList<String>();
+				values.add(lodger.getId());
+				values.add(lodger.getName());
+				values.add(lodger.getGender());
+				values.add(String.valueOf(lodger.getAge()));
+				values.add(lodger.getPhone());
+				insertRow(sc, "‰ΩèÂÆ¢", values);
+			}
+			ArrayList<String> values = new ArrayList<String>();
+			values.add(null);
+			values.add(lodger.getId());
+			values.add(orderid);
+			insertRow(sc, "‰ΩèÂÆ¢_ËÆ¢Âçï", values);
+		}
+		
+		ArrayList<String> values = new ArrayList<String>();
+		values.add(null);
+		values.add(room.getRoomId());
+		values.add(orderid);
+		insertRow(sc, "ÂÆ¢Êàø_ËÆ¢Âçï", values);
+		
+		int surplus = Integer.valueOf(getSingleFieldValue(sc, "ÂÆ¢ÊàøÁ±ªÂûã", "‰ΩôÈáè", "Á±ªÂûã", room.getRoomType())[0]);
+		updateSingleValue(sc, "ÂÆ¢ÊàøÁ±ªÂûã", "Á±ªÂûã", room.getRoomType(), "‰ΩôÈáè", String.valueOf(--surplus));
+		
+		return orderid;
 	}
 }

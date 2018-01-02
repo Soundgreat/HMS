@@ -25,9 +25,9 @@
             <div class="mbox"> 
                
                 <div class="contNav Lovh Lcfx Lfz14 Lflr">
-                            <div class="fillIn chooseActive"><a href="javascript:;" class="Ldb">1.填写订单</a></div>
-                            <div class="choosePay"><a href="javascript:;" class="Ldb">2.确认订单</a></div>
-                            <div class="completed"><a href="javascript:;" class="Ldb">3.完成预订</a></div>
+                            <div class="fillIn chooseActive"><a href="javascript:;" class="Ldb">填写订单</a></div>
+                            <!-- <div class="choosePay"><a href="javascript:;" class="Ldb">2.确认订单</a></div> -->
+                            <!-- <div class="completed"><a href="javascript:;" class="Ldb">3.完成预订</a></div> -->
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
 
 
 <!-- 主体-->
-<div class="Porder_main">
+<div class="Porder_main" id="order">
     <section class="m_wp Lovh">
         <!-- 左侧主体-->
         <section class="left_wp Lfll">
@@ -48,34 +48,34 @@
                     <div class="LoginGuest">
                         <p class="roomNum Lfwb Lfz12 repadl">
                             <label class="sWidth Ltar Ldib"><span class="guestIcon Lfz12 Ldib">*</span><span class="Ltar">入住人：</span></label><span class="guestCheckInName">
-                                <input type="text" maxlength="50" class="reWidth">
+                                <input v-model="name" type="text" maxlength="50" class="reWidth">
                             </span><span class="inputPrompt">请确认与入住时所持身份证姓名保持一致</span>
                         </p>
                                                 <p class="roomNum Lfwb Lfz12 repadl">
                             <label class="sWidth Ltar Ldib"><span class="guestIcon Lfz12 Ldib">*</span><span class="Ltar">身份证：</span></label><span class="guestCheckInName">
-                                <input type="text" maxlength="50" class="reWidth">
+                                <input v-model="id" type="number" maxlength="50" class="reWidth">
                             </span><span class="inputPrompt">请确认与入住时所持身份证号码保持一致</span>
                         </p>
                         <p class="roomNum Lfwb Lfz12 repadl">
                             <label class="sWidth Ltar Ldib"><span class="guestIcon Lfz12 Ldib">*</span><span class="Ltar">手机号码：</span></label><span class="guestCheckInTel">
-                                <input type="text" maxlength="11" class="reWidth">
+                                <input v-model="phone" type="number" maxlength="11" class="reWidth">
                             </span><span class="inputPrompt">请确认是否是您的有效手机号，以便我们联系您</span>
                         </p>
                                                 <p class="roomNum Lfwb Lfz12 repadl">
                             <label class="sWidth Ltar Ldib"><span class="guestIcon Lfz12 Ldib"></span><span class="Ltar">入住日期：</span></label><span class="guestCheckInName">
-                                <input type="text" maxlength="50" class="reWidth">
+                                <input v-model="checkDate[0]" type="text" maxlength="50" class="reWidth" readonly>
                             </span>
                         </p>
                                                 <p class="roomNum Lfwb Lfz12 repadl">
                             <label class="sWidth Ltar Ldib"><span class="guestIcon Lfz12 Ldib"></span><span class="Ltar">退房日期：</span></label><span class="guestCheckInName">
-                                <input type="text" maxlength="50" class="reWidth">
+                                <input v-model="checkDate[1]" type="text" maxlength="50" class="reWidth" readonly>
                             </span>
-                        </p>
+                        <!-- </p>
                                                 <p class="roomNum Lfwb Lfz12 repadl">
                             <label class="sWidth Ltar Ldib"><span class="guestIcon Lfz12 Ldib"></span><span class="Ltar">其他要求：</span></label><span class="guestCheckInName">
                                 <input type="text" maxlength="50" class="reWidth">
                             </span>
-                        </p>
+                        </p> -->
                     </div>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                 <!-- 提交订单-->
                 <div class="orderSubmit Lovh Lcfx">
                     <p class="Ltar allCount"><span class="Lfz14 Lpr5"> 订单总价</span><em class="Lfz14">¥</em><i></i></p>               
-                    <a href="javascript:;" class="Lfz16 Ltac Ldb Lmt5 Lmb10 submitOrderBtn"> 提交订单</a>
+                    <a href="javascript:;" @click="submit" class="Lfz16 Ltac Ldb Lmt5 Lmb10 submitOrderBtn"> 提交订单</a>
                 </div>
                 
             </div>
@@ -147,4 +147,44 @@
         </div>
     </footer>
 </body>
+
+<script src="js/vue.js"></script>
+<script src="js/jquery.js"></script>
+<script>
+new Vue({
+	el: '#order',
+	data: function() {
+		return {
+			checkDate: [],
+			id: '',
+			name: '',
+			phone: '',
+			server: 'Order'
+		}
+	},
+	
+	mounted: function() {
+		$.ajax({
+			url: this.server,
+			method: 'get',
+			success: (res) => {
+				this.checkDate = res.checkdate;
+				console.log(res.price)
+			}
+		});
+	},
+	
+	methods: {
+		submit: function() {
+			$.post(this.server,{
+				id: this.id,
+				name: this.name,
+				phone: this.phone
+			}, (res) => {
+				alert("预定成功！ 订单号是：" + res.orderid);
+			});
+		}
+	}
+});
+</script>
 </html>

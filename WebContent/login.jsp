@@ -40,16 +40,12 @@
 					<div class="">
                         	<br/>
                             <i class="">&nbsp;</i>用户名：
-                            
-                            <input name="username" type="text" v-model="username" placeholder="会员手机号/邮箱" class="input1" maxlength="20">
-                            
+                            <input name="username" type="text" placeholder="会员手机号/邮箱" class="input1" maxlength="20">
                             <br/><br/> <br/>        
                     </div>
                         <div class="">
                             <i class="">&nbsp;</i>密　码：
-
-                                <input type="password" v-model="userpasswd" placeholder="请输入密码"  class="input1" maxlength="20">
-
+                                <input type="password" placeholder="请输入密码"  class="input1" maxlength="20">
                         </div> 
                  </div>
                     <br/><br/>
@@ -70,18 +66,12 @@
             	<div class="">
             		<br/>
             		<span class=""><i class="">&nbsp;</i>用户名：</span>
-
-                            <input type="text" v-model="staffname" placeholder="公司卡号" class="input1" maxlength="20">  
-
-
+                            <input type="text" placeholder="公司卡号" class="input1" maxlength="20">
                  </div>
                  	<br/><br/>
                     <div class="">
                         <span class=""><i class="">&nbsp;</i>密　码：</span>
-
-                            <input type="password" v-model="staffpasswd" placeholder="请输入密码" class="input1" maxlength="20" autocomplete="off">
-
-
+                            <input type="password" placeholder="请输入密码" class="input1" maxlength="20" autocomplete="off">
                     </div>
                     <br/><br/>
                      <div class="item Lcfx container">
@@ -117,7 +107,6 @@
             <p><em class="error_img"></em><span class="error_intro">系统错误，请稍后哦～</span></p>
         </div>
     </div>
-<<<<<<< HEAD
 </div>
 
 <!-- 弹出极验验证 -->
@@ -133,62 +122,8 @@
             </div>
         </div>
     </div>
-	<div id="scriptArea" data-page-id="home/signup">
+<div id="scriptArea" data-page-id="home/signup">
     <!-- 引入封装了failback的接口--initGeetest -->
-    
-        <script type="text/javascript" src="https://static.geetest.com/static/tools/gt.js"></script>
-    <script type="text/javascript" data-track-script="true" src="https://wshantinghotels.huazhu.com/wa/site/huazhu_track.js"></script>
-    <!--[if lte IE 9]><script src="/Content/js/jquery.placeholder.min.js"></script>
-        <script>$('input:not(".notplaceholder"), textarea').placeholder();</script><![endif]-->
-</div>
-<!-- 头部背景 -->   
-<script src="js/jquery.js"></script>
-<script src="js/vue.js"></script>
-<script >
-let server = 'Login';
-new Vue({
-	el: '#myTabContent',
-	data: function() {
-		return {
-			username: '',
-			staffname: '',
-			userpasswd: '',
-			staffpasswd: ''
-		}
-	},
-	methods: {
-		submit: function() {
-			console.log(this.accountType+' '+this.name+' '+this.passwd);
-		}
-	}
-});
-$("#myTabContent div[class*='tab-pane']").find("button").click(() => {
-	let type = $("li.active a").attr("href");
-	let accountType = type.substring(1, type.length);
-	let name = $("#myTabContent div[class*='active']").find("input[type='text']").val();
-	let passwd = $("#myTabContent div[class*='active']").find("input[type='password']").val();
-	$.ajax({
-		url: server,
-		method: 'post',
-		data: {
-			accounttype: accountType,
-			name: name,
-			passwd: passwd
-		},
-		success: (res) => {
-			if (res.status == 0) alert("该账号不存在！");
-			else if (res.status == -1) alert("密码错误！");
-			else window.location = res.newpage;
-		}
-	});
-});
-</script>
-
-</div>
-
-    <!-- 引入封装了failback的接口--initGeetest -->
-
-
     
         <script type="text/javascript" src="https://static.geetest.com/static/tools/gt.js"></script>
     <script type="text/javascript" data-track-script="true" src="https://wshantinghotels.huazhu.com/wa/site/huazhu_track.js"></script>
@@ -199,7 +134,7 @@ $("#myTabContent div[class*='tab-pane']").find("button").click(() => {
         <script>$('input:not(".notplaceholder"), textarea').placeholder();</script><![endif]-->
 </div>
 <!-- 头部背景 -->
-       
-             
+
+<script src="js/login.js"></script>             
 </body>
 </html>

@@ -1,4 +1,4 @@
-package user;
+package customer;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -6,20 +6,21 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 
 /**
- * Servlet implementation class PushOrder
+ * Servlet implementation class RoomDetail
  */
-@WebServlet("/PushOrder")
-public class PushOrder extends HttpServlet {
+@WebServlet("/RoomDetail")
+public class RoomDetailServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public PushOrder() {
+    public RoomDetailServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -28,9 +29,11 @@ public class PushOrder extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("applicaiton/json");
+		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
-		res.put("username", (String)request.getSession().getAttribute("loginName"));
+		RoomBean roomBean = (RoomBean)request.getSession().getAttribute("room");
+		JSONObject room = new JSONObject(roomBean);
+		res.put("room", room);
 		response.getWriter().print(res);
 	}
 
@@ -38,9 +41,8 @@ public class PushOrder extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/json");
-		JSONObject res = new JSONObject();
-		String username = request.getParameter("username");
+		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
 
 }
