@@ -611,6 +611,10 @@ public class JDBC {
 		int surplus = Integer.valueOf(getSingleFieldValue(sc, "客房类型", "余量", "类型", room.getRoomType())[0]);
 		updateSingleValue(sc, "客房类型", "类型", room.getRoomType(), "余量", String.valueOf(--surplus));
 		
+		values = new ArrayList<String>();
+		values.add(orderid);
+		insertRow(sc, "预定中订单", values);
+		
 		return orderid;
 	}
 }
