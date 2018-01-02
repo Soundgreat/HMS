@@ -169,7 +169,6 @@ new Vue({
 			method: 'get',
 			success: (res) => {
 				this.checkDate = res.checkdate;
-				console.log(res.price)
 			}
 		});
 	},

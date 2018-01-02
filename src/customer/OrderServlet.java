@@ -40,9 +40,6 @@ public class OrderServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		String[] checkDate = (String[])session.getAttribute("checkDate");
 		res.put("checkdate", checkDate);
-		RoomBean room = (RoomBean)session.getAttribute("room");
-		JSONObject m = new JSONObject(room);
-		res.put("price", room.getPrice());
 		response.getWriter().print(res);
 	}
 

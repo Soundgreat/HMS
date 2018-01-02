@@ -18,6 +18,7 @@ new Vue({
 			method: 'get',
 			success: (res) => {
 				this.roomTypes = res.roomtypes;
+				this.availableRooms = res.rooms;
 			}
 		});
 	},
@@ -41,7 +42,6 @@ new Vue({
 					roomtypes: JSON.stringify(this.checkedRoomTypes)
 				},(res) => {
 					this.availableRooms = res.rooms
-					console.log(this.availableRooms.length)
 				});
 			}
 		},
