@@ -111,8 +111,9 @@ $(function() {
                             <nav class="navlinks">
                                 <div class="navcont Lposr">
                                     <a href="hotelMain.jsp" class="nav-1 Ldib item">首页</a>
-                                    <a href="#" class="nav-2 Ldib item">酒店简介</a>
                                     <a href="introduction.jsp" class="nav-2 Ldib item">酒店简介</a>
+                                    <a href="#" class="nav-2 Ldib item">房间搜索</a>
+                                    <a href="#" class="nav-4 Ldib item">XXX</a>
                                     <a href="searchhotel.jsp" class="active nav-3 Ldib item brandIts">在线预订</a>
                                     <a href="#" class="nav-3 Ldib item">联系我们</a>        
                                 </div>
@@ -149,18 +150,17 @@ $(function() {
 		</li>
 		<li>
 			<a title="" href="#">
-				<img width="1920" height="482" alt="" style="background: url(images/lunbo2.jpg) no-repeat center;" src="images/alpha.png">
+				<img width="1920" height="482" alt="" style="background: url(images/lunbo3.jpg) no-repeat center;" src="images/alpha.png">
 			</a>
 		</li>
 		<li>
 			<a title="" href="#">
-				<img width="1920" height="482" alt="" style="background: url(images/lunbo3.jpg) no-repeat center;" src="images/alpha.png">
+				<img width="1920" height="482" alt="" style="background: url(images/3.jpg) no-repeat center;" src="images/alpha.png">
 			</a>
-<<<<<<< HEAD
+
 		</li>		
-=======
-		</li>	
->>>>>>> xixi
+	
+
 	</ul>
 	<ul class="flex-direction-nav">
 		<li><a class="flex-prev" href="javascript:;">Previous</a></li>
@@ -175,21 +175,6 @@ $(function() {
 	
 </div>
 
-        <!-- 首页居中搜索框-->
-       <!--  <div id="checkinout">
-	<div id="firstSelect" style="width:100%;">
-		<div class="Date_lr" style="float:left;">
-			<P>入住</p>
-				<input id="startDate" type="text" value=""style="" readonly>
-			</div>
-			<div class="Date_lr" style="float:right;">
-				<p>离店</p>
-				<input id="endDate" type="text" value="" style="" readonly>
-							<span style="float:right;"><a id="searchHotel" href="searchhotel.jsp" class=""> 搜索房间</a></span>
-			</div>
-			<span class="span21">共<span class="NumDate">1</span>晚</span>
-		</div>
-	</div> --> 
 <div class="mask_calendar">
 	<div class="calendar"></div>
 </div>
@@ -231,35 +216,35 @@ $(function() {
             <ul class="recommendlist Lcfx Lposr">
                 <li class="item Lposr Lfll">
                     <h2 class="hotelname Lposa">
-                        <a href="javascript:;">双人房</a>
+                        <a href="double-room.jsp">双人房</a>
                         <div class="bg"></div>
                     </h2>
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_tianjin.jpg"></div>
                     <div class="words">
                         <p class="hotelsummary">旅途中还有身边的你陪伴</p>
-                        <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/2003362">查看房间<i class="arrowright"></i></a></p>
+                        <p class="hoteldetail"><a  href="double-room.jsp">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
                 <li class="item Lposr Lfll">
                     <h2 class="hotelname Lposa">
-                        <a href="javascript:;">家庭套房</a>
+                        <a href="home-room.jsp">家庭套房</a>
                         <div class="bg"></div>
                     </h2>
                     <div class="hotelpic"><img data-src="http://ws-www.hantinghotels.com/hworld/NewWeb/img/quanji_beijingtiantan.jpg"></div>
                     <div class="words">
                         <p class="hotelsummary">家的感觉 真好</p>
-                        <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/1000051">查看房间<i class="arrowright"></i></a></p>
+                        <p class="hoteldetail"><a href="home-room.jsp">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
                 <li class="item Lposr Lfll">
                     <h2 class="hotelname Lposa">
-                        <a href="javascript:;">大床房</a>
+                        <a href="bigbed-room.jsp">大床房</a>
                         <div class="bg"></div>
                     </h2>
                     <div class="hotelpic"><img src="images/memberHZ-01.png"></div>
                     <div class="words">
                         <p class="hotelsummary">就算一个人 也要霸占一张大床</p>
-                        <p class="hoteldetail"><a target="_blank" href="http://hotels.huazhu.com//Hotel/Detail/3100063">查看房间<i class="arrowright"></i></a></p>
+                        <p class="hoteldetail"><a href="bigbed-room.jsp">查看房间<i class="arrowright"></i></a></p>
                     </div>
                 </li>
             </ul>
@@ -318,6 +303,7 @@ $(function() {
     </div>
     <script type="text/javascript" src="http://ws-www.hantinghotels.com/wa/site/huazhu_track.js">
 </script>
-<script src="js/home.js"></script>
+
+
 </body>
 </html>
