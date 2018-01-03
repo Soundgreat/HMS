@@ -505,16 +505,16 @@ public class JDBC {
 	}
 	
 	public static ArrayList<RoomBean> getAvailableRooms(ServletContext sc) {
-		ArrayList<RoomBean> searchedRooms = new ArrayList<RoomBean>();
+		ArrayList<RoomBean> availableRooms = new ArrayList<RoomBean>();
 		try {
-			String sql = "SELECT DISTINCT O.订单状态, O.入住日期, O.离店日期, M.空置, M.房号, \n" + 
-					"M.类型, T.描述 AS 类型描述, M.描述 AS 客房描述, M.朝向, T.容量, T.价格\n" + 
-					"FROM 客房 AS M\n" + 
-					"JOIN 客房类型 AS T ON M.类型 = T.类型\n" + 
-					"JOIN 客房_订单 AS R ON M.房号 = R.房号\n" + 
-					"LEFT JOIN 订单 AS O ON R.订单号 = O.订单号\n" + 
-					"WHERE M.空置 = 1" + 
-					"GROUP BY M.房号 HAVING COUNT(M.房号) >= 1; ";
+			String sql = "SELECT DISTINCT O.订单状态, O.入住日期, O.离店日期, M.空置, M.房号, " + 
+					"M.类型, T.描述 AS 类型描述, M.描述 AS 客房描述, M.朝向, T.容量, T.价格 " + 
+					"FROM 客房 AS M " + 
+					"JOIN 客房类型 AS T ON M.类型 = T.类型 " + 
+					"JOIN 客房_订单 AS R ON M.房号 = R.房号 " + 
+					"LEFT JOIN 订单 AS O ON R.订单号 = O.订单号 " + 
+					"WHERE M.空置 = 1 " + 
+					"GROUP BY M.房号 HAVING COUNT(M.房号) >= 1;";
 			Connection cn = getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
 			ResultSet rs = st.executeQuery();
@@ -527,7 +527,7 @@ public class JDBC {
 				room.setOrientation(rs.getString("朝向"));
 				room.setCapacity(rs.getInt("容量"));
 				room.setPrice(rs.getInt("价格"));
-				searchedRooms.add(room);
+				availableRooms.add(room);
 			}
 			rs.close();
 			st.close();
@@ -535,20 +535,20 @@ public class JDBC {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return searchedRooms;
+		return availableRooms;
 	}
 	
 	public static ArrayList<RoomBean> searchRoom(ServletContext sc, String checkinDate, String checkoutDate, String roomType) {
 		ArrayList<RoomBean> searchedRooms = new ArrayList<RoomBean>();
 		try {
-			String sql = "SELECT DISTINCT O.订单状态, O.入住日期, O.离店日期, M.空置, M.房号, \n" + 
-					"M.类型, T.描述 AS 类型描述, M.描述 AS 客房描述, M.朝向, T.容量, T.价格\n" + 
-					"FROM 客房 AS M\n" + 
-					"JOIN 客房类型 AS T ON M.类型 = T.类型\n" + 
-					"JOIN 客房_订单 AS R ON M.房号 = R.房号\n" + 
-					"LEFT JOIN 订单 AS O ON R.订单号 = O.订单号\n" + 
-					"WHERE NOT (M.类型 != ?  OR M.空置 = 0\n" + 
-					"OR (O.订单状态 = '交易中' AND (O.入住日期 >= ? OR O.离店日期 < ?)))\n" + 
+			String sql = "SELECT DISTINCT O.订单状态, O.入住日期, O.离店日期, M.空置, M.房号, " + 
+					"M.类型, T.描述 AS 类型描述, M.描述 AS 客房描述, M.朝向, T.容量, T.价格 " + 
+					"FROM 客房 AS M " + 
+					"JOIN 客房类型 AS T ON M.类型 = T.类型 " + 
+					"JOIN 客房_订单 AS R ON M.房号 = R.房号 " + 
+					"LEFT JOIN 订单 AS O ON R.订单号 = O.订单号 " + 
+					"WHERE NOT (M.类型 != ?  OR M.空置 = 0 " + 
+					"OR (O.订单状态 = '交易中' AND (O.入住日期 >= ? OR O.离店日期 < ?))) " + 
 					"GROUP BY M.房号 HAVING COUNT(M.房号) >= 1; ";
 			Connection cn = getConnection(sc);
 			PreparedStatement st = cn.prepareStatement(sql);
@@ -649,5 +649,33 @@ public class JDBC {
 		insertRow(sc, "预定中订单", values);
 		
 		return orderid;
+	}
+	
+	public static String[][] getAdvanceOrder(ServletContext sc, String idcard) {
+		String[][] result = null;
+		try {
+			String sql = "SELECT R.订单号, R.身份证号, O.入住日期, O.离店日期, O.入住人数, O.价格, O.订单状态  " + 
+					"FROM  住客_订单 as R JOIN 订单 AS O ON R.订单号 = O.订单号 " + 
+					"WHERE R.身份证号 = ? and O.订单状态 = '预定中'; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			setData(st, "char", 1, idcard);
+			ResultSet rs = st.executeQuery();
+			int rowNum = 0;
+			while (rs.next()) rowNum++;
+			int colNum = rs.getMetaData().getColumnCount();
+			result = new String[rowNum+1][colNum];
+			result[0] = new String[]{"订单号", "身份证号", "入住日期", "离店日期", "入住人数", "价格", "订单状态" };
+			for (int row = 1; row <= rowNum; row++) {
+				rs.absolute(row);
+				for(int col = 0; col < colNum; col++) result[row][col] = rs.getString(col+1);
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			
+		}
+		return result;
 	}
 }
