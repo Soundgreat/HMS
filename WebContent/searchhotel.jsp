@@ -235,8 +235,8 @@ $(document).ready(function(e){
         </div>
     </div>
 </div>
-<script type="text/javascript" src="js/shaixuan.js"></script> 
-<script type="text/javascript" src="js/vue.js"></script> 
+<script src="js/shaixuan.js"></script> 
+<script src="js/vue.js"></script> 
 <script src="js/searchRoom.js"></script>
 </body>
 </html>

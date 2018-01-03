@@ -1,7 +1,6 @@
 package global;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +9,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -506,6 +504,40 @@ public class JDBC {
 		return status;
 	}
 	
+	public static ArrayList<RoomBean> getAvailableRooms(ServletContext sc) {
+		ArrayList<RoomBean> searchedRooms = new ArrayList<RoomBean>();
+		try {
+			String sql = "SELECT DISTINCT O.订单状态, O.入住日期, O.离店日期, M.空置, M.房号, \n" + 
+					"M.类型, T.描述 AS 类型描述, M.描述 AS 客房描述, M.朝向, T.容量, T.价格\n" + 
+					"FROM 客房 AS M\n" + 
+					"JOIN 客房类型 AS T ON M.类型 = T.类型\n" + 
+					"JOIN 客房_订单 AS R ON M.房号 = R.房号\n" + 
+					"LEFT JOIN 订单 AS O ON R.订单号 = O.订单号\n" + 
+					"WHERE M.空置 = 1" + 
+					"GROUP BY M.房号 HAVING COUNT(M.房号) >= 1; ";
+			Connection cn = getConnection(sc);
+			PreparedStatement st = cn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				RoomBean room = new RoomBean();
+				room.setRoomId(rs.getString("房号"));
+				room.setRoomType(rs.getString("类型"));
+				room.setTypeDesc(rs.getString("类型描述"));
+				room.setRoomDesc(rs.getString("客房描述"));
+				room.setOrientation(rs.getString("朝向"));
+				room.setCapacity(rs.getInt("容量"));
+				room.setPrice(rs.getInt("价格"));
+				searchedRooms.add(room);
+			}
+			rs.close();
+			st.close();
+			cn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return searchedRooms;
+	}
+	
 	public static ArrayList<RoomBean> searchRoom(ServletContext sc, String checkinDate, String checkoutDate, String roomType) {
 		ArrayList<RoomBean> searchedRooms = new ArrayList<RoomBean>();
 		try {
@@ -602,6 +634,7 @@ public class JDBC {
 			insertRow(sc, "住客_订单", values);
 		}
 		
+		updateSingleValue(sc, "客房", "房号", room.getRoomId(), "空置", "0");
 		ArrayList<String> values = new ArrayList<String>();
 		values.add(null);
 		values.add(room.getRoomId());

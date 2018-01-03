@@ -10,12 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.sun.source.tree.NewArrayTree;
 
 import global.JDBC;
 
@@ -40,7 +37,10 @@ public class SearchRoomServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
-		res.put("roomtypes", JDBC.getRoomTypes(getServletContext()));
+		ServletContext sc = getServletContext();
+		res.put("roomtypes", JDBC.getRoomTypes(sc));
+		res.put("rooms", JDBC.getAvailableRooms(sc));
+		
 		response.getWriter().print(res);
 	}
 
