@@ -347,7 +347,7 @@ public class JDBC {
 	 * @return
 	 */
 	
-	private static int updateSingleValue(ServletContext sc, String table, String primaryKey, String keyValue, String field, String value) {
+	public static int updateSingleValue(ServletContext sc, String table, String primaryKey, String keyValue, String field, String value) {
 		int status = 0;
 		try {
 			String sql = "UPDATE " + table + " SET " + field + " = " + " ? WHERE " + primaryKey + " = " + keyValue + "; ";
