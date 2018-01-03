@@ -112,9 +112,9 @@ $(function() {
                                 <div class="navcont Lposr">
                                     <a href="hotelMain.jsp" class="nav-1 Ldib item">首页</a>
                                     <a href="introduction.jsp" class="nav-2 Ldib item">酒店简介</a>
-                                    <a href="#" class="nav-2 Ldib item">房间搜索</a>
-                                    <a href="#" class="nav-4 Ldib item">XXX</a>
+                                    <a href="searchhotel.jsp" class="nav-2 Ldib item">房间搜索</a>
                                     <a href="searchhotel.jsp" class="active nav-3 Ldib item brandIts">在线预订</a>
+                                    <a href="#" class="nav-4 Ldib item">关于我们</a>
                                     <a href="#" class="nav-3 Ldib item">联系我们</a>        
                                 </div>
                             </nav>

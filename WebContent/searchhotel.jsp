@@ -91,7 +91,7 @@ $(document).ready(function(e){
     <div class="inner Cwrap">
         <div class="mbox">
             <div class="content Lcfx Ltar">
-                <div class="h3 pagename Lfll Lmt30 Lpl25"></div><span class="otherlink Ldib Lmt30 Lpr25"><a href="http://www.huazhu.com/AboutHZ">了解更多</a><i>|</i><a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">反馈意见</a>
+                <div class="h3 pagename Lfll Lmt30 Lpl25">预定房间</div><span class="otherlink Ldib Lmt30 Lpr25"><a href="http://www.huazhu.com/AboutHZ">了解更多</a><i>|</i><a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">反馈意见</a>
             </div>
         </div>
     </div>
@@ -102,8 +102,6 @@ $(document).ready(function(e){
 	<div class="list-screen">
 		
 		<div class="screen-top" style="position:relative;">
-			<!--  <span>酒店位置<input type="text" class="ju-adress"  /></span>
-			<span>酒店名称<input type="text" class="ju-name" /></span>-->
 			<span>入住日期<input type="text" v-model="checkinDate" name="checkindate" class="mh_date" readonly="true" /></span>
 			<span>退房日期<input type="text" v-model="checkoutDate" name="checkoutdate" class="mh_date" readonly="true" /></span>
 			<a href="#" id="submit-btn" @click="search">搜索</a>
@@ -221,11 +219,6 @@ $(document).ready(function(e){
     <div class="Mfoot">
         <div class="inner Lpb25 Lpt25">
             <div class="links Ltac">
-                <a href="http://www.huazhu.com/MemberHkh">酒店介绍</a>
-                <a href="http://www.huazhu.com/Affiliate">酒店加盟</a>
-                <a href="http://huazhu.zhiye.com/home/">职位招聘</a>
-                <a href="http://hwj.huazhu.com:8080/HQuestionCRM?qNo=F9C6BC63-B467-4104-B441-D853B576EDC9">意见反馈</a>
-                <a href="http://www.huazhu.com/AboutHZ?type=concat">联系我们</a>
                 <a href="#">酒店介绍</a>
                 <a href="#">酒店加盟</a>
                 <a href="#">职位招聘</a>
