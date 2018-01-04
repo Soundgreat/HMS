@@ -39,7 +39,7 @@
 				</dt>
 				<dd>
 					<img class="coin11" src="images/coin111.png" /><img class="coin22"
-						src="images/coin222.png" /><a class="cks">预定入住</a><img class="icon5"
+						src="images/coin222.png" /><a class="cks" href="receptionist.jsp">预定入住</a><img class="icon5"
 						src="images/coin21.png" />
 				</dd>
 				<dd>
