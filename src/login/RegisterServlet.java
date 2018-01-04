@@ -16,7 +16,7 @@ import global.JDBC;
 /**
  * Servlet implementation class Register
  */
-@WebServlet("/Register")
+@WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

@@ -81,7 +81,8 @@ public class JDBC {
 			PreparedStatement st = cn.prepareStatement(sql);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
-				if (!rs.getString(1).equals("住客_订单")) tables.add(rs.getString(1));	
+				if (!rs.getString(1).equals("住客_订单")
+						&& !rs.getString(1).equals("客房_订单")) tables.add(rs.getString(1));	
 			}
 			rs.close();
 			st.close();

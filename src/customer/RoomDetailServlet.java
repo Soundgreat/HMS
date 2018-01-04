@@ -12,7 +12,7 @@ import org.json.JSONObject;
 /**
  * Servlet implementation class RoomDetail
  */
-@WebServlet("/RoomDetail")
+@WebServlet("/RoomDetailServlet")
 public class RoomDetailServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

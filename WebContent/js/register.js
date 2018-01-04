@@ -1,6 +1,6 @@
 document.write("<script src='js/jquery.js'> </script><script src='js/vue.js'></script>");
 
-let server = 'Register';
+let server = 'RegisterServlet';
 $("#signUp_btn").click(() => {
 	let username = $("input[name='username']").val();
 	let idcard = $("input[name='idcard']").val();

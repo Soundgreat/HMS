@@ -15,7 +15,7 @@ import global.ClientBean;
 /**
  * Servlet implementation class Login
  */
-@WebServlet("/Login")
+@WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -55,7 +55,7 @@ public class LoginServlet extends HttpServlet {
 			request.getSession().setAttribute("user",user);
 		}
 		if (status == 1) {
-			res.put("newpage", "neworder.jsp"); 
+			res.put("newpage", "receptionist.jsp"); 
 		}
 		if (status == 2) {
 			res.put("newpage", "manager-panel.jsp"); 

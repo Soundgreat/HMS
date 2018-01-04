@@ -83,7 +83,7 @@ new Vue({
 	},
 	mounted: function() {
 		$.ajax({
-			url: 'RoomDetail',
+			url: 'RoomDetailServlet',
 			method: 'get',
 			success: (res) => {
 				this.roomType = res.room.roomType;

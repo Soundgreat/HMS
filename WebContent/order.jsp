@@ -159,7 +159,7 @@ new Vue({
 			id: '',
 			name: '',
 			phone: '',
-			server: 'Order'
+			server: 'OrderServlet'
 		}
 	},
 	

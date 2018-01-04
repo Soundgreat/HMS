@@ -9,7 +9,7 @@ new Vue({
 			checkedRoomTypes: [],
 			availableRooms: [],
 			pageIdx: 0,
-			server: 'SearchRoom'
+			server: 'SearchRoomServlet'
 		}
 	},
 	mounted: function() {

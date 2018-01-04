@@ -1,6 +1,6 @@
 document.write("<script src='js/jquery.js'></script><script src='js/vue.js'></script>");
 
-let server = 'Login';
+let server = 'LoginServlet';
 $("#myTabContent div[class*='tab-pane']").find("button").click(() => {
 	let type = $("li.active a").attr("href");
 	let accountType = type.substring(1, type.length);
