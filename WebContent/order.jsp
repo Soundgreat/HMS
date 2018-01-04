@@ -23,9 +23,9 @@
     <div class="Mhead slim Lpt5 Lpb5">
         <div class="inner Cwrap">
             <div class="mbox"> 
-               
+             >
                 <div class="contNav Lovh Lcfx Lfz14 Lflr">
-                            <div class="fillIn chooseActive"><a href="javascript:;" class="Ldb">填写订单</a></div>
+                            <div class="fillIn chooseActive"><a href="hotelMain.jsp" class="Ldb">返回首页</a></div>
                             <!-- <div class="choosePay"><a href="javascript:;" class="Ldb">2.确认订单</a></div> -->
                             <!-- <div class="completed"><a href="javascript:;" class="Ldb">3.完成预订</a></div> -->
                 </div>
@@ -84,7 +84,7 @@
                 <div class="cont_mid Lpt20 Lpb40 hzCharacteristic">
                 <!-- 提交订单-->
                 <div class="orderSubmit Lovh Lcfx">
-                    <p class="Ltar allCount"><span class="Lfz14 Lpr5"> 订单总价</span><em class="Lfz14">¥</em><i></i></p>               
+                    <p class="Ltar allCount"><span class="Lfz14 Lpr5"> 订单总价</span><em class="Lfz14">¥100</em><i></i></p>               
                     <a href="javascript:;" @click="submit" class="Lfz16 Ltac Ldb Lmt5 Lmb10 submitOrderBtn"> 提交订单</a>
                 </div>
                 

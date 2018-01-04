@@ -40,7 +40,6 @@ public class SearchRoomServlet extends HttpServlet {
 		ServletContext sc = getServletContext();
 		res.put("roomtypes", JDBC.getRoomTypes(sc));
 		res.put("rooms", JDBC.getAvailableRooms(sc));
-		
 		response.getWriter().print(res);
 	}
 
@@ -90,7 +89,6 @@ public class SearchRoomServlet extends HttpServlet {
 			roomBean.setRoomDesc(roomDesc);
 			HttpSession session = request.getSession();
 			session.setAttribute("room", roomBean);
-			session.setMaxInactiveInterval(30*60);
 			res.put("status", 200);
 		default:
 			break;

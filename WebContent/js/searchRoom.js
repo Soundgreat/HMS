@@ -19,6 +19,9 @@ new Vue({
 			success: (res) => {
 				this.roomTypes = res.roomtypes;
 				this.availableRooms = res.rooms;
+			},
+			error: (req, sta, err) => {
+				alert('error');
 			}
 		});
 	},

@@ -55,7 +55,9 @@ public class RegisterServlet extends HttpServlet {
 			user.setName(name);
 			user.setPhone(phone);
 			request.getSession().setAttribute("user",user);
-			res.put("newpage", "hotelMain.jsp");
+			request.getSession().setMaxInactiveInterval(30*60);
+			
+			res.put("newpage", "introduction.jsp");
 		}
 		res.put("status", status);
 		response.getWriter().print(res);

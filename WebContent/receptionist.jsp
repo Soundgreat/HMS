@@ -13,7 +13,7 @@
 </head>
 <body>
 <div id="desk">
- <div v-if="mode == 'checkin' ">
+ <div >
  	<table>
  	<tr>
  	<td>身份证号</td>
@@ -38,10 +38,10 @@
  	
  </div>
  
- <div v-if="mode == 'checkout' ">
+ <div >
  	<table>
  	<tr>
- 	<td>身份证号</td>
+ 	<td>房号</td>
  	<td><input type="number" name="roomid" v-model="checkout.roomid" placeholder="输入房号" required/></td>
 	<td><button @click="queryRoom">搜索</button></td>
 	</tr>

@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 
@@ -41,6 +42,7 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		JSONObject res = new JSONObject();
+		request.getSession().invalidate();
 		String accountType = request.getParameter("accounttype");
 		String id = request.getParameter("name");
 		String passwd = request.getParameter("passwd");
@@ -55,13 +57,13 @@ public class LoginServlet extends HttpServlet {
 			request.getSession().setAttribute("user",user);
 		}
 		if (status == 1) {
-			res.put("newpage", "receptionist.jsp"); 
+			res.put("newpage", "hotelMain.jsp"); 
 		}
 		if (status == 2) {
 			res.put("newpage", "manager-panel.jsp"); 
 		}
 		if (status == 3) {
-			res.put("newpage", "manager-panel.jsp"); 
+			res.put("newpage", "receptionist.jsp"); 
 		}
 		res.put("status", status);
 		response.getWriter().print(res);

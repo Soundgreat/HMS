@@ -26,6 +26,10 @@ ul.pagination li a.active {
     color: white;
 }
 
+.detail {
+ display: inline-block;
+}
+
 ul.pagination li a:hover:not(.active) {background-color: #ddd;}
 </style>
 <title>酒店查询</title>
@@ -142,49 +146,29 @@ $(document).ready(function(e){
 
 </div>
 
-<div v-for="(room, idx) in availableRooms" class="hotelbox" >
+<div v-for="(room, idx) in availableRooms" class="roombox" >
 <template v-if="idx >= pageIdx*20 && idx < pageIdx*20 + 20">
-<div class="hotelbox"  @click="browseDetail(idx)">
+<div class=""  @click="browseDetail(idx)">
 <br/>
-<div class="roombox" >
-	<div class="img">
-		<img src="http://ws-p.hantinghotels.com/f/m/6es4b1.jpg.190-160.jpg" width="190" height="160"/></div>
-	<div class="desc">
-		<div class="hotelname hasChildTag hasTaxBedge">
-			<a class="name" title="" href="" target="">
-				<h2>{{room.roomid}}</h2>
-            </a>
-            <span class="child_bedge bedge_16"><i class="arrow"></i></span>                                                                 <span class="tax_bedge tax_bedge_1" title="离店时可立即开具增值税专用发票，用于6%的进项抵\n扣，为企业节省差旅成本！\nPS：当您此次住宿为出差性质，且出差报销企业是一般\n纳税人的企业，酒店才可开具增值税专用发票。">&lt;i&gt;专票抵扣&lt;/i&gt;&lt;i class=&quot;percent&quot;&gt;6%&lt;/i&gt;</span>
+	<div class="img"> 
+		<img src="http://ws-p.hantinghotels.com/f/m/6es4b1.jpg.190-160.jpg" width="190" height="160"/>
+			<div class="detail" align="center">
+	<h2>{{room.roomType}}</h2>
+                <p class="">房间ID：{{room.roomId}}</p>
+				<p class="">{{room.typeDesc}}</p>
+				<p class="">{{room.roomDesc}}</p>
+				<p class="">{{room.orientation}}</p>
+				<p class="">{{room.capacity}}</p>
+				<div >价格：{{room.price}}</div> 	
+	</div>
+	</div>                                                                                       
+         
+                                                                                                
+         <div class="bookbtn"><a href="javascript:;" @click="bookRoom(idx)" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
          </div>
-         <div class="address">{{room.roomType}}</div>                                                                                                   <div class="coming"><i class="Cicon hourglass"></i>即将开放预订</div>
-         <div class="lastorder"></div>
-         <div class="commentseg hasLabel"></div>
-         <div class="service">
-         		<i class="Cicon small_wifi" title="客房Wifi覆盖"></i>
-         		<i class="Cicon small_park" title="停车场"></i>
-                <i class="Cicon small_breakfast" title="餐厅"></i>
-                <span class="favor_count"><!--<i class="Cicon small_favor"></i>20132--></span>
-         </div>
-     </div>
-                                                <div class="rarea">
-                                                    <div class="score Ltar">
-                                                        <span class="Ldib Lpl5">5<i>/5分</i></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+        
 
-    <div class="text-center" align="center">
-				<p class="roomtitle">{{room.typeDesc}}</p>
-				<p class="roomtitle">{{room.roomDesc}}</p>
-				<p class="roomtitle">{{room.orientation}}</p>
-				<p class="roomtitle">{{room.capacity}}</p>
-         </div>
-         <div class="address">{{room.price}}</div>                                                                                                 
-         <div class="lastorder"></div>
-         <div class="commentseg hasLabel"></div>
 
-<a href="javascript:;" @click="bookRoom(idx)" class="Cbtn orderbtn" data-room-type="DR" data-activity-id="" data-isagents="0">预订</a>
        </template>
 </div>
 

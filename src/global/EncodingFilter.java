@@ -9,6 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Servlet Filter implementation class EncodingFilter
@@ -45,6 +46,9 @@ public class EncodingFilter implements Filter {
 			request.setCharacterEncoding(encoding);
 			response.setCharacterEncoding(encoding);
 		}
+
+		((HttpServletRequest)request).getSession().setMaxInactiveInterval(30*60);
+		
 		chain.doFilter(request, response);
 	}
 	
